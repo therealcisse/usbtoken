@@ -1,0 +1,17 @@
+<div class="form-header">Change your PIN</div>
+<form class="changepin form" method="post" action="#/changepin">
+
+  <label>Enter old PIN</label>
+  <input name="oldpin" type="password" class="span3" autofocus>
+
+  <label>Enter new PIN</label>
+  <input name="pin" type="password" class="span3">
+
+  <label>Confirm PIN</label>
+  <input name="pin_confirm" type="password" class="span3">
+
+  <button type="submit" class="btn default" style="margin-top:5px;"><i class="icon-retweet"></i> &nbsp;Change PIN</button> &nbsp;&nbsp;
+
+  <button type="button" class="cancel btn" style="margin-top:5px;">Cancel</button>
+
+</form>

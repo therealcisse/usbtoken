@@ -1,0 +1,8 @@
+<% Login = require('controllers/login'); %>
+<div class="form-header">Login <%= 'as Admin' if @type is Login.SO_LOGIN %></div>
+<form class="form login" method="post" action="#/login">
+  <label>Enter PIN</label>
+  <input name="pin" type="password" class="span3" autofocus>
+  <cite class="help-block"><i class="icon-info-sign"></i> &nbsp;PIN must be between <%= @minLength %> and <%= @maxLength %> caracters.</cite>
+  <button type="submit" class="btn default"><i class="icon-signin"></i> &nbsp;Sign in</button>
+</form>

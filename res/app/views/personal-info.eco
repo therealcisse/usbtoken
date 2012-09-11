@@ -1,0 +1,24 @@
+<div class="form-header">Edit personal information</div>
+<form class="form personal-info" method="post" action="#/personal-info">
+  
+  <label>Full Name</label>
+  <input name="fullName" type="text" class="span3" autofocus>
+  
+  <label>Email</label>
+  <input name="email" type="text" class="span3">
+  
+  <label>Telephone</label>
+  <input name="telephone" type="text" class="span3">
+  
+  <label>Address</label>
+  <textarea rows="3" name="address" class="span3"></textarea>
+  
+  <label>City</label>
+  <input name="country" type="text" class="span3">
+  
+  <label>Country</label>
+  <input name="country" type="text" class="span3">
+
+  <button type="submit" class="btn default"><i class="icon-ok"></i> &nbsp;Ok</button>
+
+</form>

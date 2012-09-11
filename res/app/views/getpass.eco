@@ -1,0 +1,13 @@
+<div class="form-title"><%= @title %></div>
+<form class="getpw form">
+
+  <label>Enter new <%= @label %></label>
+  <input name="pw" type="password" class="span3" autofocus>
+
+  <label>Confirm <%= @label %></label>
+  <input name="pw_confirm" type="password" class="span3">
+
+  <cite class="help-block"><i class="icon-info-sign"></i> &nbsp;<%= @label %> must be between <%= @minLength %> and <%= @maxLength %> caracters.</cite>
+  <button type="submit" class="btn default"><i class="icon-ok"></i> &nbsp;<%= @actionLabel %></button>  
+
+</form>

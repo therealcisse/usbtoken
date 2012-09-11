@@ -1,0 +1,21 @@
+<div class="toolsbar-inner">
+	
+	<div class="for-keys">
+		<div class="add btn-group">
+		  <a class="btn btn-large btn-success btn-primary default dropdown-toggle" data-toggle="dropdown"><i class="icon-plus"></i> Add <span class="split"></span><b class="caret"></b>
+		  </a>
+		  <ul class="dropdown-menu">
+        <li><a class="add:gen" href="#/key/gen">Generate Key</a></li>
+        <li><a class="add:import-fs" href="#/key/import/fs">Import from filesystem</a></li>
+        <li><a class="add:import-ldap" href="#/key/import/ldap">Import from LDAP</a></li>
+		  </ul>			
+		</div>
+		<div class="btn-group">
+			<a title="Reload keys" class="reload btn"><i class="icon-undo"></i></a>
+		</div>
+		<div class="actions btn-group">			
+			<a title="Delete" href="#/purge" class="purge btn"><i class="icon-trash"></i></a>
+			<a title="Telecharger" href="#/export" class="export btn"><i class="icon-download-alt"></i></a>
+		</div>
+	</div>
+</div>

@@ -1,0 +1,10 @@
+<!-- args(type, closeable, msg) -->
+<div id="<%= @id %>" class="alert alert-<%= @type %>">
+
+	<% if @closable: %>
+  	<a class="close" data-dismiss="alert" href="#">×</a>
+	<% end %>
+
+  <%- @msg %>
+
+</div>

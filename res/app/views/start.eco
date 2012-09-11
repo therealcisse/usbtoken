@@ -1,0 +1,26 @@
+<div class="detecting">
+  
+  <div class="spinner"></div>        
+
+</div>
+
+<div class="absent">
+
+  <ul class="nav nav-list">
+    <li><a href="#"><i class="icon-refresh"></i>Re-essayer</a>
+    </li>
+    </li>
+  </ul>
+
+</div>
+
+<div class="locked blank">
+
+  <ul class="nav nav-list">
+    <li><a href="#"><i class="icon-refresh"></i>Re-essayer</a>
+    </li>
+    <li><a href="#"><i class="icon-bolt"></i>Initialize token</a>
+    </li>
+  </ul>
+
+</div>
