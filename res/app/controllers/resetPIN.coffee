@@ -8,36 +8,39 @@ Token   = require('models/token')
 class ResetPIN extends Wizard
 
   doSetPIN: (params) ->
-    @log 'ResetPIN@doSetPIN'    
+    @log 'ResetPIN@doSetPIN'
+    
+    df = app.Loading()
+    @delay (=> @controller.fn(params); df())
 
-    Façade.resetPIN params.puk, params.pin, (err) =>
-      if err
-        @controller.alert "Error resetting PIN"
-        return false
+    # Façade.resetPIN params.puk, params.pin, (err) =>
+    #   if err
+    #     @controller.alert "Error resetting PIN"
+    #     return false
 
-      @delay (=> @controller.info msg: 'Your PIN was successfully changed.', closable: true), 100  
+    #   @delay (=> @controller.info msg: 'Your PIN was successfully changed.', closable: true), 100  
       
-      @controller.end @
+    #   @controller.end @
 
   doUnblock: (puk) -> 
     @log 'ResetPIN@doUnblock'
 
-    Façade.unblock puk, (err) =>
-      if err >= 0
+    # Façade.unblock puk, (err) =>
+    #   if err >= 0
 
-        if err is 0
+    #     if err is 0
 
-          @controller.app.setStatus(Token.Locked)
+    #       @controller.app.setStatus(Token.Locked)
 
-        else
+    #     else
 
-          @controller.alert "PUK, invalide, il ne vous reste que #{err} essaie#{if err > 1 then 's' else ''} avant le blockage permanent de votre support."
+    #       @controller.alert "PUK, invalide, il ne vous reste que #{err} essaie#{if err > 1 then 's' else ''} avant le blockage permanent de votre support."
 
-        return false
+    #     return false
       
-      @controller.info msg: 'Your PIN was successfully unblocked . . .', closable: true
+    #   @controller.info msg: 'Your PIN was successfully unblocked . . .', closable: true
 
-      @controller.end @, puk: puk
+    @controller.next @, puk: puk
 
   constructor: ->
 

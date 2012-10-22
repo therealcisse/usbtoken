@@ -1,0 +1,23 @@
+<div class="navbar pull-right">
+  <div class="navbar-inner">
+    <div class="container">
+      
+      <ul class="nav pull-right">
+                      
+          <li class="dropdown" id="options">
+            <a title="Options"  href="#" class="dropdown-toggle options btn btn-small" data-toggle="dropdown"><i class="icon-wrench"></i><b class="caret"></b></a>
+            <ul class="dropdown-menu">
+              <li><a href="#/changepin">Change PIN</a></li>
+              <!-- <li><a href="#/personal-info">Modify personal data</a></li> -->
+              <li><a href="#/erase">Erase token</a></li>
+              <li class="divider"></li>
+              <li><a href="#/init">Re-initialize token</a></li>
+            </ul>
+          </li>
+
+          <li id="sign-out"><a title="Sign out" class="btn btn-small" href="#/logout"><i class="icon-signout"></i></a></li>
+
+        </ul><!-- /.nav-collapse -->
+    </div>
+  </div><!-- /navbar-inner -->
+</div><!-- /navbar -->

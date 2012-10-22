@@ -12339,7 +12339,8 @@ module.exports = jQuery;}, "D:/Users\\amadou\\Documents\\Visual Studio 2010\\Pro
     ChangePIN.prototype.elements = {
       '[name=oldpin]': 'oldpin',
       '[name=pin]': 'pin',
-      '[name=pin_confirm]': 'pin_confirm'
+      '[name=pin_confirm]': 'pin_confirm',
+      '[type=submit]': 'submitBtn'
     };
 
     ChangePIN.templ = require('views/changepin');
@@ -12349,15 +12350,7 @@ module.exports = jQuery;}, "D:/Users\\amadou\\Documents\\Visual Studio 2010\\Pro
     };
 
     ChangePIN.prototype.cancel = function() {
-      var _this = this;
-      return Façade.getStatus(function(status) {
-        if (status === Token.ChangePIN) {
-          return _this.app.trigger('alert', 'You must reset your PIN.');
-          false;
-        }
-        _this.navigate('#/keys');
-        return false;
-      });
+      return this.navigate('#/keys');
     };
 
     ChangePIN.prototype.params = function() {
@@ -12374,15 +12367,25 @@ module.exports = jQuery;}, "D:/Users\\amadou\\Documents\\Visual Studio 2010\\Pro
     };
 
     ChangePIN.prototype.submit = function(e) {
-      var msg, params;
+      var df, msg, params;
       this.log('@actn');
       e.preventDefault();
+      this.submitBtn.enable(false);
       params = this.params();
       if (msg = this.valid(params.oldpin, params.pin, params.pin_confirm)) {
-        this.app.alert(msg);
+        this.app.alert({
+          msg: msg,
+          closable: true
+        });
+        this.submitBtn.enable();
         return false;
       }
-      this.doAction(params);
+      df = app.Loading();
+      this.delay((function() {
+        this.doAction(params);
+        df();
+        return this.submitBtn.enable();
+      }));
       return false;
     };
 
@@ -12405,6 +12408,43 @@ module.exports = jQuery;}, "D:/Users\\amadou\\Documents\\Visual Studio 2010\\Pro
   module.exports = ChangePIN;
 
 }).call(this);
+}, "controllers/dlg": function(exports, require, module) {(function() {
+  var Dlg, Spine,
+    __hasProp = {}.hasOwnProperty,
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+  Spine = require('spine');
+
+  Dlg = (function(_super) {
+
+    __extends(Dlg, _super);
+
+    Dlg.prototype.className = 'dlg';
+
+    function Dlg(args) {
+      var btn, _i, _len, _ref;
+      _ref = args.buttons;
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        btn = _ref[_i];
+        (this.events || (this.events = {}))["click #" + btn.id] = btn.fn;
+      }
+      Dlg.__super__.constructor.apply(this, arguments);
+    }
+
+    Dlg.tmpl = require('views/dlg');
+
+    Dlg.prototype.render = function() {
+      this.html(Dlg.tmpl(this));
+      return this;
+    };
+
+    return Dlg;
+
+  })(Spine.Controller);
+
+  module.exports = Dlg;
+
+}).call(this);
 }, "controllers/get_pass": function(exports, require, module) {(function() {
   var Façade, GetPass, Spine,
     __hasProp = {}.hasOwnProperty,
@@ -12424,7 +12464,8 @@ module.exports = jQuery;}, "D:/Users\\amadou\\Documents\\Visual Studio 2010\\Pro
 
     GetPass.prototype.elements = {
       '[name=pw]': 'pw',
-      '[name=pw_confirm]': 'pw_confirm'
+      '[name=pw_confirm]': 'pw_confirm',
+      '[type=submit]': 'submitBtn'
     };
 
     GetPass.prototype.events = {
@@ -12444,23 +12485,23 @@ module.exports = jQuery;}, "D:/Users\\amadou\\Documents\\Visual Studio 2010\\Pro
 
     GetPass.viewopts = function(type, title) {
       var _this = this;
-      return Façade.getOptions(function(opts) {
+      return Façade.GetPINOpts(function(opts) {
         switch (type) {
           case GetPass.PIN:
             return {
               title: title || 'Enter PIN',
               label: 'PIN',
               actionLabel: 'Ok',
-              minLength: opts['min-pin-length'],
-              maxLength: opts['max-pin-length']
+              minLength: opts['minlen'],
+              maxLength: opts['maxlen']
             };
           case GetPass.PUK:
             return {
               title: title || 'Enter PUK',
               label: 'PUK',
               actionLabel: 'Ok',
-              minLength: opts['min-puk-length'],
-              maxLength: opts['max-puk-length']
+              minLength: opts['minlen'],
+              maxLength: opts['maxlen']
             };
         }
       });
@@ -12486,19 +12527,19 @@ module.exports = jQuery;}, "D:/Users\\amadou\\Documents\\Visual Studio 2010\\Pro
     };
 
     GetPass.valid = function(params) {
-      return Façade.getOptions(function(opts) {
+      return Façade.GetPINOpts(function(opts) {
         switch (params.type) {
           case GetPass.PIN:
-            if (!(params.pw.length > opts['min-pin-length'] && params.pw.length < opts['max-pin-length'])) {
-              return "PIN must be between " + opts['min-pin-length'] + " and " + opts['max-pin-length'] + " caracters.";
+            if (!(params.pw.length > opts['minlen'] && params.pw.length < opts['maxlen'])) {
+              return "PIN must be between " + opts['minlen'] + " and " + opts['maxlen'] + " caracters.";
             }
             if (params.pw !== params.pw_confirm) {
               return "The PIN confirmation does not match.";
             }
             break;
           case GetPass.PUK:
-            if (!(params.pw.length > opts['min-puk-length'] && params.pw.length < opts['max-puk-length'])) {
-              return "PUK must be between " + opts['min-puk-length'] + " and " + opts['max-puk-length'] + " caracters.";
+            if (!(params.pw.length > opts['minlen'] && params.pw.length < opts['maxlen'])) {
+              return "PUK must be between " + opts['minlen'] + " and " + opts['maxlen'] + " caracters.";
             }
             if (params.pw !== params.pw_confirm) {
               return "The PUK confirmation does not match.";
@@ -12516,12 +12557,16 @@ module.exports = jQuery;}, "D:/Users\\amadou\\Documents\\Visual Studio 2010\\Pro
     };
 
     GetPass.prototype.submit = function(evt) {
-      var key, msg, params, val, _ref,
-        _this = this;
+      var key, msg, params, val, _ref;
       evt.preventDefault();
+      this.submitBtn.enable(false);
       params = this.params();
       if (msg = GetPass.valid(params)) {
-        this.controller.alert(msg);
+        this.controller.alert({
+          msg: msg,
+          closable: true
+        });
+        this.submitBtn.enable();
         return false;
       }
       _ref = this.vars;
@@ -12531,9 +12576,8 @@ module.exports = jQuery;}, "D:/Users\\amadou\\Documents\\Visual Studio 2010\\Pro
       }
       params[this.type] = params['pw'];
       delete params['pw'];
-      this.delay(function() {
-        return _this.fn(params);
-      });
+      this.fn(params);
+      this.submitBtn.enable();
       return false;
     };
 
@@ -12565,35 +12609,25 @@ module.exports = jQuery;}, "D:/Users\\amadou\\Documents\\Visual Studio 2010\\Pro
 
     __extends(Init, _super);
 
+    Init.prototype.doSetPersonalInfo = function(params) {
+      this.log("doSetPersonalInfo#" + params);
+      return this.controller.next(this, params);
+    };
+
     Init.prototype.doSetPIN = function(params) {
       this.log("setPIN" + params.pin);
-      return this.controller.end(this, params);
+      return this.controller.next(this, params);
     };
 
     Init.prototype.doSetPUK = function(params) {
+      var df,
+        _this = this;
       this.log("setPUK" + params.puk);
-      return this.controller.end(this, params);
-    };
-
-    Init.prototype.doSOLogin = function(params) {
-      var _this = this;
-      this.log("doLogin#" + params.puk);
-      return Façade.login(params.pin, function(remainingAttempts) {
-        if (remainingAttempts >= 0) {
-          if (remainingAttempts === 0) {
-            _this.navigate('#/');
-          } else {
-            _this.controller.alert("PIN invalide, il ne vous reste que " + remainingAttempts + " essaie" + (remainingAttempts > 1 ? 's' : '') + " avant le blockage de votre PIN.");
-          }
-          return false;
-        }
-        return _this.controller.end(_this, params);
-      });
-    };
-
-    Init.prototype.doSetPersonalInfo = function(params) {
-      this.log("doSetPersonalInfo#" + params);
-      return this.controller.end(this, params);
+      df = app.Loading();
+      return this.delay((function() {
+        _this.controller.fn(params.pin, params.puk, params.fullName);
+        return df();
+      }));
     };
 
     Init.prototype.unRenderMsg = function(evt) {
@@ -12601,7 +12635,7 @@ module.exports = jQuery;}, "D:/Users\\amadou\\Documents\\Visual Studio 2010\\Pro
     };
 
     Init.prototype.unRendered = function() {
-      return window.jQuery(window).bind('beforeunload', this.unRenderMsg);
+      return window.jQuery(window).unbind('beforeunload', this.unRenderMsg);
     };
 
     function Init() {
@@ -12609,14 +12643,6 @@ module.exports = jQuery;}, "D:/Users\\amadou\\Documents\\Visual Studio 2010\\Pro
       window.jQuery(window).bind('beforeunload', this.unRenderMsg);
       this.steps = [
         {
-          Clss: Login,
-          args: {
-            name: 'sologin',
-            controller: this,
-            doLogin: this.doSOLogin,
-            type: Login.SO_LOGIN
-          }
-        }, {
           Clss: PersonalInfo,
           args: {
             name: 'personal-info',
@@ -12641,6 +12667,9 @@ module.exports = jQuery;}, "D:/Users\\amadou\\Documents\\Visual Studio 2010\\Pro
           }
         }
       ];
+      this.app.delay(function() {
+        return Façade.SetWindowText('Initialize');
+      });
     }
 
     return Init;
@@ -12751,6 +12780,9 @@ module.exports = jQuery;}, "D:/Users\\amadou\\Documents\\Visual Studio 2010\\Pro
         return delete this.app;
       });
       this.append(this.toolsbar.render(), this.key);
+      this.delay(function() {
+        return Façade.SetWindowText('Keys');
+      });
     }
 
     return KeyView;
@@ -12784,6 +12816,9 @@ module.exports = jQuery;}, "D:/Users\\amadou\\Documents\\Visual Studio 2010\\Pro
         return delete this.app;
       });
       this.append(this.toolsbar.render(), this.keys);
+      this.delay(function() {
+        return Façade.SetWindowText('Keys');
+      });
     }
 
     KeyList.prototype.selectionChanged = function(key, hasSelection) {
@@ -13007,6 +13042,9 @@ module.exports = jQuery;}, "D:/Users\\amadou\\Documents\\Visual Studio 2010\\Pro
       this.bind('release', function() {
         return delete _this.controller;
       });
+      this.delay(function() {
+        return Façade.SetWindowText('Login');
+      });
     }
 
     Login.prototype.events = {
@@ -13015,7 +13053,8 @@ module.exports = jQuery;}, "D:/Users\\amadou\\Documents\\Visual Studio 2010\\Pro
     };
 
     Login.prototype.elements = {
-      '[name=pin]': 'pin'
+      '[name=pin]': 'pin',
+      '[type=submit]': 'submitBtn'
     };
 
     Login.prototype.className = 'login';
@@ -13035,11 +13074,11 @@ module.exports = jQuery;}, "D:/Users\\amadou\\Documents\\Visual Studio 2010\\Pro
 
     Login.viewopts = function(type) {
       var _this = this;
-      return Façade.getOptions(function(opts) {
+      return Façade.GetPINOpts(function(opts) {
         return {
           type: type,
-          minLength: opts['min-pin-length'],
-          maxLength: opts['max-pin-length']
+          minLength: opts['minlen'],
+          maxLength: opts['maxlen']
         };
       });
     };
@@ -13049,17 +13088,25 @@ module.exports = jQuery;}, "D:/Users\\amadou\\Documents\\Visual Studio 2010\\Pro
     };
 
     Login.prototype.submit = function(e) {
-      var msg, params,
+      var df, msg, params,
         _this = this;
       e.preventDefault();
+      this.submitBtn.enable(false);
       params = this.params();
       if (msg = Login.valid(params)) {
-        this.controller.alert(msg);
+        this.controller.alert({
+          msg: msg,
+          closable: true
+        });
+        this.submitBtn.enable();
         return false;
       }
-      this.delay(function() {
-        return _this.doLogin(params);
-      });
+      df = app.Loading();
+      this.delay((function() {
+        _this.doLogin(params);
+        df();
+        return _this.submitBtn.enable();
+      }));
       return false;
     };
 
@@ -13075,9 +13122,9 @@ module.exports = jQuery;}, "D:/Users\\amadou\\Documents\\Visual Studio 2010\\Pro
 
     Login.valid = function(params) {
       var _this = this;
-      return Façade.getOptions(function(opts) {
-        if (!(params.pin.length > opts['min-pin-length'] && params.pin.length < opts['max-pin-length'])) {
-          return "PIN must be between " + opts['min-pin-length'] + " and " + opts['max-pin-length'] + " caracters.";
+      return Façade.GetPINOpts(function(opts) {
+        if (!(params.pin.length > opts['minlen'] && params.pin.length < opts['maxlen'])) {
+          return "PIN must be between " + opts['minlen'] + " and " + opts['maxlen'] + " caracters.";
         }
       });
     };
@@ -13101,12 +13148,7 @@ module.exports = jQuery;}, "D:/Users\\amadou\\Documents\\Visual Studio 2010\\Pro
     __extends(PersonalInfo, _super);
 
     PersonalInfo.prototype.elements = {
-      '[name=fullName]': 'fullName',
-      '[name=email]': 'email',
-      '[name=telephone]': 'telephone',
-      '[name=address]': 'address',
-      '[name=city]': 'city',
-      '[name=country]': 'country'
+      '[name=fullName]': 'fullName'
     };
 
     PersonalInfo.prototype.events = {
@@ -13125,12 +13167,7 @@ module.exports = jQuery;}, "D:/Users\\amadou\\Documents\\Visual Studio 2010\\Pro
         return (_this[key].val() || '').trim();
       };
       return {
-        fullName: cleaned('fullName'),
-        email: cleaned('email'),
-        telephone: cleaned('telephone'),
-        address: cleaned('address'),
-        city: cleaned('city'),
-        country: cleaned('country')
+        fullName: cleaned('fullName')
       };
     };
 
@@ -13156,7 +13193,10 @@ module.exports = jQuery;}, "D:/Users\\amadou\\Documents\\Visual Studio 2010\\Pro
       e.preventDefault();
       params = this.params();
       if (msg = PersonalInfo.valid(params)) {
-        this.controller.alert(msg);
+        this.controller.alert({
+          msg: msg,
+          closable: true
+        });
         return false;
       }
       this.delay(function() {
@@ -13206,42 +13246,20 @@ module.exports = jQuery;}, "D:/Users\\amadou\\Documents\\Visual Studio 2010\\Pro
     __extends(ResetPIN, _super);
 
     ResetPIN.prototype.doSetPIN = function(params) {
-      var _this = this;
+      var df,
+        _this = this;
       this.log('ResetPIN@doSetPIN');
-      return Façade.resetPIN(params.puk, params.pin, function(err) {
-        if (err) {
-          _this.controller.alert("Error resetting PIN");
-          return false;
-        }
-        _this.delay((function() {
-          return _this.controller.info({
-            msg: 'Your PIN was successfully changed.',
-            closable: true
-          });
-        }), 100);
-        return _this.controller.end(_this);
-      });
+      df = app.Loading();
+      return this.delay((function() {
+        _this.controller.fn(params);
+        return df();
+      }));
     };
 
     ResetPIN.prototype.doUnblock = function(puk) {
-      var _this = this;
       this.log('ResetPIN@doUnblock');
-      return Façade.unblock(puk, function(err) {
-        if (err >= 0) {
-          if (err === 0) {
-            _this.controller.app.setStatus(Token.Locked);
-          } else {
-            _this.controller.alert("PUK, invalide, il ne vous reste que " + err + " essaie" + (err > 1 ? 's' : '') + " avant le blockage permanent de votre support.");
-          }
-          return false;
-        }
-        _this.controller.info({
-          msg: 'Your PIN was successfully unblocked . . .',
-          closable: true
-        });
-        return _this.controller.end(_this, {
-          puk: puk
-        });
+      return this.controller.next(this, {
+        puk: puk
       });
     };
 
@@ -13280,7 +13298,7 @@ module.exports = jQuery;}, "D:/Users\\amadou\\Documents\\Visual Studio 2010\\Pro
 
 }).call(this);
 }, "controllers/start": function(exports, require, module) {(function() {
-  var Spine, Start, Token,
+  var Façade, Spine, Start, Token,
     __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
     __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -13289,18 +13307,25 @@ module.exports = jQuery;}, "D:/Users\\amadou\\Documents\\Visual Studio 2010\\Pro
 
   Token = require('models/token');
 
+  Façade = require('lib/façade');
+
   Start = (function(_super) {
 
     __extends(Start, _super);
 
+    Start.events = {
+      'click .action': 'doDetect',
+      'click .init': 'doInit'
+    };
+
     function Start() {
-      this.statusChanged = __bind(this.statusChanged, this);
+      this.doDetect = __bind(this.doDetect, this);
+
+      this.doInit = __bind(this.doInit, this);
 
       var _this = this;
       Start.__super__.constructor.apply(this, arguments);
-      this.app.bind('statusChanged', this.statusChanged);
       this.bind('release', function() {
-        _this.app.unbind('statusChanged', _this.statusChanged);
         return delete _this.app;
       });
     }
@@ -13314,30 +13339,15 @@ module.exports = jQuery;}, "D:/Users\\amadou\\Documents\\Visual Studio 2010\\Pro
       return this;
     };
 
-    Start.prototype.detecting = function() {};
+    Start.prototype.doInit = function() {
+      return this.navigate('#/init');
+    };
 
-    Start.prototype.locked = function() {};
-
-    Start.prototype.blocked = function() {};
-
-    Start.prototype.blank = function() {};
-
-    Start.prototype.absent = function() {};
-
-    Start.prototype.statusChanged = function(status) {
-      this.log("Start#statusChanged:" + status);
-      switch (status) {
-        case Token.Absent:
-          return this.absent();
-        case Token.Locked:
-          return this.locked();
-        case Token.Blocked:
-          return this.blocked();
-        case Token.Blank:
-          return this.blank();
-        case null:
-          return this.detecting();
-      }
+    Start.prototype.doDetect = function() {
+      this.app.el.attr('class', "" + this.app.className + " detecting");
+      this.el.attr('class', "" + this.className + " detecting");
+      this.app.info('Detection en cour . . .');
+      return this.delay(this.app.detectToken, 3000);
     };
 
     return Start;
@@ -13370,17 +13380,6 @@ module.exports = jQuery;}, "D:/Users\\amadou\\Documents\\Visual Studio 2010\\Pro
       this.bind('release', function() {
         _this.app.unbind('statusChanged', _this.statusChanged);
         return delete _this.app;
-      });
-      this.el.on('dragstart', function(evt) {
-        _this.log('Topbar#ondragstart');
-        evt.preventDefault();
-        evt.stopPropagation();
-        evt.originalEvent.dataTransfer.setDragImage(document.getElementById('blank'), 0, 0);
-        evt.originalEvent.dataTransfer.effectAllowed = 'none';
-        return false;
-      });
-      this.el.on('drag', function(evt) {
-        return _this.log('Topbar#ondrag');
       });
     }
 
@@ -13433,6 +13432,9 @@ module.exports = jQuery;}, "D:/Users\\amadou\\Documents\\Visual Studio 2010\\Pro
       this.bind('release', function() {
         return delete _this.controller;
       });
+      this.delay(function() {
+        return Façade.SetWindowText('Unblock');
+      });
     }
 
     Unblock.prototype.events = {
@@ -13440,7 +13442,8 @@ module.exports = jQuery;}, "D:/Users\\amadou\\Documents\\Visual Studio 2010\\Pro
     };
 
     Unblock.prototype.elements = {
-      '[name=puk]': 'puk'
+      '[name=puk]': 'puk',
+      '[type=submit]': 'submitBtn'
     };
 
     Unblock.prototype.className = 'unblock';
@@ -13449,10 +13452,10 @@ module.exports = jQuery;}, "D:/Users\\amadou\\Documents\\Visual Studio 2010\\Pro
 
     Unblock.prototype.viewopts = function() {
       var _this = this;
-      return Façade.getOptions(function(opts) {
+      return Façade.GetPINOpts(function(opts) {
         return {
-          minLength: opts['min-pin-length'],
-          maxLength: opts['max-pin-length']
+          minLength: opts['minlen'],
+          maxLength: opts['maxlen']
         };
       });
     };
@@ -13476,19 +13479,25 @@ module.exports = jQuery;}, "D:/Users\\amadou\\Documents\\Visual Studio 2010\\Pro
       var msg, params;
       this.log('@unblock');
       e.preventDefault();
+      this.submitBtn.enable(false);
       params = this.params();
       if (msg = Unblock.valid(params)) {
-        this.controller.alert(msg);
+        this.controller.alert({
+          msg: msg,
+          closable: true
+        });
+        this.submitBtn.enable();
         return false;
       }
-      return this.doUnblock(params.puk);
+      this.doUnblock(params.puk);
+      return this.submitBtn.enable();
     };
 
     Unblock.valid = function(params) {
       var _this = this;
-      return Façade.getOptions(function(opts) {
-        if (!(params.puk.length > opts['min-pin-length'] && params.puk.length < opts['max-pin-length'])) {
-          return "PUK must be between " + opts['min-pin-length'] + " and " + opts['max-pin-length'] + " caracters.";
+      return Façade.GetPINOpts(function(opts) {
+        if (!(params.puk.length > opts['minlen'] && params.puk.length < opts['maxlen'])) {
+          return "PUK must be between " + opts['minlen'] + " and " + opts['maxlen'] + " caracters.";
         }
       });
     };
@@ -13501,7 +13510,7 @@ module.exports = jQuery;}, "D:/Users\\amadou\\Documents\\Visual Studio 2010\\Pro
 
 }).call(this);
 }, "index": function(exports, require, module) {(function() {
-  var App, ChangePIN, Façade, Init, KeyMgr, Login, PersonalInfo, ResetPIN, Spine, Start, Token, Topbar, Unblock,
+  var App, ChangePIN, Dlg, Façade, Init, KeyMgr, Login, PersonalInfo, ResetPIN, Spine, Start, Token, Topbar, Unblock,
     __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
     __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -13531,6 +13540,8 @@ module.exports = jQuery;}, "D:/Users\\amadou\\Documents\\Visual Studio 2010\\Pro
   Façade = require('lib/façade');
 
   ResetPIN = require('controllers/resetPIN');
+
+  Dlg = require('controllers/dlg');
 
   App = (function(_super) {
     var Msg;
@@ -13570,11 +13581,11 @@ module.exports = jQuery;}, "D:/Users\\amadou\\Documents\\Visual Studio 2010\\Pro
           closable: p['closable'],
           msg: p['msg']
         });
-        return this.html(msg).find('.alert')[p['animation']](p['duration'], function() {
+        return this.html(msg).find('.alert')[p['animation']](p['duration'], (function() {
           if (p['closable']) {
             return _this.delay(_this.hide(id), p['delay']);
           }
-        });
+        }));
       };
 
       Msg.prototype.hide = function(e) {
@@ -13598,51 +13609,75 @@ module.exports = jQuery;}, "D:/Users\\amadou\\Documents\\Visual Studio 2010\\Pro
     function App() {
       this.routeUnblock = __bind(this.routeUnblock, this);
 
+      this.routeInit = __bind(this.routeInit, this);
+
       this.routeLogin = __bind(this.routeLogin, this);
 
       this.routeChangePIN = __bind(this.routeChangePIN, this);
 
+      this.routeInitPIN = __bind(this.routeInitPIN, this);
+
       this.routePersonalInfo = __bind(this.routePersonalInfo, this);
 
       this.routeDetect = __bind(this.routeDetect, this);
+
+      this.detectToken = __bind(this.detectToken, this);
 
       this.alert = __bind(this.alert, this);
 
       this.info = __bind(this.info, this);
 
       this.setStatus = __bind(this.setStatus, this);
+
+      var _this = this;
       App.__super__.constructor.apply(this, arguments);
+      app.setMessageCallback('log', function(name, _arg) {
+        var response;
+        response = _arg[0];
+        return console.log(response);
+      });
+      app.setMessageCallback('token_removed', function(name, _arg) {
+        var response;
+        response = _arg[0];
+        _this.alert("Le supporte a ete debranche!");
+        return _this.delay(function() {
+          return _this.become(_this.start(Token.Absent, {
+            alert: "Le supporte a ete debranche"
+          }), 2000);
+        });
+      });
       this.routes({
         '/unblock': function() {
-          return this.verify(Token.Blocked)(this.setStatus);
+          return this.setStatus(Token.Blocked);
         },
         '/changepin': function() {
           var _this = this;
-          return this.verify(Token.LoggedIn)(function() {
+          return this.ifLoggedIn()(function() {
             return _this.become(_this.changepin());
           });
         },
         '/login': function() {
-          return this.verify(Token.AuthRequired)(this.setStatus);
+          return this.setStatus(Token.AuthRequired);
         },
+        '/erase': this.routeErase,
         '/keys': function() {
           var _this = this;
-          return this.verify(Token.LoggedIn)(function() {
-            return _this.become(_this.loggedin(KeyMgr.KeyList, {
+          return this.ifLoggedIn()(function() {
+            return _this.become(_this.any(KeyMgr.KeyList, {
               app: _this
             }));
           });
         },
         '/key/:id': function(params) {
           var _this = this;
-          return this.verify(Token.LoggedIn)(function() {
+          return this.ifLoggedIn()(function() {
             params.app = _this;
             return _this.become(_this.loggedin(KeyMgr.KeyView, params));
           });
         },
         '/key/gen': function() {
           var _this = this;
-          return this.verify(Token.LoggedIn)(function() {
+          return this.ifLoggedIn()(function() {
             return _this.become(_this.loggedin(KeyMgr.GenForm, {
               app: _this
             }));
@@ -13650,54 +13685,28 @@ module.exports = jQuery;}, "D:/Users\\amadou\\Documents\\Visual Studio 2010\\Pro
         },
         '/key/import/:type': function(params) {
           var _this = this;
-          return this.verify(Token.LoggedIn)(function() {
+          return this.ifLoggedIn()(function() {
             params.app = _this;
             return _this.become(_this.loggedin(KeyMgr.ImportForm, params));
           });
         },
         '/logout': this.routeLogout,
-        '/minimize': function() {
-          this.log("minimize");
-          return false;
-        },
-        '/close': function() {
-          this.log("close");
-          return false;
-        },
         '/init': function() {
-          var _this = this;
-          return this.verify(Token.LoggedIn)(function() {
-            return _this.become(_this.loggedin(Init, {
-              app: _this
-            }));
-          });
-        },
-        '/personal-info': function() {
-          var _this = this;
-          return this.verify(Token.LoggedIn)(function() {
-            return _this.become(_this.loggedin(PersonalInfo, {
-              controller: _this,
-              fn: _this.routePersonalInfo
-            }));
-          });
+          return this.become(this.any(Init, {
+            app: this,
+            fn: this.routeInit
+          }));
         },
         '/setpin': function(params) {
-          var _this = this;
-          return this.verify(Token.ChangePIN)(function() {
-            return _this.become(_this.setpw({
-              type: GetPass.PIN,
-              fn: _this.routeSetPIN,
-              controller: _this
-            }));
-          });
+          return this.become(this.setpw({
+            type: GetPass.PIN,
+            fn: this.routeSetPIN,
+            controller: this
+          }));
         },
         '/': this.routeDetect
       });
       this.bind('statusChanged', this.statusChanged);
-      this.topbar = new Topbar({
-        el: '.topbar',
-        app: this
-      });
       this.body = new Spine.Controller({
         el: '.body'
       });
@@ -13711,50 +13720,12 @@ module.exports = jQuery;}, "D:/Users\\amadou\\Documents\\Visual Studio 2010\\Pro
       return document.location.reload();
     };
 
-    App.prototype.verify = function(expectedStatus) {
+    App.prototype.ifLoggedIn = function() {
       var _this = this;
       return function(fn) {
-        return Façade.getStatus(function(status) {
-          var doTell, msg, showByAlert, showByInnerHTML, waitPeriod;
-          if (status === expectedStatus) {
-            _this.clearAllMsgs();
-            _this.el.attr('class', status || App.INITIAL_STATUS_CLASS);
-            return fn(status);
-          }
-          showByAlert = function(msg) {
-            return _this.alert({
-              msg: msg
-            });
-          };
-          showByInnerHTML = function(msg) {
-            return _this.msg.el.find('.alert').html(msg);
-          };
-          msg = (function() {
-            switch (expectedStatus) {
-              case Token.AuthRequired:
-                return 'You must be connected';
-              case Token.changePIN:
-                return 'You must reset your PIN';
-              default:
-                return 'An unknown error occured';
-            }
-          })();
-          waitPeriod = 4;
-          doTell = function(sec) {
-            return function() {
-              if (sec === 0) {
-                return _this.navigate('#/');
-              }
-              if (sec === waitPeriod) {
-                showByAlert("" + msg + ", redirecting in " + (sec - 1) + " . . .");
-              } else {
-                showByInnerHTML("" + msg + ", redirecting in " + (sec - 1) + " . . .");
-              }
-              return _this.delay(doTell(sec - 1), 1100);
-            };
-          };
-          return doTell(waitPeriod)();
-        });
+        if (Façade.authData) {
+          return fn();
+        }
       };
     };
 
@@ -13772,7 +13743,7 @@ module.exports = jQuery;}, "D:/Users\\amadou\\Documents\\Visual Studio 2010\\Pro
         closable: opts['closable'] || false,
         delay: opts['delay'] || 6000,
         animation: opts['animation'] || 'slideDown',
-        duration: opts['duration'] || 600
+        duration: opts['duration'] || 200
       });
     };
 
@@ -13786,7 +13757,7 @@ module.exports = jQuery;}, "D:/Users\\amadou\\Documents\\Visual Studio 2010\\Pro
         closable: opts['closable'] || false,
         delay: opts['delay'] || 6000,
         animation: opts['animation'] || 'slideDown',
-        duration: opts['duration'] || 600
+        duration: opts['duration'] || 200
       });
     };
 
@@ -13799,24 +13770,18 @@ module.exports = jQuery;}, "D:/Users\\amadou\\Documents\\Visual Studio 2010\\Pro
       this.el.attr('class', status || App.INITIAL_STATUS_CLASS);
       switch (status) {
         case Token.Absent:
-          this.become(this.start(status));
-          break;
+          return this.become(this.start(status));
         case Token.Blocked:
-          this.become(this.blocked());
-          break;
+          return this.become(this.blocked());
         case Token.AuthRequired:
-          this.become(this.authrequired());
-          break;
+          return this.become(this.authrequired());
         case Token.Blank:
-          this.become(this.start(status));
-          break;
+          return this.become(this.start(status));
         case Token.Locked:
-          this.become(this.start(status));
-          break;
+          return this.become(this.start(status));
         case null:
-          this.become(this.start(status));
+          return this.become(this.start(status));
       }
-      return false;
     };
 
     App.prototype.become = function(s) {
@@ -13829,40 +13794,62 @@ module.exports = jQuery;}, "D:/Users\\amadou\\Documents\\Visual Studio 2010\\Pro
       }
     };
 
-    App.prototype.start = function(status) {
-      var ret;
+    App.prototype.start = function(status, _arg) {
+      var alert, info, ret, _ref;
+      _ref = _arg != null ? _arg : {}, alert = _ref.alert, info = _ref.info;
       ret = {
         Clss: Start,
+        alert: alert,
+        info: info,
         args: {
-          app: this
+          app: this,
+          status: status
         }
       };
       switch (status) {
         case Token.Locked:
-          ret.alert = 'Votre PUK a ete bloque, veuillez re-initialisez votre support.';
+          if (!alert) {
+            ret.alert = 'Votre PUK a ete bloque, veuillez re-initialisez votre support.';
+          }
           break;
         case Token.Blank:
-          ret.alert = 'Le support doit etre initialize.';
+          if (!alert) {
+            ret.alert = 'Le support doit etre initialize.';
+          }
           break;
         case Token.Absent:
-          ret.alert = "Aucun support n'a ete detecte.";
+          if (!alert) {
+            ret.alert = "Aucun supporte detecte, veuillez inserer votre supporte physique.";
+          }
+          break;
+        case Token.ReadOnly:
+          if (!alert) {
+            ret.alert = "Le supporte est en mode lecture.";
+          }
+          break;
+        case Token.InUse:
+          if (!alert) {
+            ret.alert = "Le supporte est en cours d'utilisation.";
+          }
           break;
         case null:
-          ret.info = 'Detection en cour, veuillez inserer votre support physique.';
+          if (!info) {
+            ret.info = 'Detection en cour, veuillez inserer votre support physique.';
+          }
       }
       return ret;
     };
 
     App.prototype.changepin = function() {
       var _this = this;
-      return Façade.getOptions(function(opts) {
+      return Façade.GetPINOpts(function(opts) {
         return {
           Clss: ChangePIN,
           args: {
             app: _this,
             doAction: _this.routeChangePIN,
-            minLength: opts['min-pin-length'],
-            maxLength: opts['max-pin-length']
+            minLength: opts['minlen'],
+            maxLength: opts['maxlen']
           }
         };
       });
@@ -13883,13 +13870,14 @@ module.exports = jQuery;}, "D:/Users\\amadou\\Documents\\Visual Studio 2010\\Pro
       return {
         Clss: ResetPIN,
         args: {
-          app: this
+          app: this,
+          fn: this.routeUnblock
         },
         alert: 'Votre PIN a ete bloque, veuillez entrez votre PUK.'
       };
     };
 
-    App.prototype.loggedin = function(Clss, args) {
+    App.prototype.any = function(Clss, args) {
       return {
         Clss: Clss,
         args: args || {}
@@ -13929,44 +13917,70 @@ module.exports = jQuery;}, "D:/Users\\amadou\\Documents\\Visual Studio 2010\\Pro
       }
     };
 
-    App.prototype.dlg = function(cmpnt, options) {
-      if (options == null) {
-        options = {};
+    App.prototype.confirm = function(fn, hidden) {
+      if (hidden == null) {
+        hidden = function() {
+          return console.log('hidden');
+        };
       }
+      return {
+        msg: 'Are you sure?',
+        options: {
+          show: true
+        },
+        hidden: hidden,
+        buttons: [
+          {
+            id: 'dlg-yes',
+            title: 'Yes',
+            primary: true,
+            fn: fn
+          }, {
+            id: 'dlg-no',
+            title: 'No',
+            fn: function(evt) {
+              return window.jQuery(evt.target).closest('.dlg').modal('hide');
+            }
+          }
+        ]
+      };
+    };
+
+    App.prototype.dlg = function(meta) {
       return this.delay(function() {
-        return window.jQuery(cmpnt.render().el).modal(options);
+        var dlg;
+        dlg = window.jQuery((new Dlg(meta)).render().el).modal(meta.options);
+        return dlg.on('hide', meta.hidden);
       });
     };
 
-    App.prototype.routeDetect = function() {
+    App.prototype.detectToken = function() {
       var _this = this;
-      this.log('@routeDetect');
-      return Façade.getStatus(function(status, err) {
+      this.log("@detectToken");
+      Façade.getStatus(function(status, err) {
+        _this.clearAllMsgs();
         if (err) {
           return false;
         }
-        if (status === Token.Absent || status === Token.Locked || status === Token.Blank || status === null) {
+        if (status === Token.Absent || status === Token.Locked || status === Token.Blank || status === Token.InUse || status === Token.ReadOnly) {
           _this.setStatus(status);
-          return;
+          return false;
         }
         switch (status) {
           case Token.Blocked:
-            _this.navigate("#/unblock");
-            break;
-          case Token.ChangePIN:
-            _this.navigate("#/setpin");
-            break;
+            return _this.navigate("#/unblock");
+          case Token.SetPIN:
+            return _this.navigate("#/setpin");
           case Token.AuthRequired:
-            _this.navigate("#/login");
-            break;
+            return _this.navigate("#/login");
           case Token.LoggedIn:
-            _this.navigate("#/keys");
-            break;
-          default:
-            _this.setStatus(null);
+            return _this.navigate("#/keys");
+            /* Unknow status, try to detect again
+            */
+
         }
-        return false;
       });
+      return false;
     };
 
     App.prototype.selectKey = function(key) {
@@ -13977,87 +13991,190 @@ module.exports = jQuery;}, "D:/Users\\amadou\\Documents\\Visual Studio 2010\\Pro
       return this.trigger('selectionChanged', key, false);
     };
 
+    App.prototype.routeDetect = function() {
+      this.log('@routeDetect');
+      return this.detectToken();
+    };
+
     App.prototype.routePersonalInfo = function(params) {
+      var _this = this;
       this.log('@routePersonalInfo');
-      this.navigate('#/keys');
       return this.delay((function() {
-        return this.info({
-          msg: 'Your personal information was successfully saved.',
+        _this.navigate('#/keys');
+        return _this.delay((function() {
+          return this.info({
+            msg: 'Your personal information was successfully saved.',
+            closable: true
+          });
+        }), 100);
+      }));
+    };
+
+    App.prototype.routeInitPIN = function(params) {
+      var _this = this;
+      this.log('@routeInitPIN');
+      return Façade.InitPIN(params.pin, params.puk, function(err) {
+        if (ok) {
+          _this.delay((function() {
+            _this.info({
+              msg: 'Your PIN was successfully changed.',
+              closable: true
+            });
+            return _this.delay((function() {
+              return _this.navigate('#/keys');
+            }), 1000);
+          }));
+          return false;
+        }
+        return _this.alert({
+          msg: 'An unknown error occured, please try again.',
           closable: true
         });
-      }), 100);
+      });
     };
 
     App.prototype.routeChangePIN = function(params) {
       var _this = this;
       this.log('@routeChangePIN');
-      return Façade.changePIN(params.oldpin, params.pin, function(err) {
-        if (err) {
-          _this.alert("Error " + (params.task === 'setpin' ? 'setting' : 'changing') + " PIN");
+      return Façade.ChangePIN(params.oldpin, params.pin, function(ok) {
+        if (ok) {
+          _this.delay((function() {
+            _this.info({
+              msg: 'Your PIN was successfully changed.',
+              closable: true
+            });
+            return _this.delay((function() {
+              return _this.navigate('#/keys');
+            }), 1000);
+          }));
           return false;
         }
-        _this.navigate('#/keys');
-        return _this.delay((function() {
-          return this.info({
-            msg: 'Your PIN was successfully changed.',
-            closable: true
-          });
-        }), 100);
+        return _this.alert({
+          msg: 'An unknown error occured, please try again.',
+          closable: true
+        });
       });
     };
 
     App.prototype.routeLogin = function(params) {
       var _this = this;
       this.log('@routeLogin');
-      return Façade.login(params.pin, function(remainingAttempts) {
-        if (remainingAttempts >= 0) {
-          if (remainingAttempts === 0) {
-            _this.navigate('#/');
-          } else {
-            _this.alert("PIN invalide, il ne vous reste que " + remainingAttempts + " essaie" + (remainingAttempts > 1 ? 's' : '') + " avant le blockage de votre PIN.");
-          }
+      return Façade.Login(params.pin, function(err) {
+        if (err === null) {
+          _this.setStatus(Token.LoggedIn);
+          return _this.navigate('#/keys');
+        }
+        if (err === 0) {
+          _this.navigate('/');
+        } else if (err <= 3) {
+          _this.alert({
+            msg: "PIN invalide, il ne vous reste que " + err + " essaie" + (err > 1 ? 's' : '') + " avant le blockage de votre PIN.",
+            closable: true
+          });
+        } else {
+          _this.alert({
+            msg: "PIN invalide, essayer encore.",
+            closable: true
+          });
+        }
+        return false;
+      });
+    };
+
+    App.prototype.routeInit = function(pin, puk, label) {
+      var _this = this;
+      this.log('@routeInit');
+      return Façade.InitToken(pin, puk, label, function(ok) {
+        if (ok) {
+          _this.delay((function() {
+            _this.info({
+              msg: 'Your token was successfully initialized.',
+              closable: true
+            });
+            return _this.delay((function() {
+              return _this.navigate('#/');
+            }), 1000);
+          }));
           return false;
         }
-        return _this.navigate('#/keys');
+        return _this.alert({
+          msg: 'An unknown error occured, please try again.',
+          closable: true
+        });
+      });
+    };
+
+    App.prototype.routeErase = function() {
+      var df,
+        _this = this;
+      this.log('@routeErase');
+      df = app.Loading();
+      return Façade.EraseToken(function(ok) {
+        df();
+        if (ok) {
+          _this.delay((function() {
+            _this.info({
+              msg: 'Your token was successfully erase . . .',
+              closable: true
+            });
+            return _this.delay(function() {
+              return this.navigate('/');
+            });
+          }), 1000);
+          return false;
+        }
+        return _this.alert({
+          msg: 'An unknown error occured, please try again.',
+          closable: true
+        });
       });
     };
 
     App.prototype.routeLogout = function() {
       var _this = this;
       this.log('@routeLogout');
-      return Façade.logout(function(err) {
+      return Façade.Logout(function(err) {
         if (err) {
+          _this.delay(function() {
+            _this.info({
+              msg: 'You have successfully logged out.',
+              closable: true
+            });
+            return _this.delay((function() {
+              return _this.navigate('/');
+            }), 200);
+          });
           return false;
         }
-        _this.navigate('#/');
-        return _this.delay((function() {
-          return this.info({
-            msg: 'You have successfully logged out.',
-            closable: true
-          });
-        }), 100);
+        return _this.navigate('/');
       });
     };
 
     App.prototype.routeUnblock = function(params) {
       var _this = this;
       this.log('@routeUnblock');
-      return Façade.unblock(params.puk, function(err) {
-        if (err >= 0) {
-          if (err === 0) {
-            _this.setStatus(Token.Locked);
-          } else {
-            _this.alert("PUK, invalide, il ne vous reste que " + err + " essaie" + (err > 1 ? 's' : '') + " avant le blockage permanent de votre support.");
-          }
+      return Façade.Unblock(params.puk, params.pin, function(ok) {
+        if (ok) {
+          _this.delay((function() {
+            _this.info({
+              msg: 'You have successfully unblocked.',
+              closable: true
+            });
+            return _this.delay((function() {
+              return _this.navigate('/');
+            }), 1000);
+          }));
           return false;
         }
-        _this.info({
-          msg: 'Your PIN was successfully unblocked . . .',
-          closable: true
-        });
         return _this.delay((function() {
-          return this.navigate("#/setpin/" + params.puk);
-        }), 1000);
+          _this.navigate('/');
+          return _this.delay((function() {
+            return _this.alert({
+              msg: 'An unknown error occured, please try again.',
+              closable: true
+            });
+          }), 1000);
+        }));
       });
     };
 
@@ -14091,10 +14208,20 @@ module.exports = jQuery;}, "D:/Users\\amadou\\Documents\\Visual Studio 2010\\Pro
 
     Façade.logPrefix = '(Façade)';
 
-    Façade.trace = false;
+    Façade.trace = true;
+
+    Façade.cnt = 0;
+
+    Façade.SetWindowText = function(text) {
+      return document.title = "" + text + " | Epsilon Token Manager";
+    };
+
+    Façade.GetPINOpts = function(fn) {
+      return fn(Façade._pinopts);
+    };
 
     Façade.data = {
-      status: Token.AuthRequired,
+      status: Token.Absent,
       pin: '1234',
       puk: '1111',
       sopin: '5678',
@@ -14200,28 +14327,192 @@ module.exports = jQuery;}, "D:/Users\\amadou\\Documents\\Visual Studio 2010\\Pro
     };
 
     Façade.getStatus = function(fn) {
-      return fn(Façade['data']['status']);
+      var callback, replyto, req,
+        _this = this;
+      callback = function(kMessageName, _arg) {
+        var response, _ref;
+        response = _arg[0];
+        console.log("@getStatus: Reply from " + kMessageName + ": " + response.status);
+        if (Façade.authData && response.status !== Token.LoggedIn) {
+          delete Façade.authData;
+        }
+        if ((_ref = response.status) === Token.Blank || _ref === Token.Blocked) {
+          Façade._pinopts = {
+            minlen: response.minlen,
+            maxlen: response.maxlen
+          };
+        }
+        if (response.status === Token.AuthRequired) {
+          Façade._pinopts = {
+            minlen: response.minlen,
+            maxlen: response.maxlen,
+            max_tries: response.max_tries,
+            tries_left: response.tries_left
+          };
+        }
+        return callback.fn(response.status);
+      };
+      callback.fn = fn;
+      replyto = "getstatus." + (++Façade.cnt);
+      req = {
+        replyto: replyto
+      };
+      if (Façade.authData) {
+        req.authData = Façade.authData;
+      }
+      app.setMessageCallback(replyto, callback);
+      return app.sendMessage("getstatus", [req]);
     };
 
     Façade.getOptions = function(fn) {
       return fn(Façade['data']['options']);
     };
 
-    Façade.login = function(pin, fn) {
-      this.log("@login:pin-attempts=" + Façade['data']['options']['pin-attempts']);
-      this.log("@login:remaining-pin-attempts=" + Façade['data']['options']['remaining-pin-attempts']);
-      Façade['data']['options']['remaining-pin-attempts'] -= 1;
-      if (Façade['data']['options']['remaining-pin-attempts'] === 0) {
-        Façade['data']['status'] = Token.Blocked;
-        return fn(0);
-      }
-      if (pin === Façade['data']['pin']) {
-        Façade['data']['options']['remaining-pin-attempts'] = Façade['data']['options']['pin-attempts'];
-        Façade['data']['status'] = Token.LoggedIn;
-        return fn();
-      } else {
-        return fn(Façade['data']['options']['remaining-pin-attempts']);
-      }
+    Façade.SetPIN = function(pin, fn) {
+      var callback, replyto,
+        _this = this;
+      this.log("@SetPIN");
+      callback = function(kMessageName, _arg) {
+        var response;
+        response = _arg[0];
+        console.log("@SetPIN: Reply from " + kMessageName + ": " + response.status);
+        return callback.fn(response.ok);
+      };
+      callback.fn = fn;
+      replyto = "setpin." + (++Façade.cnt);
+      app.setMessageCallback(replyto, callback);
+      return app.sendMessage("setpin", [
+        {
+          replyto: replyto,
+          pin: pin
+        }
+      ]);
+    };
+
+    Façade.ChangePIN = function(pincode, pin, fn) {
+      var callback, replyto,
+        _this = this;
+      this.log("@ChangePIN");
+      callback = function(kMessageName, _arg) {
+        var response;
+        response = _arg[0];
+        console.log("@ChangePIN: Reply from " + kMessageName + ": " + response.status);
+        return callback.fn(response.ok);
+      };
+      callback.fn = fn;
+      replyto = "changepin." + (++Façade.cnt);
+      app.setMessageCallback(replyto, callback);
+      return app.sendMessage("changepin", [
+        {
+          replyto: replyto,
+          pincode: pincode,
+          pin: pin
+        }
+      ]);
+    };
+
+    Façade.Unblock = function(puk, pin, fn) {
+      var callback, replyto,
+        _this = this;
+      this.log("@UnblockPIN");
+      callback = function(kMessageName, _arg) {
+        var response;
+        response = _arg[0];
+        console.log("@Unblock: Reply from " + kMessageName + ": " + response.status);
+        return callback.fn(response.ok);
+      };
+      callback.fn = fn;
+      replyto = "unblock." + (++Façade.cnt);
+      app.setMessageCallback(replyto, callback);
+      return app.sendMessage("unblock", [
+        {
+          replyto: replyto,
+          puk: puk,
+          pin: pin
+        }
+      ]);
+    };
+
+    Façade.EraseToken = function(fn) {
+      var callback, replyto,
+        _this = this;
+      this.log("@EraseToken");
+      callback = function(kMessageName, _arg) {
+        var response;
+        response = _arg[0];
+        console.log("@EraseToken: Reply from " + kMessageName + ": " + response.status);
+        return callback.fn(response.ok);
+      };
+      callback.fn = fn;
+      replyto = "erase." + (++Façade.cnt);
+      app.setMessageCallback(replyto, callback);
+      return app.sendMessage("erase", [
+        {
+          replyto: replyto
+        }
+      ]);
+    };
+
+    Façade.InitToken = function(pin, puk, label, fn) {
+      var callback, replyto,
+        _this = this;
+      this.log("@InitToken");
+      callback = function(kMessageName, _arg) {
+        var response;
+        response = _arg[0];
+        console.log("@InitToken: Reply from " + kMessageName + ": " + response.status);
+        return callback.fn(response.ok);
+      };
+      callback.fn = fn;
+      replyto = "init." + (++Façade.cnt);
+      app.setMessageCallback(replyto, callback);
+      return app.sendMessage("init", [
+        {
+          replyto: replyto,
+          pin: pin,
+          puk: puk,
+          label: label
+        }
+      ]);
+    };
+
+    Façade.Logout = function(fn) {
+      delete Façade.authData;
+      return fn(true);
+    };
+
+    Façade.Login = function(pin, fn) {
+      var callback, replyto,
+        _this = this;
+      this.log("@Login");
+      callback = function(kMessageName, _arg) {
+        var response;
+        response = _arg[0];
+        console.log("@Login: Reply from " + kMessageName + ": " + response.status);
+        if (response.status === Token.LoggedIn) {
+          Façade._pinopts = {
+            minlen: response.minlen,
+            maxlen: response.maxlen,
+            max_tries: response.max_tries,
+            tries_left: response.tries_left
+          };
+          /* very crucial
+          */
+
+          Façade.authData = pin;
+          return callback.fn(null);
+        }
+        return callback.fn(response.tries_left);
+      };
+      callback.fn = fn;
+      replyto = "verifypin." + (++Façade.cnt);
+      app.setMessageCallback(replyto, callback);
+      return app.sendMessage("verifypin", [
+        {
+          replyto: replyto,
+          pin: pin
+        }
+      ]);
     };
 
     Façade.soLogin = function(sopin, fn) {};
@@ -14290,19 +14581,27 @@ module.exports = jQuery;}, "D:/Users\\amadou\\Documents\\Visual Studio 2010\\Pro
 }).call(this);
 }, "lib/setup": function(exports, require, module) {(function() {
 
-  require('json2ify');
 
-  require('es5-shimify');
 
-  require('jqueryify');
+}).call(this);
+}, "lib/sysmenu": function(exports, require, module) {(function() {
+  var SysMenu;
 
-  require('spine');
+  SysMenu = (function() {
 
-  require('spine/lib/manager');
+    function SysMenu() {}
 
-  require('spine/lib/route');
+    SysMenu.templ = require('views/sysmenu');
 
-  require('façade');
+    SysMenu.render = function() {
+      return SysMenu.templ();
+    };
+
+    return SysMenu;
+
+  })();
+
+  module.exports = SysMenu;
 
 }).call(this);
 }, "lib/wizard": function(exports, require, module) {(function() {
@@ -14326,6 +14625,7 @@ module.exports = jQuery;}, "D:/Users\\amadou\\Documents\\Visual Studio 2010\\Pro
     Wizard.prototype.steps = [];
 
     Wizard.prototype.setStep = function(step) {
+      this.app.clearAllMsgs();
       return this.trigger("stepChanged", step);
     };
 
@@ -14334,7 +14634,7 @@ module.exports = jQuery;}, "D:/Users\\amadou\\Documents\\Visual Studio 2010\\Pro
     function Wizard(options) {
       this.cancelled = __bind(this.cancelled, this);
 
-      this.end = __bind(this.end, this);
+      this.next = __bind(this.next, this);
 
       this.rendered = __bind(this.rendered, this);
 
@@ -14374,7 +14674,7 @@ module.exports = jQuery;}, "D:/Users\\amadou\\Documents\\Visual Studio 2010\\Pro
       return this.setStep(this.steps.shift());
     };
 
-    Wizard.prototype.end = function(step, params) {
+    Wizard.prototype.next = function(step, params) {
       var key, next, val, _base,
         _this = this;
       this.log("end:" + step.name);
@@ -14386,7 +14686,7 @@ module.exports = jQuery;}, "D:/Users\\amadou\\Documents\\Visual Studio 2010\\Pro
         }
         return this.app.delay((function() {
           return _this.setStep(next);
-        }), 1000);
+        }), 200);
       }
       return this.app.delay((function() {
         return _this.app.navigate('#/keys');
@@ -14460,6 +14760,12 @@ module.exports = jQuery;}, "D:/Users\\amadou\\Documents\\Visual Studio 2010\\Pro
 
     Token.LoggedIn = 'logged-in';
 
+    Token.SetPIN = 'setpin';
+
+    Token.ReadOnly = 'readonly';
+
+    Token.InUse = 'in-use';
+
     Token.ChangePIN = 'change-pin';
 
     return Token;
@@ -14510,6 +14816,80 @@ module.exports = jQuery;}, "D:/Users\\amadou\\Documents\\Visual Studio 2010\\Pro
     (function() {
     
       __out.push('<div class="form-header">Change your PIN</div>\n<form class="changepin form" method="post" action="#/changepin">\n\n  <label>Enter old PIN</label>\n  <input name="oldpin" type="password" class="span3" autofocus>\n\n  <label>Enter new PIN</label>\n  <input name="pin" type="password" class="span3">\n\n  <label>Confirm PIN</label>\n  <input name="pin_confirm" type="password" class="span3">\n\n  <button type="submit" class="btn default" style="margin-top:5px;"><i class="icon-retweet"></i> &nbsp;Change PIN</button> &nbsp;&nbsp;\n\n  <button type="button" class="cancel btn" style="margin-top:5px;">Cancel</button>\n\n</form>');
+    
+    }).call(this);
+    
+  }).call(__obj);
+  __obj.safe = __objSafe, __obj.escape = __escape;
+  return __out.join('');
+}}, "views/dlg": function(exports, require, module) {module.exports = function(__obj) {
+  if (!__obj) __obj = {};
+  var __out = [], __capture = function(callback) {
+    var out = __out, result;
+    __out = [];
+    callback.call(this);
+    result = __out.join('');
+    __out = out;
+    return __safe(result);
+  }, __sanitize = function(value) {
+    if (value && value.ecoSafe) {
+      return value;
+    } else if (typeof value !== 'undefined' && value != null) {
+      return __escape(value);
+    } else {
+      return '';
+    }
+  }, __safe, __objSafe = __obj.safe, __escape = __obj.escape;
+  __safe = __obj.safe = function(value) {
+    if (value && value.ecoSafe) {
+      return value;
+    } else {
+      if (!(typeof value !== 'undefined' && value != null)) value = '';
+      var result = new String(value);
+      result.ecoSafe = true;
+      return result;
+    }
+  };
+  if (!__escape) {
+    __escape = __obj.escape = function(value) {
+      return ('' + value)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    };
+  }
+  (function() {
+    (function() {
+      var btn, _i, _len, _ref;
+    
+      __out.push('<div class="modal">\n  <div class="modal-header">\n    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>\n  </div>\n  <div class="modal-body">\n    <p>');
+    
+      __out.push(__sanitize(this.msg));
+    
+      __out.push('</p>\n  </div>\n  <div class="modal-footer">\n    ');
+    
+      _ref = this.buttons;
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        btn = _ref[_i];
+        __out.push('\n      ');
+        if (btn.primary != null) {
+          __out.push('\n        <a href="#" id="');
+          __out.push(__sanitize(btn.id));
+          __out.push('" class="btn default">');
+          __out.push(__sanitize(btn.title));
+          __out.push('</a>\n      ');
+        } else {
+          __out.push('\n        <a href="#" id="');
+          __out.push(__sanitize(btn.id));
+          __out.push('" class="btn">');
+          __out.push(__sanitize(btn.title));
+          __out.push('</a>\n      ');
+        }
+        __out.push('\n    ');
+      }
+    
+      __out.push('\n  </div>\n</div>');
     
     }).call(this);
     
@@ -14681,8 +15061,11 @@ module.exports = jQuery;}, "D:/Users\\amadou\\Documents\\Visual Studio 2010\\Pro
   }
   (function() {
     (function() {
+      var sysmenu;
     
-      __out.push('<div class="toolsbar-inner">\n\t\n\t<div class="for-key">\n\t\t<div class="back btn-group">\n\t\t  <a title="Retour" class="btn btn-large default btn-success btn-primary" href="#/keys"><i class="icon-arrow-left"></i></a>\n\t\t</div>\n\t\t<div class="actions btn-group">\t\t\t\n\t\t\t<a title="Delete" href="#/key/');
+      sysmenu = require('lib/sysmenu');
+    
+      __out.push('\n<div class="toolsbar-inner">\n\t\n\t<div class="for-key">\n\t\t<div class="back btn-group">\n\t\t  <a title="Retour" class="btn btn-large default btn-success btn-primary" href="#/keys"><i class="icon-arrow-left"></i></a>\n\t\t</div>\n\t\t<div class="actions btn-group">\t\t\t\n\t\t\t<a title="Delete" href="#/key/');
     
       __out.push(__sanitize(this.id));
     
@@ -14690,7 +15073,11 @@ module.exports = jQuery;}, "D:/Users\\amadou\\Documents\\Visual Studio 2010\\Pro
     
       __out.push(__sanitize(this.id));
     
-      __out.push('/export" class="export btn"><i class="icon-download-alt"></i></a>\n\t\t</div>\n\t</div>\n\n</div>');
+      __out.push('/export" class="export btn"><i class="icon-download-alt"></i></a>\n\t\t</div>\n\t\t');
+    
+      __out.push(sysmenu.render());
+    
+      __out.push('\n\t</div>\n\n</div>');
     
     }).call(this);
     
@@ -14736,8 +15123,15 @@ module.exports = jQuery;}, "D:/Users\\amadou\\Documents\\Visual Studio 2010\\Pro
   }
   (function() {
     (function() {
+      var sysmenu;
     
-      __out.push('<div class="toolsbar-inner">\n\t\n\t<div class="for-keys">\n\t\t<div class="add btn-group">\n\t\t  <a class="btn btn-large btn-success btn-primary default dropdown-toggle" data-toggle="dropdown"><i class="icon-plus"></i> Add <span class="split"></span><b class="caret"></b>\n\t\t  </a>\n\t\t  <ul class="dropdown-menu">\n        <li><a class="add:gen" href="#/key/gen">Generate Key</a></li>\n        <li><a class="add:import-fs" href="#/key/import/fs">Import from filesystem</a></li>\n        <li><a class="add:import-ldap" href="#/key/import/ldap">Import from LDAP</a></li>\n\t\t  </ul>\t\t\t\n\t\t</div>\n\t\t<div class="btn-group">\n\t\t\t<a title="Reload keys" class="reload btn"><i class="icon-undo"></i></a>\n\t\t</div>\n\t\t<div class="actions btn-group">\t\t\t\n\t\t\t<a title="Delete" href="#/purge" class="purge btn"><i class="icon-trash"></i></a>\n\t\t\t<a title="Telecharger" href="#/export" class="export btn"><i class="icon-download-alt"></i></a>\n\t\t</div>\n\t</div>\n</div>');
+      sysmenu = require('lib/sysmenu');
+    
+      __out.push('\n<div class="toolsbar-inner">\n\t\n\t<div class="for-keys">\n\t\t<div class="add btn-group">\n\t\t  <a class="btn btn-large btn-success btn-primary default dropdown-toggle" data-toggle="dropdown"><i class="icon-plus"></i> Add <span class="split"></span><b class="caret"></b>\n\t\t  </a>\n\t\t  <ul class="dropdown-menu">\n        <li><a class="add:gen" href="#/key/gen">Generate Key</a></li>\n        <li><a class="add:import-fs" href="#/key/import/fs">Import from filesystem</a></li>\n        <li><a class="add:import-ldap" href="#/key/import/ldap">Import from LDAP</a></li>\n\t\t  </ul>\t\t\t\n\t\t</div>\n\t\t<div class="btn-group">\n\t\t\t<a title="Reload keys" class="reload btn"><i class="icon-undo"></i></a>\n\t\t</div>\n\t\t<div class="actions btn-group">\t\t\t\n\t\t\t<a title="Delete" href="#/purge" class="purge btn"><i class="icon-trash"></i></a>\n\t\t\t<a title="Telecharger" href="#/export" class="export btn"><i class="icon-download-alt"></i></a>\n\t\t</div>\n\t\t');
+    
+      __out.push(sysmenu.render());
+    
+      __out.push('\n\t</div>\n</div>');
     
     }).call(this);
     
@@ -14980,7 +15374,7 @@ module.exports = jQuery;}, "D:/Users\\amadou\\Documents\\Visual Studio 2010\\Pro
   (function() {
     (function() {
     
-      __out.push('<div class="form-header">Edit personal information</div>\n<form class="form personal-info" method="post" action="#/personal-info">\n  \n  <label>Full Name</label>\n  <input name="fullName" type="text" class="span3" autofocus>\n  \n  <label>Email</label>\n  <input name="email" type="text" class="span3">\n  \n  <label>Telephone</label>\n  <input name="telephone" type="text" class="span3">\n  \n  <label>Address</label>\n  <textarea rows="3" name="address" class="span3"></textarea>\n  \n  <label>City</label>\n  <input name="country" type="text" class="span3">\n  \n  <label>Country</label>\n  <input name="country" type="text" class="span3">\n\n  <button type="submit" class="btn default"><i class="icon-ok"></i> &nbsp;Ok</button>\n\n</form>');
+      __out.push('<div class="form-header">Edit personal information</div>\n<form class="form personal-info" method="post" action="#/personal-info">\n  \n  <label>Full Name</label>\n  <input name="fullName" type="text" class="span3" autofocus>\n  \n  <!-- <label>Email</label>\n  <input name="email" type="text" class="span3">\n  \n  <label>Telephone</label>\n  <input name="telephone" type="text" class="span3">\n  \n  <label>Address</label>\n  <textarea rows="3" name="address" class="span3"></textarea>\n  \n  <label>City</label>\n  <input name="country" type="text" class="span3">\n  \n  <label>Country</label>\n  <input name="country" type="text" class="span3"> -->\n\n  <br>\n\n  <button type="submit" class="btn default"><i class="icon-ok"></i> &nbsp;Ok</button>\n\n</form>');
     
     }).call(this);
     
@@ -15074,7 +15468,54 @@ module.exports = jQuery;}, "D:/Users\\amadou\\Documents\\Visual Studio 2010\\Pro
   (function() {
     (function() {
     
-      __out.push('<div class="detecting">\n  \n  <div class="spinner"></div>        \n\n</div>\n\n<div class="absent">\n\n  <ul class="nav nav-list">\n    <li><a href="#"><i class="icon-refresh"></i>Re-essayer</a>\n    </li>\n    </li>\n  </ul>\n\n</div>\n\n<div class="locked blank">\n\n  <ul class="nav nav-list">\n    <li><a href="#"><i class="icon-refresh"></i>Re-essayer</a>\n    </li>\n    <li><a href="#"><i class="icon-bolt"></i>Initialize token</a>\n    </li>\n  </ul>\n\n</div>');
+      __out.push('<div class="detecting">\n  \n  <div class="spinner"></div>        \n\n</div>\n\n<div class="absent">\n\n  <ul class="nav nav-list">\n    <li><a title="Detecter encore l\'etat de supporte" class=\'action\' href="#"><i class="icon-refresh"></i>Re-essayer</a>\n    </li>\n    </li>\n  </ul>\n\n</div>\n\n<div class="in-use">\n\n  <ul class="nav nav-list">\n    <li><a title="Detecter encore l\'etat de supporte" class=\'action\' href="#"><i class="icon-refresh"></i>Re-essayer</a>\n    </li>\n    </li>\n  </ul>\n\n</div>\n\n<div class="readonly">\n\n  <ul class="nav nav-list">\n    <li><a title="Detecter encore l\'etat de supporte" class=\'action\' href="#"><i class="icon-refresh"></i>Re-essayer</a>\n    </li>\n    </li>\n  </ul>\n\n</div>\n\n<div class="locked blank">\n\n  <ul class="nav nav-list">\n    <li><a title="Detecter encore l\'etat de supporte" class=\'action\' href="#"><i class="icon-refresh"></i>Re-detecter</a>\n    </li>\n    <li><a title="Initializer le supporte" class="init" href="#/init"><i class="icon-bolt"></i>Initialize token</a>\n    </li>\n  </ul>\n\n</div>');
+    
+    }).call(this);
+    
+  }).call(__obj);
+  __obj.safe = __objSafe, __obj.escape = __escape;
+  return __out.join('');
+}}, "views/sysmenu": function(exports, require, module) {module.exports = function(__obj) {
+  if (!__obj) __obj = {};
+  var __out = [], __capture = function(callback) {
+    var out = __out, result;
+    __out = [];
+    callback.call(this);
+    result = __out.join('');
+    __out = out;
+    return __safe(result);
+  }, __sanitize = function(value) {
+    if (value && value.ecoSafe) {
+      return value;
+    } else if (typeof value !== 'undefined' && value != null) {
+      return __escape(value);
+    } else {
+      return '';
+    }
+  }, __safe, __objSafe = __obj.safe, __escape = __obj.escape;
+  __safe = __obj.safe = function(value) {
+    if (value && value.ecoSafe) {
+      return value;
+    } else {
+      if (!(typeof value !== 'undefined' && value != null)) value = '';
+      var result = new String(value);
+      result.ecoSafe = true;
+      return result;
+    }
+  };
+  if (!__escape) {
+    __escape = __obj.escape = function(value) {
+      return ('' + value)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    };
+  }
+  (function() {
+    (function() {
+    
+      __out.push('<div class="navbar pull-right">\n  <div class="navbar-inner">\n    <div class="container">\n      \n      <ul class="nav pull-right">\n                      \n          <li class="dropdown" id="options">\n            <a title="Options"  href="#" class="dropdown-toggle options btn btn-small" data-toggle="dropdown"><i class="icon-wrench"></i><b class="caret"></b></a>\n            <ul class="dropdown-menu">\n              <li><a href="#/changepin">Change PIN</a></li>\n              <!-- <li><a href="#/personal-info">Modify personal data</a></li> -->\n              <li><a href="#/erase">Erase token</a></li>\n              <li class="divider"></li>\n              <li><a href="#/init">Re-initialize token</a></li>\n            </ul>\n          </li>\n\n          <li id="sign-out"><a title="Sign out" class="btn btn-small" href="#/logout"><i class="icon-signout"></i></a></li>\n\n        </ul><!-- /.nav-collapse -->\n    </div>\n  </div><!-- /navbar-inner -->\n</div><!-- /navbar -->');
     
     }).call(this);
     

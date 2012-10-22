@@ -9,7 +9,7 @@
 #include "client_app.h"
 #include "client_handler.h"
 
-namespace binding_test {
+namespace binding { 
 
 // Delegate creation. Called from ClientApp and ClientHandler.
 void CreateProcessMessageDelegates(

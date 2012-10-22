@@ -8,7 +8,7 @@
 #define CEF_TESTS_CEFCLIENT_CEFCLIENT_SWITCHES_H_
 #pragma once
 
-namespace cefclient {
+namespace usbtoken {
 
 extern const char kUrl[];
 extern const char kExternalDevTools[];

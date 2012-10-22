@@ -10,6 +10,7 @@ class Wizard extends Spine.Module
   steps: []
 
   setStep: (step) ->
+    @app.clearAllMsgs()
     @trigger "stepChanged", step
   
   unRendered: ->
@@ -34,7 +35,7 @@ class Wizard extends Spine.Module
   rendered: => 
     @setStep @steps.shift()
 
-  end: (step, params) =>
+  next: (step, params) =>
     @log "end:#{step.name}"
 
     if next = @steps.shift() 
@@ -43,7 +44,7 @@ class Wizard extends Spine.Module
       next.args['vars'] or= {}     
       next.args['vars'][key] = val for key, val of params
       
-      return @app.delay (=> @setStep(next)), 1000
+      return @app.delay (=> @setStep(next)), 200
 
     @app.delay (=> @app.navigate '#/keys'), 750
 

@@ -2,7 +2,7 @@
 // reserved. Use of this source code is governed by a BSD-style license that
 // can be found in the LICENSE file.
 
-#include "binding_test.h"
+#include "binding.h"
 
 #include <algorithm>
 #include <string>
@@ -12,7 +12,7 @@
 
 #include "include/cef_process_message.h"
 
-namespace binding_test {
+namespace binding {
 
 namespace {
 

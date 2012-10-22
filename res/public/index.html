@@ -4,7 +4,7 @@
   <meta charset=utf-8>
   <title>Token Manager</title>
   
-  <link rel="stylesheet" href="/bootstrap.css" type="text/css" charset="utf-8">
+  <link rel="stylesheet" href="/bootstrap.min.css" type="text/css" charset="utf-8">
   <link rel="stylesheet" href="/font-awesome.css" type="text/css" charset="utf-8">
   <link rel="stylesheet" href="/application.css" type="text/css" charset="utf-8">
 
@@ -46,53 +46,50 @@
 
   </script>
   <script src="/jquery-ui-1.8.23.custom.min.js" type="text/javascript" charset="utf-8"></script>
-  <script src="/bootstrap.js" type="text/javascript" charset="utf-8"></script>
+  <script src="/bootstrap.min.js" type="text/javascript" charset="utf-8"></script>
 
 
   <script type="text/javascript" charset="utf-8">
-    var exports = this;
+
+    /**
+     * Enables or disables any matching elements.
+     */
+    jQuery.fn.enable = function(b) {
+        if (b === undefined) {
+            b = true;
+        }
+        return this.each(function() {
+            this.disabled = !b;
+        });
+    };
+
+
+    exports = this;
     jQuery(function($){
+
       var App = require("index");
-      exports.app = new App({el: '#app'}); 
+      var cnt = 0;
+
+      if(!exports.app)
+        exports.app = {};
+
+      app.Loading = function() {
+        jQuery('#loading').show();
+        return function() {
+          jQuery('#loading').hide();;
+        };
+      };
+
+
+      app.view = new App({el: '#application'});
     });
+
   </script>
   
 </head>
 <body class="metro-style" id="usbtoken">
   
-  <div id="app">
-    <div class="topbar" draggable="true">
-      <div class="navbar">
-          <div class="navbar-inner">
-            <div class="container">
-              
-              <a class="brand" href="#"><span id="status" class="pull-left"><i id="lock" class="icon-lock"></i></span>Token Manager</a>
-              <ul class="nav pull-right">
-                              
-                  <li class="dropdown" id="options">
-                    <a title="Options"  href="#" class="dropdown-toggle options btn btn-small icon" data-toggle="dropdown"><i class="icon-wrench"></i><b class="caret"></b></a>
-                    <ul class="dropdown-menu">
-                      <li><a class="action-changepin" href="#/changepin">Change PIN</a></li>
-                      <li><a class="action-edit" href="#/personal-info">Modify personal data</a></li>
-                      <li><a class="action-erase" href="#/erase">Erase token</a></li>
-                      <li class="divider"></li>
-                      <li><a class="action-init" href="#/init">Re-initialize token</a></li>
-                    </ul>
-                  </li>
-
-                  <li id="sign-out"><a title="Sign out" class="btn btn-small icon" href="#/logout"><i class="icon-signout"></i></a></li>
-
-                  <li class="divider-vertical"></li>
-
-                  <li><a id='close' title="Minimize" href="#/minimize"><i class="minimize icon-minus"></i></a></li>
-
-                  <li><a id='minimize' title="Quit" href="#/close"><i class="icon-remove"></i></a></li>
-
-                </ul><!-- /.nav-collapse -->
-            </div>
-          </div><!-- /navbar-inner -->
-        </div><!-- /navbar -->
-    </div><!-- /topbar -->
+  <div id="application">
   
     <div class="content">
 
@@ -119,6 +116,7 @@
   </div><!-- /app -->
 
 <img id="blank" src="data:image/gif;base64,R0lGODlhAQABAID/AMDAwAAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw=="/>
+<div id='loading'>Loading...</div>
 
 </body>
 </html>

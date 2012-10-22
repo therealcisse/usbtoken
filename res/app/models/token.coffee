@@ -7,6 +7,9 @@ class Token
 	@Absent: 'absent'
 	@AuthRequired: 'auth-required'
 	@LoggedIn: 'logged-in'
+	@SetPIN:	'setpin'
+	@ReadOnly:	'readonly'
+	@InUse:	'in-use'
 	@ChangePIN: 'change-pin'
 
 #  @UserType:

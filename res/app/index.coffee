@@ -12,6 +12,7 @@ ChangePIN    = require('controllers/changePIN')
 Init         = require('controllers/init')
 Façade       = require('lib/façade')
 ResetPIN     = require('controllers/resetPIN')
+Dlg          = require('controllers/dlg')
 
 class App extends Spine.Controller
 
@@ -48,7 +49,7 @@ class App extends Spine.Controller
           msg: p['msg']
         )
       
-      @html(msg).find('.alert')[p['animation']] p['duration'], => @delay(@hide(id), p['delay']) if p['closable']
+      @html(msg).find('.alert')[p['animation']] p['duration'], (=> @delay(@hide(id), p['delay']) if p['closable'])
 
     hide: (e) =>
       e = e and @$('#' + e) or @el.find('.alert')
@@ -61,39 +62,45 @@ class App extends Spine.Controller
   constructor: ->
     super
 
+    app.setMessageCallback 'log', (name, [response]) ->
+      console.log(response)
+
+
+    app.setMessageCallback 'token_removed', (name, [response]) =>
+      @alert("Le supporte a ete debranche!")
+      @delay => @become @start(Token.Absent, {alert: "Le supporte a ete debranche"}), 2000
+
     @routes
     
-      '/unblock'            :   -> @verify(Token.Blocked) @setStatus
+      '/unblock'            :   -> @setStatus(Token.Blocked)
   
-      '/changepin'          :   -> @verify(Token.LoggedIn) => @become @changepin()
+      '/changepin'          :   -> @ifLoggedIn() => @become @changepin()
   
-      '/login'              :   -> @verify(Token.AuthRequired) @setStatus
-  
-      '/keys'               :   -> @verify(Token.LoggedIn) => @become @loggedin(KeyMgr.KeyList, app: @)
-
-      '/key/:id'            :   (params) -> @verify(Token.LoggedIn) => params.app = @; @become @loggedin(KeyMgr.KeyView, params)
-
-      '/key/gen'            :   -> @verify(Token.LoggedIn) => @become @loggedin(KeyMgr.GenForm, app: @)
+      '/login'              :   -> @setStatus(Token.AuthRequired)
       
-      '/key/import/:type'   :   (params) -> @verify(Token.LoggedIn) => params.app = @; @become @loggedin(KeyMgr.ImportForm, params)
+      '/erase'              :   @routeErase
+  
+      '/keys'               :   -> @ifLoggedIn() => @become @any(KeyMgr.KeyList, app: @)
+
+      '/key/:id'            :   (params) -> @ifLoggedIn() => params.app = @; @become @loggedin(KeyMgr.KeyView, params)
+
+      '/key/gen'            :   -> @ifLoggedIn() => @become @loggedin(KeyMgr.GenForm, app: @)
+      
+      '/key/import/:type'   :   (params) -> @ifLoggedIn() => params.app = @; @become @loggedin(KeyMgr.ImportForm, params)
 
       '/logout'             :   @routeLogout
 
-      '/minimize'           :   -> @log("minimize"); false
-
-      '/close'              :   -> @log("close"); false
+      '/init'               :   -> @become @any(Init, app: @, fn: @routeInit)
       
-      '/init'               :   -> @verify(Token.LoggedIn) => @become @loggedin(Init, app: @)
+     # '/personal-info'      :   -> @ifLoggedIn() => @become @any(PersonalInfo, controller: @, fn: @routePersonalInfo)
       
-      '/personal-info'      :   -> @verify(Token.LoggedIn) => @become @loggedin(PersonalInfo, controller: @, fn: @routePersonalInfo)
-      
-      '/setpin'              :   (params) -> @verify(Token.ChangePIN) => @become @setpw(type: GetPass.PIN, fn: @routeSetPIN, controller: @)      
+      '/setpin'             :   (params) -> @become @setpw(type: GetPass.PIN, fn: @routeSetPIN, controller: @)      
 
       '/'                   :   @routeDetect
 
     @bind 'statusChanged', @statusChanged
     
-    @topbar = new Topbar(el: '.topbar', app: @)
+    #@topbar = new Topbar(el: '.topbar', app: @)
     @body   = new Spine.Controller(el: '.body')
     @msg    = new Msg(el: '#msg')
 
@@ -101,40 +108,9 @@ class App extends Spine.Controller
 
   reload: -> document.location.reload()
 
-  verify: (expectedStatus) ->
-    (fn) => 
-      Façade.getStatus (status) =>
-        
-        if status is expectedStatus            
-          @clearAllMsgs() 
-
-          @el.attr('class', status or App.INITIAL_STATUS_CLASS) #
-            
-          return fn(status)
-        
-        showByAlert = (msg) => @alert msg: msg
-
-        showByInnerHTML = (msg) =>  @msg.el.find('.alert').html msg
-
-        msg = 
-          switch expectedStatus
-            when Token.AuthRequired then 'You must be connected'
-            when Token.changePIN then 'You must reset your PIN'
-            else 'An unknown error occured'
-
-        waitPeriod = 4
-        doTell = (sec) =>
-          () =>
-            return @navigate('#/') if sec is 0
-            
-            if sec is waitPeriod # first msg
-              showByAlert "#{msg}, redirecting in #{sec-1} . . ."
-            else
-              showByInnerHTML "#{msg}, redirecting in #{sec-1} . . ."
-
-            @delay doTell(sec-1), 1100
-        
-        doTell(waitPeriod)()
+  ifLoggedIn: ->
+    (fn) =>
+      fn() if Façade.authData
 
   setStatus: (status) =>
     @trigger('statusChanged', status)
@@ -150,7 +126,7 @@ class App extends Spine.Controller
       closable: opts['closable'] or false, 
       delay: opts['delay'] or 6000, 
       animation: opts['animation'] or 'slideDown', 
-      duration: opts['duration'] or 600
+      duration: opts['duration'] or 200
 
   alert: (opts) =>
     # display alert message with animation
@@ -163,7 +139,7 @@ class App extends Spine.Controller
       closable: opts['closable'] or false, 
       delay: opts['delay'] or 6000, 
       animation: opts['animation'] or 'slideDown', 
-      duration: opts['duration'] or 600    
+      duration: opts['duration'] or 200    
 
   clearAllMsgs: -> 
     @msg.clearAll()
@@ -192,11 +168,6 @@ class App extends Spine.Controller
 
         @become @authrequired()
 
-#      when Token.ChangePIN
-        # show setpin form
-
-#        @become @setpw(type: GetPass.PIN, fn: @routeSetPIN, controller: @)        
-
       when Token.Blank
         # show blank alert
 
@@ -213,37 +184,40 @@ class App extends Spine.Controller
 
         @become @start(status)
 
-    false
-
   become: (s) ->
     @changeView new s.Clss(s.args)
 
     @info s.info if s.info?
     @alert s.alert if s.alert?
 
-  start: (status) ->
+  start: (status, {alert: alert, info: info}={}) ->
     ret = 
       Clss: Start
+      alert: alert
+      info: info
       args: 
         app: @
+        status: status
 
     switch status
-      when Token.Locked then ret.alert = 'Votre PUK a ete bloque, veuillez re-initialisez votre support.'
-      when Token.Blank  then ret.alert = 'Le support doit etre initialize.'
-      when Token.Absent then ret.alert = "Aucun support n'a ete detecte."
-      when null         then ret.info  = 'Detection en cour, veuillez inserer votre support physique.'
+      when Token.Locked   then ret.alert = 'Votre PUK a ete bloque, veuillez re-initialisez votre support.' if not alert
+      when Token.Blank    then ret.alert = 'Le support doit etre initialize.' if not alert
+      when Token.Absent   then ret.alert = "Aucun supporte detecte, veuillez inserer votre supporte physique." if not alert
+      when Token.ReadOnly then ret.alert = "Le supporte est en mode lecture." if not alert
+      when Token.InUse    then ret.alert = "Le supporte est en cours d'utilisation." if not alert
+      when null           then ret.info  = 'Detection en cour, veuillez inserer votre support physique.' if not info
 
     ret
 
   #TODO(use as change PIN, and use GetPass for set PIN/PUK)
   changepin: ->
-    Façade.getOptions (opts) =>
+    Façade.GetPINOpts (opts) =>
       Clss: ChangePIN
       args:
         app: @
         doAction: @routeChangePIN
-        minLength: opts['min-pin-length']
-        maxLength: opts['max-pin-length']
+        minLength: opts['minlen']
+        maxLength: opts['maxlen']
 
 #  setpw: (args) ->
 #    Clss: GetPass
@@ -260,9 +234,10 @@ class App extends Spine.Controller
     Clss: ResetPIN
     args:
       app: @
+      fn: @routeUnblock
     alert: 'Votre PIN a ete bloque, veuillez entrez votre PUK.'
 
-  loggedin: (Clss, args) ->
+  any: (Clss, args) ->
     Clss: Clss
     args: args or {}
 
@@ -293,24 +268,41 @@ class App extends Spine.Controller
 
         @currentView.rendered?()
 
-  dlg: (cmpnt, options={}) ->
-    @delay -> window.jQuery(cmpnt.render().el).modal(options)
+  confirm: (fn, hidden = -> console.log('hidden');) ->
+    msg: 'Are you sure?'
+    options:
+      show: true
+    hidden: hidden
+    buttons: [
+      {
+        id: 'dlg-yes'
+        title: 'Yes'
+        primary: true
+        fn: fn
+      },
+      {
+        id: 'dlg-no'
+        title: 'No'
+        fn: (evt) -> window.jQuery(evt.target).closest('.dlg').modal('hide') 
+      }
+    ]
 
-  # Routes
+  dlg: (meta) ->
+    @delay -> 
+      dlg = window.jQuery((new Dlg(meta)).render().el).modal(meta.options)
+      dlg.on('hide', meta.hidden)
 
-  routeDetect: =>
-    @log '@routeDetect'
-
+  detectToken: () =>
+    @log "@detectToken"
     Façade.getStatus (status, err) =>
+      @clearAllMsgs()
 
-      if err
-        # show msg
-        return false
-      
+      return false if err
+
       # Start page
-      if status in [ Token.Absent, Token.Locked, Token.Blank, null ]
+      if status in [ Token.Absent, Token.Locked, Token.Blank, Token.InUse, Token.ReadOnly ]
         @setStatus(status)
-        return
+        return false
 
       switch status
 
@@ -318,7 +310,7 @@ class App extends Spine.Controller
 
           @navigate("#/unblock")
 
-        when Token.ChangePIN
+        when Token.SetPIN
 
           @navigate("#/setpin")          
         
@@ -330,11 +322,13 @@ class App extends Spine.Controller
         
           @navigate("#/keys")
 
-        else
-        
-          @setStatus(null)
+        #else
 
-      false
+          ### Unknow status, try to detect again ###
+
+          # @setStatus(null)
+
+    false
 
   selectKey: (key) ->
     @trigger('selectionChanged', key, true)
@@ -342,73 +336,136 @@ class App extends Spine.Controller
   unSelectKey: (key) ->
     @trigger('selectionChanged', key, false)
 
+  # Routes
+
+  routeDetect: =>
+    @log '@routeDetect'
+    @detectToken()
+
   routePersonalInfo: (params) =>
     @log '@routePersonalInfo'
 
     #TODO (save personal info)
       
-    @navigate '#/keys'
-    @delay (-> @info(msg: 'Your personal information was successfully saved.', closable: true)), 100    
+    @delay (=> @navigate('#/keys'); @delay((-> @info(msg: 'Your personal information was successfully saved.', closable: true)), 100))
+
+  routeInitPIN: (params) =>
+    @log '@routeInitPIN'    
+
+    Façade.InitPIN params.pin, params.puk, (err) =>
+      
+      if ok
+        
+        @delay (=> @info(msg: 'Your PIN was successfully changed.', closable: true); @delay((=> @navigate '#/keys'), 1000))
+        
+        return false
+
+      @alert(msg: 'An unknown error occured, please try again.', closable: true)
 
   routeChangePIN: (params) =>
     @log '@routeChangePIN'    
 
-    Façade.changePIN params.oldpin, params.pin, (err) =>
-      if err
-        @alert("Error #{if params.task is 'setpin' then 'setting' else 'changing'} PIN")
+    Façade.ChangePIN params.oldpin, params.pin, (ok) =>
+      
+      if ok
+
+        @delay (=> @info(msg: 'Your PIN was successfully changed.', closable: true); @delay((=> @navigate '#/keys'), 1000))
+        
         return false
 
-      @navigate '#/keys'
-      @delay (-> @info(msg: 'Your PIN was successfully changed.', closable: true)), 100
+      @alert(msg: 'An unknown error occured, please try again.', closable: true)
 
   routeLogin: (params) =>
     @log '@routeLogin'
 
-    Façade.login params.pin, (remainingAttempts) =>
+    Façade.Login params.pin, (err) =>
 
-      if remainingAttempts >= 0
+      if err is null
+        @setStatus(Token.LoggedIn)
+        return @navigate '#/keys'
 
-        if remainingAttempts is 0
+      if err is 0
 
-          @navigate('#/')
+        @navigate '/' 
+
+      else if err <= 3
         
-        else
-        
-          @alert("PIN invalide, il ne vous reste que #{remainingAttempts} essaie#{if remainingAttempts > 1 then 's' else ''} avant le blockage de votre PIN.")
+        @alert msg: "PIN invalide, il ne vous reste que #{err} essaie#{if err > 1 then 's' else ''} avant le blockage de votre PIN.", closable: true
 
-        return false
+      else 
 
-      @navigate('#/keys')
+        @alert msg: "PIN invalide, essayer encore.", closable: true
+
+      false
+
+  routeInit: (pin, puk, label) =>
+    @log '@routeInit'
+
+    Façade.InitToken pin, puk, label, (ok) =>
+
+      if ok
+        @delay (=> @info(msg: 'Your token was successfully initialized.', closable: true); @delay( (=> @navigate('#/')), 1000))
+
+        # show msg
+        return false       
+
+      @alert(msg: 'An unknown error occured, please try again.', closable: true)
   
+  routeErase: ->
+    @log '@routeErase'
+
+    df = app.Loading()
+    Façade.EraseToken (ok) =>
+      df()
+
+      if ok
+        @delay (=> @info(msg: 'Your token was successfully erase . . .', closable: true); @delay(-> @navigate('/'))), 1000
+        # show msg
+        return false  
+
+      @alert(msg: 'An unknown error occured, please try again.', closable: true)
+
   routeLogout: ->
     @log '@routeLogout'
 
-    Façade.logout (err) =>
+    Façade.Logout (err) =>
+
       if err
+        @delay(=> @info(msg: 'You have successfully logged out.', closable: true); @delay( (=> @navigate('/')), 200))        
+
         # show msg
         return false
 
-      @navigate('#/')
-      @delay (-> @info(msg: 'You have successfully logged out.', closable: true)), 100
+      @navigate('/')
 
-  #@deprecated
+
+  #TODO(support PUK locking?)
   routeUnblock: (params) =>
     @log '@routeUnblock'
 
-    Façade.unblock params.puk, (err) =>
-      if err >= 0
-
-        if err is 0
-
-          @setStatus(Token.Locked)
-
-        else
-
-          @alert("PUK, invalide, il ne vous reste que #{err} essaie#{if err > 1 then 's' else ''} avant le blockage permanent de votre support.")
-
-        return false
+    Façade.Unblock params.puk, params.pin, (ok) =>
       
-      @info(msg: 'Your PIN was successfully unblocked . . .', closable: true)
-      @delay (-> @navigate("#/setpin/#{params.puk}")), 1000
+      if ok
+        @delay (=> @info(msg: 'You have successfully unblocked.', closable: true); @delay( (=> @navigate('/')), 1000))        
+
+        # show msg
+        return false
+
+      @delay (=> @navigate('/'); @delay( (=> @alert(msg: 'An unknown error occured, please try again.', closable: true)), 1000   ))
+
+      # if err >= 0
+
+      #   if err is 0
+
+      #     @setStatus(Token.Locked)
+
+      #   else
+
+      #     @alert("PUK, invalide, il ne vous reste que #{err} essaie#{if err > 1 then 's' else ''} avant le blockage permanent de votre support.")
+
+      #   return false
+      
+      # @info(msg: 'Your PIN was successfully unblocked . . .', closable: true)
+      # @delay (-> @navigate("#/setpin/#{params.puk}")), 1000
 
 module.exports = App

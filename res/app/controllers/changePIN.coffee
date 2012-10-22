@@ -23,6 +23,7 @@ class ChangePIN extends Spine.Controller
     '[name=oldpin]'        :    'oldpin'   
     '[name=pin]'           :    'pin' 
     '[name=pin_confirm]'   :    'pin_confirm'
+    '[type=submit]'  :    'submitBtn'
 
   @templ: require('views/changepin')
 
@@ -30,10 +31,7 @@ class ChangePIN extends Spine.Controller
     @html ChangePIN.templ()
 
   cancel: ->
-    Façade.getStatus (status) =>
-      (return @app.trigger('alert', 'You must reset your PIN.'); false) if status is Token.ChangePIN
-      @navigate('#/keys')
-      false
+    @navigate '#/keys'
 
   params: ->
 
@@ -47,15 +45,19 @@ class ChangePIN extends Spine.Controller
   submit: (e) -> 
     @log '@actn'
     e.preventDefault()
+    @submitBtn.enable(false)
 
     params = @params()
 
     if msg = @valid(params.oldpin, params.pin, params.pin_confirm)
-      @app.alert(msg) 
+      @app.alert(msg: msg, closable: true)
+      @submitBtn.enable() 
       return false
 
     # doAction process
-    @doAction(params)
+    df = app.Loading()
+    @delay (-> @doAction(params); df(); @submitBtn.enable())
+
     false
   
   # private

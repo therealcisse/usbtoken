@@ -7,7 +7,27 @@
 <div class="absent">
 
   <ul class="nav nav-list">
-    <li><a href="#"><i class="icon-refresh"></i>Re-essayer</a>
+    <li><a title="Detecter encore l'etat de supporte" class='action' href="#"><i class="icon-refresh"></i>Re-essayer</a>
+    </li>
+    </li>
+  </ul>
+
+</div>
+
+<div class="in-use">
+
+  <ul class="nav nav-list">
+    <li><a title="Detecter encore l'etat de supporte" class='action' href="#"><i class="icon-refresh"></i>Re-essayer</a>
+    </li>
+    </li>
+  </ul>
+
+</div>
+
+<div class="readonly">
+
+  <ul class="nav nav-list">
+    <li><a title="Detecter encore l'etat de supporte" class='action' href="#"><i class="icon-refresh"></i>Re-essayer</a>
     </li>
     </li>
   </ul>
@@ -17,9 +37,9 @@
 <div class="locked blank">
 
   <ul class="nav nav-list">
-    <li><a href="#"><i class="icon-refresh"></i>Re-essayer</a>
+    <li><a title="Detecter encore l'etat de supporte" class='action' href="#"><i class="icon-refresh"></i>Re-detecter</a>
     </li>
-    <li><a href="#"><i class="icon-bolt"></i>Initialize token</a>
+    <li><a title="Initializer le supporte" class="init" href="#/init"><i class="icon-bolt"></i>Initialize token</a>
     </li>
   </ul>
 
