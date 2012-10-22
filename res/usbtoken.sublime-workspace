@@ -4,6 +4,26 @@
 		"selected_items":
 		[
 			[
+				"s",
+				"submitBtn"
+			],
+			[
+				"su",
+				"submitBtn"
+			],
+			[
+				"remo",
+				"remove"
+			],
+			[
+				"bord",
+				"border-bottom"
+			],
+			[
+				"l",
+				"loading"
+			],
+			[
 				"rou",
 				"routeUnblock"
 			],
@@ -18,10 +38,6 @@
 			[
 				"Lo",
 				"LoggedIn"
-			],
-			[
-				"l",
-				"label"
 			],
 			[
 				"re",
@@ -182,10 +198,6 @@
 			[
 				"fa",
 				"Façade"
-			],
-			[
-				"s",
-				"submit"
 			],
 			[
 				"S",
@@ -502,205 +514,17 @@
 			[
 				"swi",
 				"switch"
-			],
-			[
-				"routeL",
-				"routeLogin"
-			],
-			[
-				"routeK",
-				"routeKeys"
-			],
-			[
-				"u",
-				"unblock"
 			]
 		]
 	},
 	"buffers":
 	[
 		{
-			"file": "/C/Users/amadou/Desktop/Todo.Token.txt",
+			"file": ".npmignore",
 			"settings":
 			{
-				"buffer_size": 1043,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"contents": "\n\npkcs15-init --create-pkcs15 --pin 1111 --puk 4444 -so-pin 2222 --so-puk 3333  --label \"Amadou Cisse\"\n\npkcs15-init --store-pin",
-			"settings":
-			{
-				"buffer_size": 127,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "public/index.html",
-			"settings":
-			{
-				"buffer_size": 2883,
+				"buffer_size": 17,
 				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "topbar.keep",
-			"settings":
-			{
-				"buffer_size": 1698,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "app/controllers/start.coffee",
-			"settings":
-			{
-				"buffer_size": 949,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "app/index.coffee",
-			"settings":
-			{
-				"buffer_size": 12745,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "app/lib/façade.coffee",
-			"settings":
-			{
-				"buffer_size": 7759,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "app/controllers/resetPIN.coffee",
-			"settings":
-			{
-				"buffer_size": 1609,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "app/views/start.eco",
-			"settings":
-			{
-				"buffer_size": 1029,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "app/controllers/login.coffee",
-			"settings":
-			{
-				"buffer_size": 1401,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "app/controllers/topbar.coffee",
-			"settings":
-			{
-				"buffer_size": 934,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "css/index.styl",
-			"settings":
-			{
-				"buffer_size": 14332,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "app/controllers/unblock.coffee",
-			"settings":
-			{
-				"buffer_size": 1167,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "app/controllers/init.coffee",
-			"settings":
-			{
-				"buffer_size": 1402,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "app/lib/sysmenu.coffee",
-			"settings":
-			{
-				"buffer_size": 116,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "app/views/sysmenu.eco",
-			"settings":
-			{
-				"buffer_size": 965,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "app/views/key-mgr/toolsbar.key.eco",
-			"settings":
-			{
-				"buffer_size": 560,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "app/views/key-mgr/toolsbar.keys.eco",
-			"settings":
-			{
-				"buffer_size": 997,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "public/bootstrap.css",
-			"settings":
-			{
-				"buffer_size": 78209,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "app/controllers/keyMgr.coffee",
-			"settings":
-			{
-				"buffer_size": 5077,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "app/controllers/get_pass.coffee",
-			"settings":
-			{
-				"buffer_size": 2362,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "app/lib/wizard.coffee",
-			"settings":
-			{
-				"buffer_size": 1102,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "app/views/personal-info.eco",
-			"settings":
-			{
-				"buffer_size": 737,
-				"line_ending": "Windows"
 			}
 		}
 	],
@@ -752,22 +576,41 @@
 	},
 	"file_history":
 	[
-		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/app/views/unblock.eco",
-		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/app/controllers/personalinfo.coffee",
-		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/app/views/personal-info.eco",
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/app/controllers/topbar.coffee",
+		"/C/Users/amadou/Desktop/Todo.Token.txt",
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/public/index.html",
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/public/bootstrap.min.css",
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/app/lib/wizard.coffee",
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/topbar.keep",
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/app/controllers/start.coffee",
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/app/index.coffee",
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/app/lib/façade.coffee",
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/app/controllers/resetPIN.coffee",
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/app/views/start.eco",
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/app/controllers/login.coffee",
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/css/index.styl",
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/app/controllers/unblock.coffee",
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/app/controllers/init.coffee",
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/app/lib/sysmenu.coffee",
 		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/app/views/sysmenu.eco",
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/app/views/key-mgr/toolsbar.key.eco",
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/app/views/key-mgr/toolsbar.keys.eco",
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/public/bootstrap.css",
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/app/controllers/keyMgr.coffee",
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/app/controllers/get_pass.coffee",
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/app/views/personal-info.eco",
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/app/controllers/changePIN.coffee",
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/app/controllers/personalinfo.coffee",
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/app/controllers/dlg.coffee",
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/app/views/unblock.eco",
 		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/app/controllers/sysmenu.coffee",
 		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/node_modules/spine/src/spine.coffee",
 		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/app/models/token.coffee",
 		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/public/application.js",
-		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/css/index.styl",
 		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/console.log",
 		"/D/Users/amadou/Documents/About it/Be A Bad Boy Without Being Bad.txt",
 		"/C/Program Files (x86)/OpenSC Project/OpenSC/opensc.conf",
-		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/public/index.html",
 		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/app/views/dlg.eco",
-		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/app/controllers/dlg.coffee",
-		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/app/index.coffee",
 		"/C/Users/amadou/Desktop/Mingw-reqs/config.h",
 		"/C/Program Files (x86)/OpenSC Project/OpenSC/profiles/epass2003.profile",
 		"/C/Users/amadou/Desktop/Mingw-reqs/Make.rules.mak",
@@ -820,7 +663,6 @@
 		"/C/Users/amadou/Desktop/sales_mangement.txt",
 		"/C/Users/amadou/Desktop/purchase_management.txt",
 		"/C/Users/amadou/Desktop/inventory_MMC.txt",
-		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/app/controllers/changePIN.coffee",
 		"/C/Users/amadou/Desktop/it/usbtoken.cpp",
 		"/C/Users/amadou/Desktop/it/usbtoken.rc",
 		"/C/Users/amadou/Desktop/it/client_app.cpp",
@@ -834,16 +676,13 @@
 		"/D/Users/amadou/Documents/GitHub/node/src/node.h",
 		"/D/Users/amadou/Documents/GitHub/node/src/node_file.cc",
 		"/D/Users/amadou/Documents/GitHub/node/src/node_file.h",
-		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/public/bootstrap.css",
 		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/public/application.css",
-		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/app/controllers/init.coffee",
 		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/node_modules/spine/src/route.coffee",
 		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/test/specs/controllers/get_pass.coffee",
 		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/test/specs/controllers/keyMgr.coffee",
 		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/test/specs/controllers/topbar.coffee",
 		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/test/specs/controllers/changePIN.coffee",
 		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/test/specs/controllers/resetPIN.coffee",
-		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/app/lib/wizard.coffee",
 		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/test/specs/controllers/unblock.coffee",
 		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/.npmignore",
 		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/node_modules/hem/node_modules/stylus/node_modules/mkdirp/.gitignore.orig",
@@ -864,22 +703,7 @@
 		"/C/Users/amadou/Desktop/usbtoken-web/app/views/getpass.eco",
 		"/C/Users/amadou/Desktop/usbtoken-web/app/lib/wizard2.coffee",
 		"/C/Users/amadou/Desktop/usbtoken-web/app/controllers/unblock.coffee",
-		"/C/Users/amadou/Desktop/usbtoken-web/app/views/unblock.eco",
-		"/C/Users/amadou/Desktop/usbtoken-web/app/models/token.coffee",
-		"/C/Users/amadou/Desktop/usbtoken-web/app/lib/façade.coffee",
-		"/C/Users/amadou/Desktop/usbtoken-web/public/index.html",
-		"/C/Users/amadou/Desktop/usbtoken-web/css/index.styl",
-		"/C/Users/amadou/Desktop/usbtoken-web/app/controllers/changePIN.coffee",
-		"/C/Users/amadou/Desktop/usbtoken-web/app/views/changepin.eco",
-		"/C/Users/amadou/Desktop/usbtoken-web/app/controllers/topbar.coffee",
-		"/C/Users/amadou/Desktop/usbtoken-web/public/2.1/bootstrap.js",
-		"/C/Users/amadou/Desktop/usbtoken-web/public/bootstrap.js",
-		"/C/Users/amadou/Desktop/usbtoken-web/app/views/getpuk.eco",
-		"/C/Users/amadou/Desktop/usbtoken-web/app/views/getpin.eco",
-		"/C/Users/amadou/Desktop/usbtoken-web/app/views/wizard/top.eco",
-		"/C/Users/amadou/Desktop/usbtoken-web/app/views/wizard/bottom.eco",
-		"/C/Users/amadou/Desktop/usbtoken-web/app/views/setpin.eco",
-		"/C/Users/amadou/Desktop/usbtoken-web/node_modules/spine/src/manager.coffee"
+		"/C/Users/amadou/Desktop/usbtoken-web/app/views/unblock.eco"
 	],
 	"find":
 	{
@@ -887,7 +711,7 @@
 	},
 	"find_in_files":
 	{
-		"height": 90.0,
+		"height": 0.0,
 		"where_history":
 		[
 		]
@@ -897,6 +721,8 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"uuid.v1()",
+			"loadin",
 			"end",
 			"msg",
 			"replyto",
@@ -1023,6 +849,8 @@
 		"regex": false,
 		"replace_history":
 		[
+			"++Façade.cnt",
+			"++cnt",
 			"",
 			"application",
 			"",
@@ -1055,640 +883,28 @@
 	"groups":
 	[
 		{
-			"selected": 6,
+			"selected": 0,
 			"sheets":
 			[
 				{
 					"buffer": 0,
-					"file": "/C/Users/amadou/Desktop/Todo.Token.txt",
+					"file": ".npmignore",
 					"settings":
 					{
-						"buffer_size": 1043,
+						"buffer_size": 17,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								560,
-								560
+								17,
+								17
 							]
 						],
 						"settings":
 						{
-							"auto_name": "",
-							"syntax": "Packages/Text/Plain text.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 288.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 1,
-					"settings":
-					{
-						"buffer_size": 127,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								127,
-								127
-							]
-						],
-						"settings":
-						{
-							"auto_name": "",
-							"syntax": "Packages/ShellScript/Shell-Unix-Generic.tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 2,
-					"file": "public/index.html",
-					"settings":
-					{
-						"buffer_size": 2883,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								2068,
-								2068
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/HTML/HTML.tmLanguage",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 926.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 3,
-					"file": "topbar.keep",
-					"settings":
-					{
-						"buffer_size": 1698,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								1639,
-								1639
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/HTML/HTML.tmLanguage",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 4,
-					"file": "app/controllers/start.coffee",
-					"settings":
-					{
-						"buffer_size": 949,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								448,
-								448
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/CoffeeScript/Syntaxes/CoffeeScript.tmLanguage",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 5,
-					"file": "app/index.coffee",
-					"settings":
-					{
-						"buffer_size": 12745,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								12347,
-								12347
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/CoffeeScript/Syntaxes/CoffeeScript.tmLanguage",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 5813.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 6,
-					"file": "app/lib/façade.coffee",
-					"settings":
-					{
-						"buffer_size": 7759,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								5921,
-								5921
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/CoffeeScript/Syntaxes/CoffeeScript.tmLanguage",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 1604.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 7,
-					"file": "app/controllers/resetPIN.coffee",
-					"settings":
-					{
-						"buffer_size": 1609,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								657,
-								657
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/CoffeeScript/Syntaxes/CoffeeScript.tmLanguage",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 8,
-					"file": "app/views/start.eco",
-					"settings":
-					{
-						"buffer_size": 1029,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								1013,
-								1013
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/HTML/HTML.tmLanguage",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 184.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 9,
-					"file": "app/controllers/login.coffee",
-					"settings":
-					{
-						"buffer_size": 1401,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								1139,
-								1139
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/CoffeeScript/Syntaxes/CoffeeScript.tmLanguage",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 10,
-					"file": "app/controllers/topbar.coffee",
-					"settings":
-					{
-						"buffer_size": 934,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								374,
-								374
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/CoffeeScript/Syntaxes/CoffeeScript.tmLanguage",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 11,
-					"file": "css/index.styl",
-					"settings":
-					{
-						"buffer_size": 14332,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								6026,
-								6026
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Stylus/Syntaxes/Stylus.tmLanguage",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 4861.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 12,
-					"file": "app/controllers/unblock.coffee",
-					"settings":
-					{
-						"buffer_size": 1167,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								446,
-								446
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/CoffeeScript/Syntaxes/CoffeeScript.tmLanguage",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 244.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 13,
-					"file": "app/controllers/init.coffee",
-					"settings":
-					{
-						"buffer_size": 1402,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								543,
-								543
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/CoffeeScript/Syntaxes/CoffeeScript.tmLanguage",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 14,
-					"file": "app/lib/sysmenu.coffee",
-					"settings":
-					{
-						"buffer_size": 116,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								116,
-								116
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/CoffeeScript/Syntaxes/CoffeeScript.tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 15,
-					"file": "app/views/sysmenu.eco",
-					"settings":
-					{
-						"buffer_size": 965,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								965,
-								965
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/HTML/HTML.tmLanguage",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 16,
-					"file": "app/views/key-mgr/toolsbar.key.eco",
-					"settings":
-					{
-						"buffer_size": 560,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								544,
-								521
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/HTML/HTML.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 17,
-					"file": "app/views/key-mgr/toolsbar.keys.eco",
-					"settings":
-					{
-						"buffer_size": 997,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								956,
-								956
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/HTML/HTML.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 18,
-					"file": "public/bootstrap.css",
-					"settings":
-					{
-						"buffer_size": 78209,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								47419,
-								48394
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/CSS/CSS.tmLanguage",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 30011.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 19,
-					"file": "app/controllers/keyMgr.coffee",
-					"settings":
-					{
-						"buffer_size": 5077,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								1794,
-								1794
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/CoffeeScript/Syntaxes/CoffeeScript.tmLanguage",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 2836.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 20,
-					"file": "app/controllers/get_pass.coffee",
-					"settings":
-					{
-						"buffer_size": 2362,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								2033,
-								2033
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/CoffeeScript/Syntaxes/CoffeeScript.tmLanguage",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 21,
-					"file": "app/lib/wizard.coffee",
-					"settings":
-					{
-						"buffer_size": 1102,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								130,
-								130
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/CoffeeScript/Syntaxes/CoffeeScript.tmLanguage",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 22,
-					"file": "app/views/personal-info.eco",
-					"settings":
-					{
-						"buffer_size": 737,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								642,
-								642
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/HTML/HTML.tmLanguage",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
+							"syntax": "Packages/Text/Plain text.tmLanguage"
 						},
 						"translation.x": 0.0,
 						"translation.y": 0.0,
@@ -1749,6 +965,30 @@
 		"selected_items":
 		[
 			[
+				"log",
+				"app/controllers/login.coffee"
+			],
+			[
+				"in",
+				"css/index.styl"
+			],
+			[
+				"inde",
+				"css/index.styl"
+			],
+			[
+				"l",
+				"app/controllers/login.coffee"
+			],
+			[
+				"login",
+				"app/controllers/login.coffee"
+			],
+			[
+				"index",
+				"css/index.styl"
+			],
+			[
 				"sta",
 				"app/controllers/start.coffee"
 			],
@@ -1765,18 +1005,6 @@
 				"app/controllers/topbar.coffee"
 			],
 			[
-				"in",
-				"css/index.styl"
-			],
-			[
-				"inde",
-				"css/index.styl"
-			],
-			[
-				"index",
-				"css/index.styl"
-			],
-			[
 				"wi",
 				"app/lib/wizard.coffee"
 			],
@@ -1791,10 +1019,6 @@
 			[
 				"lo",
 				"app/views/login.eco"
-			],
-			[
-				"log",
-				"app/controllers/login.coffee"
 			],
 			[
 				"f",
