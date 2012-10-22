@@ -6,7 +6,7 @@
 // a qualified path.
 #include "client_switches.h"  // NOLINT(build/include)
 
-namespace cefclient {
+namespace usbtoken {
 
 const char kUrl[] = "url";
 const char kExternalDevTools[] = "external-devtools";

@@ -10,21 +10,24 @@ class Unblock extends Spine.Controller
 
     @bind 'release', => 
       delete @controller
+
+    @delay -> Façade.SetWindowText('Unblock')
       
   events:
     'submit form' :   'unblock'
 
   elements:
     '[name=puk]' :   'puk'
+    '[type=submit]'  :    'submitBtn'
 
   className: 'unblock'
 
   @templ: require('views/unblock')
 
   viewopts: ->
-    Façade.getOptions (opts) =>
-      minLength : opts['min-pin-length']
-      maxLength : opts['max-pin-length']
+    Façade.GetPINOpts (opts) =>
+      minLength : opts['minlen']
+      maxLength : opts['maxlen']
 
   params: ->
     cleaned = (key) =>
@@ -39,19 +42,21 @@ class Unblock extends Spine.Controller
     @log '@unblock'
 
     e.preventDefault()
+    @submitBtn.enable(false)
 
     params = @params() 
 
     if msg = Unblock.valid(params)
-      @controller.alert(msg) 
+      @controller.alert(msg: msg, closable: true)
+      @submitBtn.enable()
       return false
 
-    @doUnblock(params.puk)
+    @doUnblock(params.puk); @submitBtn.enable()
   
   # private
 
   @valid: (params) ->  
-    Façade.getOptions (opts) => 
-      return "PUK must be between #{opts['min-pin-length']} and #{opts['max-pin-length']} caracters." unless params.puk.length > opts['min-pin-length'] and params.puk.length < opts['max-pin-length']    
+    Façade.GetPINOpts (opts) => 
+      return "PUK must be between #{opts['minlen']} and #{opts['maxlen']} caracters." unless params.puk.length > opts['minlen'] and params.puk.length < opts['maxlen']    
 
 module.exports = Unblock

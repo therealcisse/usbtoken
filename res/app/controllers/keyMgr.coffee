@@ -78,7 +78,8 @@ class KeyMgr.KeyView extends Spine.Controller
       
       delete @app      
       
-    @append @toolsbar.render(), @key     
+    @append @toolsbar.render(), @key 
+    @delay -> Façade.SetWindowText('Keys')   
 
 # KeyView >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
  
@@ -106,6 +107,7 @@ class KeyMgr.KeyList extends Spine.Controller
       delete @app      
       
     @append @toolsbar.render(), @keys
+    @delay -> Façade.SetWindowText('Keys')
 
   selectionChanged: (key, hasSelection) =>
     @log 'KeyList.Toolsbar#selectionChanged'

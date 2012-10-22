@@ -9,10 +9,19 @@ class Façade extends Spine.Module
 
   @logPrefix: '(Façade)'
 
-  @trace: false
+  @trace: true
+
+  @cnt: 0
+
+  @SetWindowText: (text) ->
+    document.title = "#{text} | Epsilon Token Manager"
+    #app.sendMessage 'titleset', [text]
+
+  @GetPINOpts: (fn) ->
+    fn(Façade._pinopts)
 
   @data:
-    status: Token.AuthRequired
+    status: Token.Absent
     pin:  '1234' 
     puk:  '1111'
     sopin:  '5678' 
@@ -97,30 +106,136 @@ class Façade extends Spine.Module
       fn undefined, true
 
   @getStatus: (fn) -> 
-    fn Façade['data']['status']
+
+    callback = (kMessageName, [response]) =>
+      console.log "@getStatus: Reply from #{kMessageName}: #{response.status}"
+
+      if Façade.authData and response.status isnt Token.LoggedIn       
+        delete Façade.authData
+
+      if response.status in [ Token.Blank, Token.Blocked ]
+        Façade._pinopts =
+          minlen : response.minlen,
+          maxlen : response.maxlen
+
+      if response.status is Token.AuthRequired
+        Façade._pinopts =
+          minlen : response.minlen,
+          maxlen : response.maxlen,
+          max_tries : response.max_tries,
+          tries_left : response.tries_left
+
+      callback.fn(response.status)
+
+    callback.fn = fn
+
+    replyto = "getstatus.#{++Façade.cnt}"
+
+    req = replyto: replyto
+    req.authData = Façade.authData if Façade.authData
+
+    app.setMessageCallback replyto, callback
+    app.sendMessage "getstatus", [req]
 
   @getOptions: (fn) ->  
     fn Façade['data']['options']
 
   # ops
 
-  @login: (pin, fn) ->
-    @log "@login:pin-attempts=#{Façade['data']['options']['pin-attempts']}"
-    @log "@login:remaining-pin-attempts=#{Façade['data']['options']['remaining-pin-attempts']}"
+  @SetPIN: (pin, fn) ->
+    @log "@SetPIN"
 
-    Façade['data']['options']['remaining-pin-attempts'] -= 1
+    callback = (kMessageName, [response]) =>
+      console.log "@SetPIN: Reply from #{kMessageName}: #{response.status}"
+      callback.fn(response.ok)
 
-    if Façade['data']['options']['remaining-pin-attempts'] is 0
-      Façade['data']['status'] = Token.Blocked
-      return fn(0)
+    callback.fn = fn
 
-    if pin is Façade['data']['pin']
-      Façade['data']['options']['remaining-pin-attempts'] = Façade['data']['options']['pin-attempts']
-      Façade['data']['status'] = Token.LoggedIn
-      fn()
-    else      
-      fn(Façade['data']['options']['remaining-pin-attempts']) # error
+    replyto = "setpin.#{++Façade.cnt}"
+    app.setMessageCallback replyto, callback
+    app.sendMessage "setpin", [{replyto: replyto, pin: pin}]  
 
+  @ChangePIN: (pincode, pin, fn) ->
+    @log "@ChangePIN"
+
+    callback = (kMessageName, [response]) =>
+      console.log "@ChangePIN: Reply from #{kMessageName}: #{response.status}"
+      callback.fn(response.ok)
+
+    callback.fn = fn
+
+    replyto = "changepin.#{++Façade.cnt}"
+    app.setMessageCallback replyto, callback
+    app.sendMessage "changepin", [{replyto: replyto, pincode: pincode, pin: pin}]
+
+  @Unblock: (puk, pin, fn) ->
+    @log "@UnblockPIN"
+
+    callback = (kMessageName, [response]) =>
+      console.log "@Unblock: Reply from #{kMessageName}: #{response.status}"
+      callback.fn(response.ok)
+
+    callback.fn = fn
+
+    replyto = "unblock.#{++Façade.cnt}"
+    app.setMessageCallback replyto, callback
+    app.sendMessage "unblock", [{replyto: replyto, puk: puk, pin: pin}]
+
+  @EraseToken: (fn) ->
+    @log "@EraseToken"
+
+    callback = (kMessageName, [response]) =>
+      console.log "@EraseToken: Reply from #{kMessageName}: #{response.status}"
+      callback.fn(response.ok)
+
+    callback.fn = fn
+
+    replyto = "erase.#{++Façade.cnt}"
+    app.setMessageCallback replyto, callback
+    app.sendMessage "erase", [{replyto: replyto}]  
+
+  @InitToken: (pin, puk, label, fn) ->
+    @log "@InitToken"
+
+    callback = (kMessageName, [response]) =>
+      console.log "@InitToken: Reply from #{kMessageName}: #{response.status}"
+      callback.fn(response.ok)
+
+    callback.fn = fn
+
+    replyto = "init.#{++Façade.cnt}"
+    app.setMessageCallback replyto, callback
+    app.sendMessage "init", [{replyto: replyto, pin: pin, puk: puk, label: label}]
+
+  @Logout: (fn) ->
+    delete Façade.authData
+    fn(true)
+
+  @Login: (pin, fn) ->
+    @log "@Login"
+
+    callback = (kMessageName, [response]) =>
+      console.log "@Login: Reply from #{kMessageName}: #{response.status}"
+
+      if response.status is Token.LoggedIn
+        Façade._pinopts =
+          minlen : response.minlen,
+          maxlen : response.maxlen,
+          max_tries : response.max_tries,
+          tries_left : response.tries_left
+
+        ### very crucial ###
+        Façade.authData = pin
+
+        return callback.fn(null)
+
+      callback.fn(response.tries_left)
+
+    callback.fn = fn
+
+    replyto = "verifypin.#{++Façade.cnt}"
+    app.setMessageCallback replyto, callback
+    app.sendMessage "verifypin", [{replyto: replyto, pin: pin}]
 
   @soLogin: (sopin, fn) ->
 

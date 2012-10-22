@@ -9,10 +9,11 @@ class GetPass extends Spine.Controller
   elements:
     '[name=pw]'         : 'pw'
     '[name=pw_confirm]' : 'pw_confirm'
+    '[type=submit]'  :    'submitBtn'
 
   events:
     'submit form'         : 'submit'
-    'click form .cancel'  :   'cancel'
+    'click form .cancel'  : 'cancel'
 
   className: 'getpw'
 
@@ -25,7 +26,7 @@ class GetPass extends Spine.Controller
 
   @viewopts: (type, title) ->
 
-    Façade.getOptions (opts) =>
+    Façade.GetPINOpts (opts) =>
 
       return switch type
 
@@ -35,8 +36,8 @@ class GetPass extends Spine.Controller
             title: title or 'Enter PIN',
             label: 'PIN',
             actionLabel: 'Ok',
-            minLength : opts['min-pin-length'],
-            maxLength : opts['max-pin-length']
+            minLength : opts['minlen'],
+            maxLength : opts['maxlen']
           }
 
         when GetPass.PUK
@@ -45,8 +46,8 @@ class GetPass extends Spine.Controller
             title: title or 'Enter PUK',
             label: 'PUK',
             actionLabel: 'Ok',
-            minLength : opts['min-puk-length'],
-            maxLength : opts['max-puk-length']
+            minLength : opts['minlen'],
+            maxLength : opts['maxlen']
           }
 
   @templ: require('views/getpass')
@@ -65,18 +66,18 @@ class GetPass extends Spine.Controller
 
   @valid: (params) ->
 
-    Façade.getOptions (opts) ->
+    Façade.GetPINOpts (opts) ->
 
       switch params.type
 
         when GetPass.PIN
 
-          return "PIN must be between #{opts['min-pin-length']} and #{opts['max-pin-length']} caracters." unless params.pw.length > opts['min-pin-length'] and params.pw.length < opts['max-pin-length']  
+          return "PIN must be between #{opts['minlen']} and #{opts['maxlen']} caracters." unless params.pw.length > opts['minlen'] and params.pw.length < opts['maxlen']  
           return "The PIN confirmation does not match." unless params.pw is params.pw_confirm  
 
         when GetPass.PUK
 
-          return "PUK must be between #{opts['min-puk-length']} and #{opts['max-puk-length']} caracters." unless params.pw.length > opts['min-puk-length'] and params.pw.length < opts['max-puk-length']  
+          return "PUK must be between #{opts['minlen']} and #{opts['maxlen']} caracters." unless params.pw.length > opts['minlen'] and params.pw.length < opts['maxlen']  
           return "The PUK confirmation does not match." unless params.pw is params.pw_confirm  
 
   cancel: (evt) ->
@@ -90,11 +91,13 @@ class GetPass extends Spine.Controller
   submit: (evt) ->
 
     evt.preventDefault()
+    @submitBtn.enable(false)
 
     params = @params()
 
     if msg = GetPass.valid(params)
-      @controller.alert(msg)
+      @controller.alert(msg: msg, closable: true)
+      @submitBtn.enable()
       return false
 
     for key, val of @vars
@@ -103,7 +106,7 @@ class GetPass extends Spine.Controller
     params[@type] = params['pw']
     delete params['pw']
 
-    @delay => @fn(params)
+    @fn(params); @submitBtn.enable()
 
     false
 

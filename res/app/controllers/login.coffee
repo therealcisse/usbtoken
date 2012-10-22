@@ -14,12 +14,15 @@ class Login extends Spine.Controller
     @bind 'release', => 
       delete @controller
 
+    @delay -> Façade.SetWindowText('Login')
+
   events:
     'submit form'         :   'submit'
     'click form .cancel'  :   'cancel'
 
   elements:
-    '[name=pin]'  :	  'pin'
+    '[name=pin]'  :   'pin'
+    '[type=submit]'  :	  'submitBtn'
 
   className: 'login'
 
@@ -33,10 +36,10 @@ class Login extends Spine.Controller
     pin  : cleaned 'pin'
 
   @viewopts: (type) ->
-    Façade.getOptions (opts) =>
+    Façade.GetPINOpts (opts) =>
       type      : type
-      minLength : opts['min-pin-length'],
-      maxLength : opts['max-pin-length']
+      minLength : opts['minlen'],
+      maxLength : opts['maxlen']
 
   render: ->
     @html Login.templ(Login.viewopts(@type))
@@ -44,14 +47,17 @@ class Login extends Spine.Controller
   submit: (e) ->
 
     e.preventDefault()
+    @submitBtn.enable(false)
 
-    params = @params()       
+    params = @params()
 
     if msg = Login.valid(params)
-   	  @controller.alert(msg) 
-   	  return false
+      @controller.alert(msg: msg, closable: true) 
+      @submitBtn.enable()
+      return false
 
-    @delay => @doLogin(params)
+    df = app.Loading()       
+    @delay (=> @doLogin(params); df(); @submitBtn.enable())
 
     false
 
@@ -67,7 +73,7 @@ class Login extends Spine.Controller
   # private
 
   @valid: (params) ->  
-    Façade.getOptions (opts) => 
-      return "PIN must be between #{opts['min-pin-length']} and #{opts['max-pin-length']} caracters." unless params.pin.length > opts['min-pin-length'] and params.pin.length < opts['max-pin-length'] 
+    Façade.GetPINOpts (opts) => 
+      return "PIN must be between #{opts['minlen']} and #{opts['maxlen']} caracters." unless params.pin.length > opts['minlen'] and params.pin.length < opts['maxlen'] 
 
 module.exports = Login

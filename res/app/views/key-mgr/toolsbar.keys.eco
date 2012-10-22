@@ -1,3 +1,4 @@
+<% sysmenu = require('lib/sysmenu') %>
 <div class="toolsbar-inner">
 	
 	<div class="for-keys">
@@ -17,5 +18,6 @@
 			<a title="Delete" href="#/purge" class="purge btn"><i class="icon-trash"></i></a>
 			<a title="Telecharger" href="#/export" class="export btn"><i class="icon-download-alt"></i></a>
 		</div>
+		<%- sysmenu.render() %>
 	</div>
 </div>

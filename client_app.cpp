@@ -20,10 +20,94 @@ namespace {
 void SetList(CefRefPtr<CefV8Value> source, CefRefPtr<CefListValue> target);
 void SetList(CefRefPtr<CefListValue> source, CefRefPtr<CefV8Value> target);
 
+// Transfer a Dictionary object to a V8 value.
+void SetObjectValue(CefRefPtr<CefV8Value> target,
+	CefRefPtr<CefDictionaryValue> source) {
+	CefDictionaryValue::KeyList keys;
+	if(source->GetKeys(keys))
+		for(CefDictionaryValue::KeyList::iterator key = keys.begin(); key != keys.end(); ++key) {
+           CefRefPtr<CefV8Value> new_value;
+
+		   CefValueType type = source->GetType(*key);
+           switch(type) {
+
+             case VTYPE_DICTIONARY: {
+               CefRefPtr<CefDictionaryValue> o = source->GetDictionary(*key);
+               new_value = CefV8Value::CreateObject(NULL);
+			   SetObjectValue(new_value, o);
+			   }
+               break;
+             
+             case VTYPE_LIST:{
+               CefRefPtr<CefListValue> list = source->GetList(*key);
+               new_value = CefV8Value::CreateArray(list->GetSize());
+               SetList(list, new_value);
+			   }
+               break;
+             
+             case VTYPE_BOOL:
+               new_value = CefV8Value::CreateBool(source->GetBool(*key)); 
+               break;
+             
+             case VTYPE_DOUBLE:
+               new_value = CefV8Value::CreateDouble(source->GetDouble(*key)); 
+               break;
+             
+             case VTYPE_INT:
+               new_value = CefV8Value::CreateInt(source->GetInt(*key));
+               break;
+             
+             case VTYPE_STRING:
+               new_value = CefV8Value::CreateString(source->GetString(*key)); 
+               break;
+             
+             default: 
+               break;
+           }
+
+          if (new_value.get()) {
+            target->SetValue(*key, new_value, V8_PROPERTY_ATTRIBUTE_NONE);
+          } else {
+			  target->SetValue(*key, CefV8Value::CreateNull(), V8_PROPERTY_ATTRIBUTE_NONE);
+          }		
+		}
+}
+
+// Transfer a V8 value to a Dictionary object.
+void SetObjectValue(CefRefPtr<CefDictionaryValue> object,
+                  CefRefPtr<CefV8Value> value) {
+	std::vector<CefString> keys;
+	if(value->GetKeys(keys))
+		for(std::vector<CefString>::iterator key = keys.begin(); key != keys.end(); ++key) {
+			CefRefPtr<CefV8Value> val = value->GetValue(*key);
+			  if(val->IsObject()) {
+				  CefRefPtr<CefDictionaryValue> new_obj = CefDictionaryValue::Create();
+				  SetObjectValue(new_obj, val);
+				  object->SetDictionary(*key, new_obj);
+			  } else if (val->IsArray()) {
+				CefRefPtr<CefListValue> new_list = CefListValue::Create();
+				SetList(val, new_list);
+				object->SetList(*key, new_list);
+			  } else if (val->IsString()) {
+				object->SetString(*key, val->GetStringValue());
+			  } else if (val->IsBool()) {
+				object->SetBool(*key, val->GetBoolValue());
+			  } else if (val->IsInt()) {
+				object->SetInt(*key, val->GetIntValue());
+			  } else if (val->IsDouble()) {
+				object->SetDouble(*key, val->GetDoubleValue());
+			  }
+		}		
+}
+
 // Transfer a V8 value to a List index.
 void SetListValue(CefRefPtr<CefListValue> list, int index,
                   CefRefPtr<CefV8Value> value) {
-  if (value->IsArray()) {
+  if(value->IsObject()) {
+	CefRefPtr<CefDictionaryValue> new_obj = CefDictionaryValue::Create();
+	SetObjectValue(new_obj, value);
+    list->SetDictionary(index, new_obj);
+  } else if (value->IsArray()) {
     CefRefPtr<CefListValue> new_list = CefListValue::Create();
     SetList(value, new_list);
     list->SetList(index, new_list);
@@ -60,23 +144,34 @@ void SetListValue(CefRefPtr<CefV8Value> list, int index,
 
   CefValueType type = value->GetType(index);
   switch (type) {
+    case VTYPE_DICTIONARY: {
+      CefRefPtr<CefDictionaryValue> obj = value->GetDictionary(index);
+	  new_value = CefV8Value::CreateObject(NULL);
+	  SetObjectValue(new_value, obj);
+      } break;
+
     case VTYPE_LIST: {
       CefRefPtr<CefListValue> list = value->GetList(index);
       new_value = CefV8Value::CreateArray(list->GetSize());
       SetList(list, new_value);
       } break;
+
     case VTYPE_BOOL:
       new_value = CefV8Value::CreateBool(value->GetBool(index));
       break;
+
     case VTYPE_DOUBLE:
       new_value = CefV8Value::CreateDouble(value->GetDouble(index));
       break;
+
     case VTYPE_INT:
       new_value = CefV8Value::CreateInt(value->GetInt(index));
       break;
+
     case VTYPE_STRING:
       new_value = CefV8Value::CreateString(value->GetString(index));
       break;
+
     default:
       break;
   }
@@ -175,7 +270,8 @@ class ClientAppExtensionHandler : public CefV8Handler {
 
 
 ClientApp::ClientApp()
-    : proxy_type_(PROXY_TYPE_DIRECT) {
+    : proxy_type_(CEF_PROXY_TYPE_DIRECT) {
+  CreateBrowserDelegates(browser_delegates_);
   CreateRenderDelegates(render_delegates_);
 
   // Default schemes that support cookies.
@@ -213,6 +309,19 @@ void ClientApp::OnContextInitialized() {
   CefRefPtr<CefCookieManager> manager = CefCookieManager::GetGlobalManager();
   ASSERT(manager.get());
   manager->SetSupportedSchemes(cookieable_schemes_);
+
+  // Execute delegate callbacks.
+  BrowserDelegateSet::iterator it = browser_delegates_.begin();
+  for (; it != browser_delegates_.end(); ++it)
+    (*it)->OnContextInitialized(this);
+}
+
+void ClientApp::OnBeforeChildProcessLaunch(
+      CefRefPtr<CefCommandLine> command_line) {
+  // Execute delegate callbacks.
+  BrowserDelegateSet::iterator it = browser_delegates_.begin();
+  for (; it != browser_delegates_.end(); ++it)
+    (*it)->OnBeforeChildProcessLaunch(this, command_line);
 }
 
 void ClientApp::GetProxyForUrl(const CefString& url,

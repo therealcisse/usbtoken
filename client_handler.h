@@ -20,7 +20,7 @@
 
 // ClientHandler implementation.
 class ClientHandler : public CefClient,
-                      //public CefContextMenuHandler,
+                      public CefContextMenuHandler,
                       public CefDisplayHandler,
                       //public CefDownloadHandler,
                       //public CefGeolocationHandler,
@@ -69,6 +69,9 @@ class ClientHandler : public CefClient,
   virtual ~ClientHandler();
 
   // CefClient methods
+  virtual CefRefPtr<CefContextMenuHandler> GetContextMenuHandler() OVERRIDE {
+    return this;
+  }
   virtual CefRefPtr<CefDisplayHandler> GetDisplayHandler() OVERRIDE {
     return this;
   }
@@ -88,6 +91,17 @@ class ClientHandler : public CefClient,
                                         CefProcessId source_process,
                                         CefRefPtr<CefProcessMessage> message)
                                         OVERRIDE;
+
+    // CefContextMenuHandler methods
+  virtual void OnBeforeContextMenu(CefRefPtr<CefBrowser> browser,
+                                   CefRefPtr<CefFrame> frame,
+                                   CefRefPtr<CefContextMenuParams> params,
+                                   CefRefPtr<CefMenuModel> model) OVERRIDE;
+  virtual bool OnContextMenuCommand(CefRefPtr<CefBrowser> browser,
+                                    CefRefPtr<CefFrame> frame,
+                                    CefRefPtr<CefContextMenuParams> params,
+                                    int command_id,
+                                    EventFlags event_flags) OVERRIDE;
 
   // CefDisplayHandler methods
   virtual void OnLoadingStateChange(CefRefPtr<CefBrowser> browser,
@@ -151,8 +165,15 @@ class ClientHandler : public CefClient,
   void SendNotification(NotificationType type);
   void CloseMainWindow();
 
+  void ShowDevTools(CefRefPtr<CefBrowser> browser);
+
   // Returns the startup URL.
   std::string GetStartupURL() { return m_StartupURL; }
+
+  // Create an external browser window that loads the specified URL.
+  static void LaunchExternalBrowser(const std::string& url);
+
+  void SetWindowTitle(const std::wstring);
 
  protected:
   void SetLoading(bool isLoading);
@@ -174,13 +195,13 @@ class ClientHandler : public CefClient,
   int m_BrowserId;
 
   // The edit window handle
-  CefWindowHandle m_EditHwnd;
+  // CefWindowHandle m_EditHwnd;
 
   // The button window handles
-  CefWindowHandle m_BackHwnd;
-  CefWindowHandle m_ForwardHwnd;
-  CefWindowHandle m_StopHwnd;
-  CefWindowHandle m_ReloadHwnd;
+  // CefWindowHandle m_BackHwnd;
+  // CefWindowHandle m_ForwardHwnd;
+  // CefWindowHandle m_StopHwnd;
+  // CefWindowHandle m_ReloadHwnd;
 
   // Support for logging.
   std::string m_LogFile;
@@ -191,6 +212,12 @@ class ClientHandler : public CefClient,
   // Registered delegates.
   ProcessMessageDelegateSet process_message_delegates_;
   RequestDelegateSet request_delegates_;
+
+  // If true DevTools will be opened in an external browser window.
+  bool m_bExternalDevTools;
+
+  // List of open DevTools URLs if not using an external browser window.
+  std::set<std::string> m_OpenDevToolsURLs;
 
   // The startup URL.
   std::string m_StartupURL;

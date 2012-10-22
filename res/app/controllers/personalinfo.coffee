@@ -4,11 +4,11 @@ class PersonalInfo extends Spine.Controller
 
   elements: 
     '[name=fullName]'     :   'fullName'
-    '[name=email]'        :   'email'
-    '[name=telephone]'    :   'telephone'
-    '[name=address]'      :   'address'
-    '[name=city]'         :   'city'
-    '[name=country]'      :   'country'
+    # '[name=email]'        :   'email'
+    # '[name=telephone]'    :   'telephone'
+    # '[name=address]'      :   'address'
+    # '[name=city]'         :   'city'
+    # '[name=country]'      :   'country'
 
   events:
     'submit form'         :   'submit'
@@ -24,11 +24,11 @@ class PersonalInfo extends Spine.Controller
       (@[key].val() or '').trim()
 
     fullName    : cleaned 'fullName'    
-    email       : cleaned 'email'    
-    telephone   : cleaned 'telephone'    
-    address     : cleaned 'address'    
-    city        : cleaned 'city'    
-    country     : cleaned 'country'  
+    # email       : cleaned 'email'    
+    # telephone   : cleaned 'telephone'    
+    # address     : cleaned 'address'    
+    # city        : cleaned 'city'    
+    # country     : cleaned 'country'  
 
   @viewopts: -> {}
 
@@ -49,7 +49,7 @@ class PersonalInfo extends Spine.Controller
     params = @params()       
 
     if msg = PersonalInfo.valid(params)
-      @controller.alert(msg) 
+      @controller.alert(msg: msg, closable: true) 
       return false
 
     @delay => @fn(params)

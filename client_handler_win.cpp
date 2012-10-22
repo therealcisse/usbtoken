@@ -65,6 +65,15 @@ void ClientHandler::CloseMainWindow() {
   ::PostMessage(m_MainHwnd, WM_CLOSE, 0, 0);
 }
 
+void ClientHandler::SetWindowTitle(const std::wstring text) {
+  //BYTE* u8_Mem = (BYTE*)GlobalAlloc(GMEM_FIXED, 100);
+  //WCHAR* u16_Text = (WCHAR*)u8_Mem;
+  //wcscpy(u16_Text, text.c_str());  
+  //::SetWindowText(m_MainHwnd, (LPCWSTR) text.c_str());
+  ::SetWindowText(m_MainHwnd, text.c_str());
+}
+
+
 //std::string ClientHandler::GetDownloadPath(const std::string& file_name) {
 //  TCHAR szFolderPath[MAX_PATH];
 //  std::string path;

@@ -7,61 +7,32 @@ Façade       = require('lib/façade')
 
 class Init extends Wizard
 
+  doSetPersonalInfo: (params) ->
+    @log "doSetPersonalInfo##{params}"
+    @controller.next @, params  
+
   doSetPIN: (params) ->
     @log "setPIN#{params.pin}"
-
-    @controller.end @, params   
+    @controller.next @, params   
 
   doSetPUK: (params) ->
     @log "setPUK#{params.puk}"
 
-    @controller.end @, params   
-
-  doSOLogin: (params) ->
-    @log "doLogin##{params.puk}"
-
-    Façade.login params.pin, (remainingAttempts) =>
-
-      if remainingAttempts >= 0
-
-        if remainingAttempts is 0
-
-          @navigate '#/'
-        
-        else
-        
-          @controller.alert "PIN invalide, il ne vous reste que #{remainingAttempts} essaie#{if remainingAttempts > 1 then 's' else ''} avant le blockage de votre PIN."
-
-        return false
-
-      @controller.end @, params   
-
-  doSetPersonalInfo: (params) ->
-    @log "doSetPersonalInfo##{params}"
-
-    @controller.end @, params  
+    df = app.Loading()
+    @delay (=> @controller.fn(params.pin, params.puk, params.fullName); df())   
 
   unRenderMsg: (evt) -> 
     'Votre supporte ne sera pas re-initializer'
 
   unRendered: -> 
-    window.jQuery(window).bind('beforeunload', @unRenderMsg)
+    window.jQuery(window).unbind('beforeunload', @unRenderMsg)
   
   constructor: ->
     super
 
     window.jQuery(window).bind('beforeunload', @unRenderMsg)
 
-    @steps = [
-      
-      {
-        Clss: Login
-        args:
-          name: 'sologin'
-          controller: @
-          doLogin: @doSOLogin
-          type: Login.SO_LOGIN
-      }
+    @steps = [      
 
       {
         Clss: PersonalInfo
@@ -89,5 +60,7 @@ class Init extends Wizard
           fn: @doSetPUK
       }
     ]
+
+    @app.delay -> Façade.SetWindowText('Initialize')
     
 module.exports = Init
