@@ -24,7 +24,13 @@ class GetPass extends Spine.Controller
     @bind 'release', =>
       delete @controller
 
-  @viewopts: (type, title) ->
+    @fn.err = =>
+      @pw.val('')
+      @pw_confirm.val('')
+      @submitBtn.enable()
+      @delay => @pw[0].focus()
+
+  @viewopts: (self, type, title) ->
 
     Façade.GetPINOpts (opts) =>
 
@@ -38,6 +44,7 @@ class GetPass extends Spine.Controller
             actionLabel: 'Ok',
             minLength : opts['minlen'],
             maxLength : opts['maxlen']
+            hasCancel: self.controller.hasCancel
           }
 
         when GetPass.PUK
@@ -48,12 +55,13 @@ class GetPass extends Spine.Controller
             actionLabel: 'Ok',
             minLength : opts['minlen'],
             maxLength : opts['maxlen']
+            hasCancel: self.controller.hasCancel
           }
 
   @templ: require('views/getpass')
 
   render: ->
-    @html GetPass.templ(GetPass.viewopts(@type, @title))
+    @html GetPass.templ(GetPass.viewopts(@, @type, @title))
 
   params: ->
 
@@ -72,19 +80,19 @@ class GetPass extends Spine.Controller
 
         when GetPass.PIN
 
-          return "PIN must be between #{opts['minlen']} and #{opts['maxlen']} caracters." unless params.pw.length > opts['minlen'] and params.pw.length < opts['maxlen']  
+          return "PIN must be between #{opts['minlen']} and #{opts['maxlen']} caracters." unless params.pw.length >= opts['minlen'] and params.pw.length <= opts['maxlen']  
           return "The PIN confirmation does not match." unless params.pw is params.pw_confirm  
 
         when GetPass.PUK
 
-          return "PUK must be between #{opts['minlen']} and #{opts['maxlen']} caracters." unless params.pw.length > opts['minlen'] and params.pw.length < opts['maxlen']  
+          return "PUK must be between #{opts['minlen']} and #{opts['maxlen']} caracters." unless params.pw.length >= opts['minlen'] and params.pw.length <= opts['maxlen']  
           return "The PUK confirmation does not match." unless params.pw is params.pw_confirm  
 
   cancel: (evt) ->
     evt.preventDefault()
     evt.stopPropagation()
 
-    @delay @controller.cancelled?(@)
+    @controller.cancelled?(@)
 
     false
   
@@ -97,7 +105,7 @@ class GetPass extends Spine.Controller
 
     if msg = GetPass.valid(params)
       @controller.alert(msg: msg, closable: true)
-      @submitBtn.enable()
+      @fn.err()
       return false
 
     for key, val of @vars
@@ -106,7 +114,7 @@ class GetPass extends Spine.Controller
     params[@type] = params['pw']
     delete params['pw']
 
-    @fn(params); @submitBtn.enable()
+    @fn(params)
 
     false
 

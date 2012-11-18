@@ -29,12 +29,16 @@ body {
   height: 530px;
 }
 
-div.login, div.unblock, div.setpin, div.getpw, div.personal-info, div.changepin {
+div.login, div.unblock, div.setpin, div.getpw, div.get-label, div.get-x509-req-info, div.changepin, div.get-key-info, div.get-x509-req-info, div.import-key {
   /* margin: 1em 2em 0 !important; */
   margin: 1em 0 0 2em !important;
 }
 
-.form {
+div.get-x509-req-info {
+  max-height: 287px;
+}
+
+.form:not(.export-x509) {
   margin-top: 1em !important;
 }
 
@@ -50,10 +54,21 @@ div.login, div.unblock, div.setpin, div.getpw, div.personal-info, div.changepin 
   border-color: rgba(0, 0, 0, 0.64);
 }
 
-div.personal-info .form {
-  max-height: 300px;
+div.get-label .form,
+div.get-key-info .form,
+div.import-key .form,
+div.get-x509-req-info .form {
+  max-height: 288px;
   overflow-y: auto;
   padding-bottom: 1em;
+}
+
+div.import-key:not(.has-passphrase) .form div.passphrase {
+  display: none;
+}
+
+div.import-key.has-passphrase .form br {
+  display: none;
 }
 
 input[type=text], input[type=password] {
@@ -91,6 +106,10 @@ width: 45%;
 margin-left: 20px;
 }
 
+.sysmenu .dropdown-menu {
+  left: -111px;  
+}
+
 .start > div {
   display: none;
 }
@@ -122,7 +141,7 @@ margin-left: 20px;
   color: #000;
 }
 
-#msg, .start, .login, .unlock, .setpin, .getpw, .personal-info, .changepin {
+#msg, .start, .login, .unlock, .setpin, .getpw, .get-label, .get-x509-req-info, .changepin, .get-key-info, .import-key {
   /* margin-top: -18px; */
 }
 
@@ -406,8 +425,8 @@ a:hover [class^="icon-"], a:hover [class*=" icon-"] {
 
 .keys, .key-view .key {
   position: relative;
-  top: 44px;
-  max-height:  273px;
+  top: 58px;
+  max-height:  287px; /* TODO: Keys height issue */
   margin: 0;
   overflow-y: auto;
 }
@@ -503,7 +522,7 @@ select.locale {
   background-color: white;
   position: fixed;
   width: 100%;
-  border-bottom: 1px solid #EEE;  
+  border-bottom: 1px solid #BBB;  
 }
 
 .toolsbar-inner {
@@ -522,12 +541,20 @@ select.locale {
   margin: 0;
 }
 
-.key label {
+li.key label {
   margin: 9px auto
   padding: 0;
 }
 
-.key {
+.key-view .key {
+  padding: 10px;
+  width: 100%;
+  margin: 0;
+  height:  287px;
+  border-bottom: 1px solid #DDD;  
+}
+
+li.key {
   display: table;
   padding: 0;
   width: 100%;
@@ -535,7 +562,7 @@ select.locale {
   border-bottom: 1px solid #DDD;
 }
 
-.key + .key {
+li.key + li.key {
   /* border-top: 1px solid #DDD; */
 }
 
@@ -550,7 +577,8 @@ select.locale {
 }
 
 .entry:not(:hover):not(.checked) .actions .action-delete,
-.entry:not(:hover):not(.checked) .actions .action-export {
+.entry:not(:hover):not(.checked) .actions .action-export,
+.entry:not(:hover):not(.checked) .actions .action-gen-csr {
   display: none;
 }
 
@@ -724,7 +752,10 @@ body.metro-style .btn:not(.icon).default {
 body.metro-style .login .btn:not(.icon),
 body.metro-style .setpin .btn:not(.icon),
 body.metro-style .changepin .btn:not(.icon),
-body.metro-style .personal-info .btn:not(.icon),
+body.metro-style .get-label .btn:not(.icon),
+body.metro-style .get-x509-req-info .btn:not(.icon),
+body.metro-style .import-key .btn:not(.icon),
+body.metro-style .get-key-info .btn:not(.icon),
 body.metro-style .getpw .btn:not(.icon),
 body.metro-style .unblock .btn:not(.icon),
 body.metro-style .wizard-bottom .btn:not(.icon) {
@@ -781,14 +812,16 @@ body.metro-style .btn:not(.icon):hover {
 }
 
 body.metro-style input[type=text]:hover,
-body.metro-style input[type=password]:hover {
+body.metro-style input[type=password]:hover, 
+body.metro-style select:hover {
   border-color: rgba(0, 0, 0, 0.44);
 }
 
 body.metro-style input[type=text],
-body.metro-style input[type=password] {
+body.metro-style input[type=password],
+body.metro-style select {
   width: 300px;
-  height: 1.571em;
+  /*height: 1.571em;*/
   margin-bottom: 7px;
 }
 
@@ -803,8 +836,19 @@ body.metro-style input[type=password] {
   background-color: rgba(255, 255, 255, 0.8);
 }
 
+body.metro-style select {
+  /*width: 18.544em;*/
+  padding: 4px 8px;
+  font-family: "Segoe UI", "Segoe UI Web Regular", "Segoe UI Symbol", "Helvetica Neue", "BBAlpha Sans", "S60 Sans", Arial, "sans-serif";
+  font-size: 100%;
+  color: #212121;
+  /*border: 1px solid rgba(0, 0, 0, 0.27);
+  background-color: rgba(255, 255, 255, 0.8);*/  
+}
+
 body.metro-style input[type=text]:focus,
-body.metro-style input[type=password]:focus {
+body.metro-style input[type=password]:focus, 
+body.metro-style select:focus {
   border-color: rgba(0, 0, 0, 0.64)
   outline: none;
 }
@@ -812,6 +856,15 @@ body.metro-style input[type=password]:focus {
 body.metro-style .modal-backdrop {
   opacity: 0.6;
   background-color: #ddd;
+}
+
+body.metro-style .dlg.export-x509 .btn:not(.icon) + .btn {
+  margin-left: 7px;
+}
+
+body.metro-style .dlg.export-x509 .btn:not(.icon) {
+  width: auto;
+  height: 32px;
 }
 
 body.metro-style .btn {
@@ -828,10 +881,22 @@ body.metro-style .modal .btn.default {
   background-color: white;
 }
 
-.modal-body {
+.modal-header {
+  padding: 15px 15px 0;
+}
+
+.modal-footer {
+  padding: 5px 15px 15px;
+  text-align: left;
+}
+
+.dlg:not(.export-x509) .modal-body {
   text-indent: 15px;
-  padding: 15px;
   padding-bottom: 5px;
+}
+
+.modal-body {  
+  padding: 15px;
 }
 
 .modal {
@@ -841,6 +906,10 @@ body.metro-style .modal .btn.default {
   border: 1px solid #CCC;
   color: black;
   outline: 0 none;
+}
+
+body.metro-style .dlg.export-x509 input[type="text"], body.metro-style .dlg.export-x509 select {
+  width: 225px;
 }
 
 @media (max-width: 480px) {
@@ -864,6 +933,47 @@ body.metro-style .modal .btn.default {
   border-radius: 0;
   box-shadow: none;
 }
+
+/* X509 */
+
+
+
+
+.x509-name, .validity {
+  margin-bottom: 15px;
+}
+
+.subject .header, 
+.issuer .header, 
+.validity .header {
+  font-weight: bolder;
+  font-style: italic;
+}
+
+.x509-entries {
+  margin-top: 5px;
+}
+
+.x509-entry {
+  margin-left: 10px;
+}
+
+.x509-entry div + div {
+  margin-top: 3px;
+}
+
+.x509-entry div {
+  display: inline-block;
+}
+
+.x509-entry-key {
+  font-weight: bold;
+  width: 120px;
+}
+
+
+
+/* X509 */
 
 
 /* Scroll */

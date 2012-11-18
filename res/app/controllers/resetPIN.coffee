@@ -9,6 +9,8 @@ class ResetPIN extends Wizard
 
   doSetPIN: (params) ->
     @log 'ResetPIN@doSetPIN'
+
+    @controller.fn.err = @controller.doSetPIN.err
     
     df = app.Loading()
     @delay (=> @controller.fn(params); df())

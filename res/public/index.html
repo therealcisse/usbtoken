@@ -30,6 +30,8 @@
 
   <script type="text/javascript" charset="utf-8">
 
+window.countries=[{name:'Afghanistan',code:'AF'},{name:'Åland Islands',code:'AX'},{name:'Albania',code:'AL'},{name:'Algeria',code:'DZ'},{name:'American Samoa',code:'AS'},{name:'AndorrA',code:'AD'},{name:'Angola',code:'AO'},{name:'Anguilla',code:'AI'},{name:'Antarctica',code:'AQ'},{name:'Antigua and Barbuda',code:'AG'},{name:'Argentina',code:'AR'},{name:'Armenia',code:'AM'},{name:'Aruba',code:'AW'},{name:'Australia',code:'AU'},{name:'Austria',code:'AT'},{name:'Azerbaijan',code:'AZ'},{name:'Bahamas',code:'BS'},{name:'Bahrain',code:'BH'},{name:'Bangladesh',code:'BD'},{name:'Barbados',code:'BB'},{name:'Belarus',code:'BY'},{name:'Belgium',code:'BE'},{name:'Belize',code:'BZ'},{name:'Benin',code:'BJ'},{name:'Bermuda',code:'BM'},{name:'Bhutan',code:'BT'},{name:'Bolivia',code:'BO'},{name:'Bosnia and Herzegovina',code:'BA'},{name:'Botswana',code:'BW'},{name:'Bouvet Island',code:'BV'},{name:'Brazil',code:'BR'},{name:'British Indian Ocean Territory',code:'IO'},{name:'Brunei Darussalam',code:'BN'},{name:'Bulgaria',code:'BG'},{name:'Burkina Faso',code:'BF'},{name:'Burundi',code:'BI'},{name:'Cambodia',code:'KH'},{name:'Cameroon',code:'CM'},{name:'Canada',code:'CA'},{name:'Cape Verde',code:'CV'},{name:'Cayman Islands',code:'KY'},{name:'Central African Republic',code:'CF'},{name:'Chad',code:'TD'},{name:'Chile',code:'CL'},{name:'China',code:'CN'},{name:'Christmas Island',code:'CX'},{name:'Cocos (Keeling) Islands',code:'CC'},{name:'Colombia',code:'CO'},{name:'Comoros',code:'KM'},{name:'Congo',code:'CG'},{name:'Congo, The Democratic Republic of the',code:'CD'},{name:'Cook Islands',code:'CK'},{name:'Costa Rica',code:'CR'},{name:'Cote D\'Ivoire',code:'CI'},{name:'Croatia',code:'HR'},{name:'Cuba',code:'CU'},{name:'Cyprus',code:'CY'},{name:'Czech Republic',code:'CZ'},{name:'Denmark',code:'DK'},{name:'Djibouti',code:'DJ'},{name:'Dominica',code:'DM'},{name:'Dominican Republic',code:'DO'},{name:'Ecuador',code:'EC'},{name:'Egypt',code:'EG'},{name:'El Salvador',code:'SV'},{name:'Equatorial Guinea',code:'GQ'},{name:'Eritrea',code:'ER'},{name:'Estonia',code:'EE'},{name:'Ethiopia',code:'ET'},{name:'Falkland Islands (Malvinas)',code:'FK'},{name:'Faroe Islands',code:'FO'},{name:'Fiji',code:'FJ'},{name:'Finland',code:'FI'},{name:'France',code:'FR'},{name:'French Guiana',code:'GF'},{name:'French Polynesia',code:'PF'},{name:'French Southern Territories',code:'TF'},{name:'Gabon',code:'GA'},{name:'Gambia',code:'GM'},{name:'Georgia',code:'GE'},{name:'Germany',code:'DE'},{name:'Ghana',code:'GH'},{name:'Gibraltar',code:'GI'},{name:'Greece',code:'GR'},{name:'Greenland',code:'GL'},{name:'Grenada',code:'GD'},{name:'Guadeloupe',code:'GP'},{name:'Guam',code:'GU'},{name:'Guatemala',code:'GT'},{name:'Guernsey',code:'GG'},{name:'Guinea',code:'GN'},{name:'Guinea-Bissau',code:'GW'},{name:'Guyana',code:'GY'},{name:'Haiti',code:'HT'},{name:'Heard Island and Mcdonald Islands',code:'HM'},{name:'Holy See (Vatican City State)',code:'VA'},{name:'Honduras',code:'HN'},{name:'Hong Kong',code:'HK'},{name:'Hungary',code:'HU'},{name:'Iceland',code:'IS'},{name:'India',code:'IN'},{name:'Indonesia',code:'ID'},{name:'Iran, Islamic Republic Of',code:'IR'},{name:'Iraq',code:'IQ'},{name:'Ireland',code:'IE'},{name:'Isle of Man',code:'IM'},{name:'Israel',code:'IL'},{name:'Italy',code:'IT'},{name:'Jamaica',code:'JM'},{name:'Japan',code:'JP'},{name:'Jersey',code:'JE'},{name:'Jordan',code:'JO'},{name:'Kazakhstan',code:'KZ'},{name:'Kenya',code:'KE'},{name:'Kiribati',code:'KI'},{name:'Korea, Democratic People\'S Republic of',code:'KP'},{name:'Korea, Republic of',code:'KR'},{name:'Kuwait',code:'KW'},{name:'Kyrgyzstan',code:'KG'},{name:'Lao People\'S Democratic Republic',code:'LA'},{name:'Latvia',code:'LV'},{name:'Lebanon',code:'LB'},{name:'Lesotho',code:'LS'},{name:'Liberia',code:'LR'},{name:'Libyan Arab Jamahiriya',code:'LY'},{name:'Liechtenstein',code:'LI'},{name:'Lithuania',code:'LT'},{name:'Luxembourg',code:'LU'},{name:'Macao',code:'MO'},{name:'Macedonia, The Former Yugoslav Republic of',code:'MK'},{name:'Madagascar',code:'MG'},{name:'Malawi',code:'MW'},{name:'Malaysia',code:'MY'},{name:'Maldives',code:'MV'},{name:'Mali',code:'ML'},{name:'Malta',code:'MT'},{name:'Marshall Islands',code:'MH'},{name:'Martinique',code:'MQ'},{name:'Mauritania',code:'MR'},{name:'Mauritius',code:'MU'},{name:'Mayotte',code:'YT'},{name:'Mexico',code:'MX'},{name:'Micronesia, Federated States of',code:'FM'},{name:'Moldova, Republic of',code:'MD'},{name:'Monaco',code:'MC'},{name:'Mongolia',code:'MN'},{name:'Montserrat',code:'MS'},{name:'Morocco',code:'MA'},{name:'Mozambique',code:'MZ'},{name:'Myanmar',code:'MM'},{name:'Namibia',code:'NA'},{name:'Nauru',code:'NR'},{name:'Nepal',code:'NP'},{name:'Netherlands',code:'NL'},{name:'Netherlands Antilles',code:'AN'},{name:'New Caledonia',code:'NC'},{name:'New Zealand',code:'NZ'},{name:'Nicaragua',code:'NI'},{name:'Niger',code:'NE'},{name:'Nigeria',code:'NG'},{name:'Niue',code:'NU'},{name:'Norfolk Island',code:'NF'},{name:'Northern Mariana Islands',code:'MP'},{name:'Norway',code:'NO'},{name:'Oman',code:'OM'},{name:'Pakistan',code:'PK'},{name:'Palau',code:'PW'},{name:'Palestinian Territory, Occupied',code:'PS'},{name:'Panama',code:'PA'},{name:'Papua New Guinea',code:'PG'},{name:'Paraguay',code:'PY'},{name:'Peru',code:'PE'},{name:'Philippines',code:'PH'},{name:'Pitcairn',code:'PN'},{name:'Poland',code:'PL'},{name:'Portugal',code:'PT'},{name:'Puerto Rico',code:'PR'},{name:'Qatar',code:'QA'},{name:'Reunion',code:'RE'},{name:'Romania',code:'RO'},{name:'Russian Federation',code:'RU'},{name:'RWANDA',code:'RW'},{name:'Saint Helena',code:'SH'},{name:'Saint Kitts and Nevis',code:'KN'},{name:'Saint Lucia',code:'LC'},{name:'Saint Pierre and Miquelon',code:'PM'},{name:'Saint Vincent and the Grenadines',code:'VC'},{name:'Samoa',code:'WS'},{name:'San Marino',code:'SM'},{name:'Sao Tome and Principe',code:'ST'},{name:'Saudi Arabia',code:'SA'},{name:'Senegal',code:'SN'},{name:'Serbia and Montenegro',code:'CS'},{name:'Seychelles',code:'SC'},{name:'Sierra Leone',code:'SL'},{name:'Singapore',code:'SG'},{name:'Slovakia',code:'SK'},{name:'Slovenia',code:'SI'},{name:'Solomon Islands',code:'SB'},{name:'Somalia',code:'SO'},{name:'South Africa',code:'ZA'},{name:'South Georgia and the South Sandwich Islands',code:'GS'},{name:'Spain',code:'ES'},{name:'Sri Lanka',code:'LK'},{name:'Sudan',code:'SD'},{name:'Suriname',code:'SR'},{name:'Svalbard and Jan Mayen',code:'SJ'},{name:'Swaziland',code:'SZ'},{name:'Sweden',code:'SE'},{name:'Switzerland',code:'CH'},{name:'Syrian Arab Republic',code:'SY'},{name:'Taiwan, Province of China',code:'TW'},{name:'Tajikistan',code:'TJ'},{name:'Tanzania, United Republic of',code:'TZ'},{name:'Thailand',code:'TH'},{name:'Timor-Leste',code:'TL'},{name:'Togo',code:'TG'},{name:'Tokelau',code:'TK'},{name:'Tonga',code:'TO'},{name:'Trinidad and Tobago',code:'TT'},{name:'Tunisia',code:'TN'},{name:'Turkey',code:'TR'},{name:'Turkmenistan',code:'TM'},{name:'Turks and Caicos Islands',code:'TC'},{name:'Tuvalu',code:'TV'},{name:'Uganda',code:'UG'},{name:'Ukraine',code:'UA'},{name:'United Arab Emirates',code:'AE'},{name:'United Kingdom',code:'GB'},{name:'United States',code:'US'},{name:'United States Minor Outlying Islands',code:'UM'},{name:'Uruguay',code:'UY'},{name:'Uzbekistan',code:'UZ'},{name:'Vanuatu',code:'VU'},{name:'Venezuela',code:'VE'},{name:'Viet Nam',code:'VN'},{name:'Virgin Islands, British',code:'VG'},{name:'Virgin Islands, U.S.',code:'VI'},{name:'Wallis and Futuna',code:'WF'},{name:'Western Sahara',code:'EH'},{name:'Yemen',code:'YE'},{name:'Zambia',code:'ZM'},{name:'Zimbabwe',code:'ZW'}];  
+
     for(var winPath in require.modules) {
       path = winPath.replace(/\\/g, '/'); 
       path = path.match('/node_modules/') ? path.split('/node_modules/')[1] : path;
@@ -47,9 +49,25 @@
   </script>
   <script src="/jquery-ui-1.8.23.custom.min.js" type="text/javascript" charset="utf-8"></script>
   <script src="/bootstrap.min.js" type="text/javascript" charset="utf-8"></script>
+  <!-- <script src="/base64.js" type="text/javascript" charset="utf-8"></script> -->
 
 
   <script type="text/javascript" charset="utf-8">
+
+    function encode_utf8(s) {
+      return unescape(encodeURIComponent(s));
+    }
+
+    function decode_utf8(s) {
+      return decodeURIComponent(escape(s));
+    }
+
+    function truncate(word, max, trail) {
+      trail || (trail = '...');
+      var len = word.length;
+      if(len <= max) return word;
+      return word.substring(0, max - trail.length) + trail;
+    }
 
     /**
      * Enables or disables any matching elements.
@@ -67,6 +85,247 @@
     exports = this;
     jQuery(function($){
 
+      var _ticksTo1970 = (((1970 - 1) * 365 + Math.floor(1970 / 4) - Math.floor(1970 / 100) + Math.floor(1970 / 400)) * 24 * 60 * 60 * 10000000);   
+
+      function _daylightSavingAdjust(date) {
+        if (!date) return null;
+        date.setHours(date.getHours() > 12 ? date.getHours() + 2 : 0);
+        return date;
+      }     
+
+      function _getDaysInMonth(year, month) {
+        return 32 - _daylightSavingAdjust(new Date(year, month, 32)).getDate();
+      }     
+
+      var _defaults = { // Global defaults for all the date picker instances
+        monthNames: ['January','February','March','April','May','June',
+          'July','August','September','October','November','December'], // Names of months for drop-down and formatting
+        monthNamesShort: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'], // For formatting
+        dayNames: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'], // For formatting
+        dayNamesShort: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'], // For formatting
+        dayNamesMin: ['Su','Mo','Tu','We','Th','Fr','Sa'], // Column headings for days starting at Sunday
+        shortYearCutoff: '+10', // Short year values < this are in the current century,
+      // > this are in the previous century,
+      // string value starting with '+' for current year + value
+      };      
+
+      $.formatDate = function formatDate(format, date, settings) {
+        if (!date)
+          return '';
+        var dayNamesShort = (settings ? settings.dayNamesShort : null) || _defaults.dayNamesShort;
+        var dayNames = (settings ? settings.dayNames : null) || _defaults.dayNames;
+        var monthNamesShort = (settings ? settings.monthNamesShort : null) || _defaults.monthNamesShort;
+        var monthNames = (settings ? settings.monthNames : null) || _defaults.monthNames;
+        // Check whether a format character is doubled
+        var lookAhead = function(match) {
+          var matches = (iFormat + 1 < format.length && format.charAt(iFormat + 1) == match);
+          if (matches)
+            iFormat++;
+          return matches;
+        };
+        // Format a number, with leading zero if necessary
+        var formatNumber = function(match, value, len) {
+          var num = '' + value;
+          if (lookAhead(match))
+            while (num.length < len)
+              num = '0' + num;
+          return num;
+        };
+        // Format a name, short or long as requested
+        var formatName = function(match, value, shortNames, longNames) {
+          return (lookAhead(match) ? longNames[value] : shortNames[value]);
+        };
+        var output = '';
+        var literal = false;
+        if (date)
+          for (var iFormat = 0; iFormat < format.length; iFormat++) {
+            if (literal)
+              if (format.charAt(iFormat) == "'" && !lookAhead("'"))
+                literal = false;
+              else
+                output += format.charAt(iFormat);
+            else
+              switch (format.charAt(iFormat)) {
+                case 'd':
+                  output += formatNumber('d', date.getDate(), 2);
+                  break;
+                case 'D':
+                  output += formatName('D', date.getDay(), dayNamesShort, dayNames);
+                  break;
+                case 'o':
+                  output += formatNumber('o',
+                    Math.round((new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime() - new Date(date.getFullYear(), 0, 0).getTime()) / 86400000), 3);
+                  break;
+                case 'm':
+                  output += formatNumber('m', date.getMonth() + 1, 2);
+                  break;
+                case 'M':
+                  output += formatName('M', date.getMonth(), monthNamesShort, monthNames);
+                  break;
+                case 'y':
+                  output += (lookAhead('y') ? date.getFullYear() :
+                    (date.getYear() % 100 < 10 ? '0' : '') + date.getYear() % 100);
+                  break;
+                case '@':
+                  output += date.getTime();
+                  break;
+                case '!':
+                  output += date.getTime() * 10000 + _ticksTo1970;
+                  break;
+                case "'":
+                  if (lookAhead("'"))
+                    output += "'";
+                  else
+                    literal = true;
+                  break;
+                default:
+                  output += format.charAt(iFormat);
+              }
+          }
+        return output;
+      };
+
+      $.parseDate = function parseDate(format, value, settings) {
+        if (format == null || value == null)
+          throw 'Invalid arguments';
+        value = (typeof value == 'object' ? value.toString() : value + '');
+        if (value == '')
+          return null;
+        var shortYearCutoff = (settings ? settings.shortYearCutoff : null) || _defaults.shortYearCutoff;
+        shortYearCutoff = (typeof shortYearCutoff != 'string' ? shortYearCutoff :
+            new Date().getFullYear() % 100 + parseInt(shortYearCutoff, 10));
+        var dayNamesShort = (settings ? settings.dayNamesShort : null) || _defaults.dayNamesShort;
+        var dayNames = (settings ? settings.dayNames : null) || _defaults.dayNames;
+        var monthNamesShort = (settings ? settings.monthNamesShort : null) || _defaults.monthNamesShort;
+        var monthNames = (settings ? settings.monthNames : null) || _defaults.monthNames;
+        var year = -1;
+        var month = -1;
+        var day = -1;
+        var doy = -1;
+        var literal = false;
+        // Check whether a format character is doubled
+        var lookAhead = function(match) {
+          var matches = (iFormat + 1 < format.length && format.charAt(iFormat + 1) == match);
+          if (matches)
+            iFormat++;
+          return matches;
+        };
+        // Extract a number from the string value
+        var getNumber = function(match) {
+          var isDoubled = lookAhead(match);
+          var size = (match == '@' ? 14 : (match == '!' ? 20 :
+            (match == 'y' && isDoubled ? 4 : (match == 'o' ? 3 : 2))));
+          var digits = new RegExp('^\\d{1,' + size + '}');
+          var num = value.substring(iValue).match(digits);
+          if (!num)
+            throw 'Missing number at position ' + iValue;
+          iValue += num[0].length;
+          return parseInt(num[0], 10);
+        };
+        // Extract a name from the string value and convert to an index
+        var getName = function(match, shortNames, longNames) {
+          var names = $.map(lookAhead(match) ? longNames : shortNames, function (v, k) {
+            return [ [k, v] ];
+          }).sort(function (a, b) {
+            return -(a[1].length - b[1].length);
+          });
+          var index = -1;
+          $.each(names, function (i, pair) {
+            var name = pair[1];
+            if (value.substr(iValue, name.length).toLowerCase() == name.toLowerCase()) {
+              index = pair[0];
+              iValue += name.length;
+              return false;
+            }
+          });
+          if (index != -1)
+            return index + 1;
+          else
+            throw 'Unknown name at position ' + iValue;
+        };
+        // Confirm that a literal character matches the string value
+        var checkLiteral = function() {
+          if (value.charAt(iValue) != format.charAt(iFormat))
+            throw 'Unexpected literal at position ' + iValue;
+          iValue++;
+        };
+        var iValue = 0;
+        for (var iFormat = 0; iFormat < format.length; iFormat++) {
+          if (literal)
+            if (format.charAt(iFormat) == "'" && !lookAhead("'"))
+              literal = false;
+            else
+              checkLiteral();
+          else
+            switch (format.charAt(iFormat)) {
+              case 'd':
+                day = getNumber('d');
+                break;
+              case 'D':
+                getName('D', dayNamesShort, dayNames);
+                break;
+              case 'o':
+                doy = getNumber('o');
+                break;
+              case 'm':
+                month = getNumber('m');
+                break;
+              case 'M':
+                month = getName('M', monthNamesShort, monthNames);
+                break;
+              case 'y':
+                year = getNumber('y');
+                break;
+              case '@':
+                var date = new Date(getNumber('@'));
+                year = date.getFullYear();
+                month = date.getMonth() + 1;
+                day = date.getDate();
+                break;
+              case '!':
+                var date = new Date((getNumber('!') - _ticksTo1970) / 10000);
+                year = date.getFullYear();
+                month = date.getMonth() + 1;
+                day = date.getDate();
+                break;
+              case "'":
+                if (lookAhead("'"))
+                  checkLiteral();
+                else
+                  literal = true;
+                break;
+              default:
+                checkLiteral();
+            }
+        }
+        if (iValue < value.length){
+          var extra = value.substr(iValue);
+          if (!/^\s+/.test(extra)) {
+            throw "Extra/unparsed characters found in date: " + extra;
+          }
+        }
+        if (year == -1)
+          year = new Date().getFullYear();
+        else if (year < 100)
+          year += new Date().getFullYear() - new Date().getFullYear() % 100 +
+            (year <= shortYearCutoff ? 0 : -100);
+        if (doy > -1) {
+          month = 1;
+          day = doy;
+          do {
+            var dim = _getDaysInMonth(year, month - 1);
+            if (day <= dim)
+              break;
+            month++;
+            day -= dim;
+          } while (true);
+        }
+        var date = _daylightSavingAdjust(new Date(year, month - 1, day));
+        if (date.getFullYear() != year || date.getMonth() + 1 != month || date.getDate() != day)
+          throw 'Invalid date'; // E.g. 31/02/00
+        return date;
+      };     
+
       var App = require("index");
       var cnt = 0;
 
@@ -79,7 +338,6 @@
           jQuery('#loading').hide();;
         };
       };
-
 
       app.view = new App({el: '#application'});
     });
@@ -102,7 +360,7 @@
     <div class="statusbar">
       <!-- <div class="copyright pull-left">©2012 Epsilon</div> -->
 
-      <div class="copyright pull-left"><span> Epsilon © 2012</span> · <a rel="dialog" href="#/setlang" title="Use Token Manager in another language.">English</a></div>      
+      <div class="copyright pull-left"><span> Epsilon © 2012</span> <!-- · <a rel="dialog" href="#/setlang" title="Use Token Manager in another language.">English</a> --></div>      
       
       <!-- <select class="locale pull-right">
         <option value="en_US">English</option>
@@ -117,6 +375,5 @@
 
 <img id="blank" src="data:image/gif;base64,R0lGODlhAQABAID/AMDAwAAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw=="/>
 <div id='loading'>Loading...</div>
-
 </body>
 </html>

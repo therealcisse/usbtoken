@@ -1,0 +1,28 @@
+<!-- <li class="entry" id='key-<%= @id %>'> -->
+
+	<label class="entry-box">
+		
+		<div class="checkbox">
+			<i class="icon-check"></i>
+			<i class="icon-check-empty"></i>
+		</div>
+		
+		<div class="title">
+			<a data-id="<%= @id %>" class="action-view" href="#/keys/<%= @id %>"><%= @label %></a>
+		</div>
+		
+		<div class="tags">
+	  </div>
+
+		<div class="actions">
+			<a title="Supprimer" class="action-delete"><i class="icon-trash"></i></a>
+			<a title="Exporter la cle" class="action-export"><i class="icon-download-alt"></i></a>
+			<a title="Afficher plus d'informations" class="action-view" href="#/key/<%= @id %>"><i class="icon-arrow-right"></i></a>
+		</div>
+
+	</label>
+
+<!-- </li> 
+
+<input type="checkbox" id="checkbox-<%= @id %>">
+-->

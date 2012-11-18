@@ -263,7 +263,7 @@
     <ClCompile Include="usbtoken\usbtoken.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="usbtoken\usbtoken.rc" />
+    <ResourceCompile Include="usbtoken\resources.rc" />
   </ItemGroup>
   <ItemGroup>
     <None Include="cefclient.gyp">

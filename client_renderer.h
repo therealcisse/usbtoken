@@ -12,10 +12,10 @@
 namespace client_renderer {
 
 // Message sent when the focused node changes.
-extern const char kFocusedNodeChangedMessage[];
-
-// Create the render delegate.
-void CreateRenderDelegates(ClientApp::RenderDelegateSet& delegates);
+//extern const char kFocusedNodeChangedMessage[];
+//
+//// Create the render delegate.
+//void CreateRenderDelegates(ClientApp::RenderDelegateSet& delegates);
 
 }  // namespace client_renderer
 

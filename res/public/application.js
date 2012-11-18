@@ -12315,7 +12315,7 @@ module.exports = jQuery;}, "D:/Users\\amadou\\Documents\\Visual Studio 2010\\Pro
 
     __extends(ChangePIN, _super);
 
-    ChangePIN.prototype.className = 'changepin';
+    ChangePIN.prototype.className = 'v-scroll changepin';
 
     function ChangePIN(args) {
       var _this = this;
@@ -12323,6 +12323,13 @@ module.exports = jQuery;}, "D:/Users\\amadou\\Documents\\Visual Studio 2010\\Pro
       this.bind('release', function() {
         return delete _this.app;
       });
+      this.doAction.err = function() {
+        _this.oldpin.val('');
+        _this.pin.val('');
+        _this.pin_confirm.val('');
+        _this.submitBtn.enable();
+        return _this.oldpin[0].focus();
+      };
       this.bind('setpin-error', function(msg) {
         return _this.app.alert({
           msg: msg,
@@ -12377,23 +12384,22 @@ module.exports = jQuery;}, "D:/Users\\amadou\\Documents\\Visual Studio 2010\\Pro
           msg: msg,
           closable: true
         });
-        this.submitBtn.enable();
+        this.doAction.err();
         return false;
       }
       df = app.Loading();
       this.delay((function() {
         this.doAction(params);
-        df();
-        return this.submitBtn.enable();
+        return df();
       }));
       return false;
     };
 
     ChangePIN.prototype.valid = function(oldpin, pin, pin_confirm) {
-      if (!(oldpin.length > this.minLength && oldpin.length < this.maxLength)) {
+      if (!(oldpin.length >= this.minLength && oldpin.length <= this.maxLength)) {
         return "Old PIN must be between " + this.minLength + " and " + this.maxLength + " caracters.";
       }
-      if (!(pin.length > this.minLength && pin.length < this.maxLength)) {
+      if (!(pin.length >= this.minLength && pin.length <= this.maxLength)) {
         return "New PIN must be between " + this.minLength + " and " + this.maxLength + " caracters.";
       }
       if (pin !== pin_confirm) {
@@ -12419,14 +12425,32 @@ module.exports = jQuery;}, "D:/Users\\amadou\\Documents\\Visual Studio 2010\\Pro
 
     __extends(Dlg, _super);
 
-    Dlg.prototype.className = 'dlg';
+    Dlg.prototype.className = 'dlg fade';
 
     function Dlg(args) {
-      var btn, _i, _len, _ref;
-      _ref = args.buttons;
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        btn = _ref[_i];
-        (this.events || (this.events = {}))["click #" + btn.id] = btn.fn;
+      if (args.buttons[0]) {
+        (this.events || (this.events = {}))["click #" + args.buttons[0].id] = function(evt) {
+          evt.preventDefault();
+          evt.stopPropagation();
+          args.buttons[0].fn(evt);
+          return false;
+        };
+      }
+      if (args.buttons[1]) {
+        (this.events || (this.events = {}))["click #" + args.buttons[1].id] = function(evt) {
+          evt.preventDefault();
+          evt.stopPropagation();
+          args.buttons[1].fn(evt);
+          return false;
+        };
+      }
+      if (args.buttons[2]) {
+        (this.events || (this.events = {}))["click #" + args.buttons[2].id] = function(evt) {
+          evt.preventDefault();
+          evt.stopPropagation();
+          args.buttons[2].fn(evt);
+          return false;
+        };
       }
       Dlg.__super__.constructor.apply(this, arguments);
     }
@@ -12443,6 +12467,111 @@ module.exports = jQuery;}, "D:/Users\\amadou\\Documents\\Visual Studio 2010\\Pro
   })(Spine.Controller);
 
   module.exports = Dlg;
+
+}).call(this);
+}, "controllers/get-label": function(exports, require, module) {(function() {
+  var GetLabel, Spine,
+    __hasProp = {}.hasOwnProperty,
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+  Spine = require('spine');
+
+  GetLabel = (function(_super) {
+
+    __extends(GetLabel, _super);
+
+    GetLabel.prototype.events = {
+      'submit form': 'submit',
+      'click form .cancel': 'cancel'
+    };
+
+    GetLabel.prototype.className = 'get-label v-scroll';
+
+    GetLabel.templ = require('views/get-label');
+
+    GetLabel.prototype.params = function() {
+      var cleaned,
+        _this = this;
+      cleaned = function(key) {
+        return (_this[key].val() || '').trim();
+      };
+      return {
+        "label": cleaned('label')
+      };
+    };
+
+    GetLabel.prototype.elements = {
+      "[name=label]": "label",
+      "[type=submit]": 'submitBtn'
+    };
+
+    function GetLabel(args) {
+      var _this = this;
+      GetLabel.__super__.constructor.apply(this, arguments);
+      this.optional || (this.optional = false);
+      this.bind('release', function() {
+        return delete _this.controller;
+      });
+      this.viewopts = {
+        title: this.title,
+        header: this.header,
+        hasCancel: this.controller.hasCancel
+      };
+      this.fn.err = function() {
+        return _this.delay((function() {
+          _this.submitBtn.enable();
+          return _this.label[0].focus();
+        }));
+      };
+    }
+
+    GetLabel.prototype.render = function() {
+      return this.html(GetLabel.templ(this.viewopts));
+    };
+
+    GetLabel.prototype.submit = function(e) {
+      var msg, params, _base,
+        _this = this;
+      this.submitBtn.enable(false);
+      e.preventDefault();
+      params = this.params();
+      if (!this.optional && (msg = GetLabel.valid(this, params))) {
+        this.controller.alert({
+          msg: msg,
+          closable: true
+        });
+        if (typeof (_base = this.fn).err === "function") {
+          _base.err();
+        }
+        return false;
+      }
+      this.delay(function() {
+        return _this.fn(params);
+      });
+      return false;
+    };
+
+    GetLabel.prototype.cancel = function(e) {
+      var _base;
+      e.preventDefault();
+      e.stopPropagation();
+      if (typeof (_base = this.controller).cancelled === "function") {
+        _base.cancelled(this);
+      }
+      return false;
+    };
+
+    GetLabel.valid = function(self, params) {
+      if (!params['label'].length) {
+        return "" + self.title + " is required.";
+      }
+    };
+
+    return GetLabel;
+
+  })(Spine.Controller);
+
+  module.exports = GetLabel;
 
 }).call(this);
 }, "controllers/get_pass": function(exports, require, module) {(function() {
@@ -12481,9 +12610,17 @@ module.exports = jQuery;}, "D:/Users\\amadou\\Documents\\Visual Studio 2010\\Pro
       this.bind('release', function() {
         return delete _this.controller;
       });
+      this.fn.err = function() {
+        _this.pw.val('');
+        _this.pw_confirm.val('');
+        _this.submitBtn.enable();
+        return _this.delay(function() {
+          return _this.pw[0].focus();
+        });
+      };
     }
 
-    GetPass.viewopts = function(type, title) {
+    GetPass.viewopts = function(self, type, title) {
       var _this = this;
       return Façade.GetPINOpts(function(opts) {
         switch (type) {
@@ -12493,7 +12630,8 @@ module.exports = jQuery;}, "D:/Users\\amadou\\Documents\\Visual Studio 2010\\Pro
               label: 'PIN',
               actionLabel: 'Ok',
               minLength: opts['minlen'],
-              maxLength: opts['maxlen']
+              maxLength: opts['maxlen'],
+              hasCancel: self.controller.hasCancel
             };
           case GetPass.PUK:
             return {
@@ -12501,7 +12639,8 @@ module.exports = jQuery;}, "D:/Users\\amadou\\Documents\\Visual Studio 2010\\Pro
               label: 'PUK',
               actionLabel: 'Ok',
               minLength: opts['minlen'],
-              maxLength: opts['maxlen']
+              maxLength: opts['maxlen'],
+              hasCancel: self.controller.hasCancel
             };
         }
       });
@@ -12510,7 +12649,7 @@ module.exports = jQuery;}, "D:/Users\\amadou\\Documents\\Visual Studio 2010\\Pro
     GetPass.templ = require('views/getpass');
 
     GetPass.prototype.render = function() {
-      return this.html(GetPass.templ(GetPass.viewopts(this.type, this.title)));
+      return this.html(GetPass.templ(GetPass.viewopts(this, this.type, this.title)));
     };
 
     GetPass.prototype.params = function() {
@@ -12530,7 +12669,7 @@ module.exports = jQuery;}, "D:/Users\\amadou\\Documents\\Visual Studio 2010\\Pro
       return Façade.GetPINOpts(function(opts) {
         switch (params.type) {
           case GetPass.PIN:
-            if (!(params.pw.length > opts['minlen'] && params.pw.length < opts['maxlen'])) {
+            if (!(params.pw.length >= opts['minlen'] && params.pw.length <= opts['maxlen'])) {
               return "PIN must be between " + opts['minlen'] + " and " + opts['maxlen'] + " caracters.";
             }
             if (params.pw !== params.pw_confirm) {
@@ -12538,7 +12677,7 @@ module.exports = jQuery;}, "D:/Users\\amadou\\Documents\\Visual Studio 2010\\Pro
             }
             break;
           case GetPass.PUK:
-            if (!(params.pw.length > opts['minlen'] && params.pw.length < opts['maxlen'])) {
+            if (!(params.pw.length >= opts['minlen'] && params.pw.length <= opts['maxlen'])) {
               return "PUK must be between " + opts['minlen'] + " and " + opts['maxlen'] + " caracters.";
             }
             if (params.pw !== params.pw_confirm) {
@@ -12552,7 +12691,9 @@ module.exports = jQuery;}, "D:/Users\\amadou\\Documents\\Visual Studio 2010\\Pro
       var _base;
       evt.preventDefault();
       evt.stopPropagation();
-      this.delay(typeof (_base = this.controller).cancelled === "function" ? _base.cancelled(this) : void 0);
+      if (typeof (_base = this.controller).cancelled === "function") {
+        _base.cancelled(this);
+      }
       return false;
     };
 
@@ -12566,7 +12707,7 @@ module.exports = jQuery;}, "D:/Users\\amadou\\Documents\\Visual Studio 2010\\Pro
           msg: msg,
           closable: true
         });
-        this.submitBtn.enable();
+        this.fn.err();
         return false;
       }
       _ref = this.vars;
@@ -12577,7 +12718,6 @@ module.exports = jQuery;}, "D:/Users\\amadou\\Documents\\Visual Studio 2010\\Pro
       params[this.type] = params['pw'];
       delete params['pw'];
       this.fn(params);
-      this.submitBtn.enable();
       return false;
     };
 
@@ -12589,13 +12729,13 @@ module.exports = jQuery;}, "D:/Users\\amadou\\Documents\\Visual Studio 2010\\Pro
 
 }).call(this);
 }, "controllers/init": function(exports, require, module) {(function() {
-  var Façade, GetPass, Init, Login, PersonalInfo, Spine, Wizard,
+  var Façade, GetLabel, GetPass, Init, Login, Spine, Wizard,
     __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
   Spine = require('spine');
 
-  PersonalInfo = require('controllers/personalinfo');
+  GetLabel = require('controllers/get-label');
 
   Wizard = require('lib/wizard');
 
@@ -12609,8 +12749,12 @@ module.exports = jQuery;}, "D:/Users\\amadou\\Documents\\Visual Studio 2010\\Pro
 
     __extends(Init, _super);
 
-    Init.prototype.doSetPersonalInfo = function(params) {
-      this.log("doSetPersonalInfo#" + params);
+    Init.HEADER = 'Initialize Token';
+
+    Init.prototype.hasCancel = true;
+
+    Init.prototype.doSetLabel = function(params) {
+      this.log("doSetLabel#" + params);
       return this.controller.next(this, params);
     };
 
@@ -12623,9 +12767,10 @@ module.exports = jQuery;}, "D:/Users\\amadou\\Documents\\Visual Studio 2010\\Pro
       var df,
         _this = this;
       this.log("setPUK" + params.puk);
+      this.controller.fn.err = this.controller.doSetPUK.err;
       df = app.Loading();
       return this.delay((function() {
-        _this.controller.fn(params.pin, params.puk, params.fullName);
+        _this.controller.fn(params.pin, params.puk, params['label']);
         return df();
       }));
     };
@@ -12643,11 +12788,13 @@ module.exports = jQuery;}, "D:/Users\\amadou\\Documents\\Visual Studio 2010\\Pro
       window.jQuery(window).bind('beforeunload', this.unRenderMsg);
       this.steps = [
         {
-          Clss: PersonalInfo,
+          Clss: GetLabel,
           args: {
-            name: 'personal-info',
+            name: 'get-label',
             controller: this,
-            fn: this.doSetPersonalInfo
+            header: Init.HEADER,
+            title: "Token Name",
+            fn: this.doSetLabel
           }
         }, {
           Clss: GetPass,
@@ -12668,7 +12815,7 @@ module.exports = jQuery;}, "D:/Users\\amadou\\Documents\\Visual Studio 2010\\Pro
         }
       ];
       this.app.delay(function() {
-        return Façade.SetWindowText('Initialize');
+        return Façade.SetWindowText();
       });
     }
 
@@ -12680,7 +12827,7 @@ module.exports = jQuery;}, "D:/Users\\amadou\\Documents\\Visual Studio 2010\\Pro
 
 }).call(this);
 }, "controllers/keyMgr": function(exports, require, module) {(function() {
-  var Façade, KeyMgr, Spine, Token,
+  var Façade, GetLabel, KeyMgr, Spine, Token, Wizard, emailRegex,
     __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
     __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -12691,6 +12838,12 @@ module.exports = jQuery;}, "D:/Users\\amadou\\Documents\\Visual Studio 2010\\Pro
 
   Façade = require('lib/façade');
 
+  Wizard = require('lib/wizard');
+
+  GetLabel = require('controllers/get-label');
+
+  emailRegex = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,6}$/i;
+
   KeyMgr = (function() {
 
     function KeyMgr() {}
@@ -12699,48 +12852,104 @@ module.exports = jQuery;}, "D:/Users\\amadou\\Documents\\Visual Studio 2010\\Pro
 
   })();
 
-  KeyMgr.KeyView = (function(_super) {
+  KeyMgr.X509View = (function(_super) {
 
-    __extends(KeyView, _super);
+    __extends(X509View, _super);
 
-    KeyView.prototype.logPrefix = '(KeyView)';
+    X509View.prototype.logPrefix = '(X509View)';
 
-    KeyView.Toolsbar = (function(_super1) {
+    X509View.Toolsbar = (function(_super1) {
 
       __extends(Toolsbar, _super1);
 
-      Toolsbar.prototype.logPrefix = '(KeyView.Toolsbar)';
+      Toolsbar.prototype.logPrefix = '(X509View.Toolsbar)';
 
       Toolsbar.prototype.className = 'toolsbar toolsbar-key';
 
       Toolsbar.prototype.events = {
-        'click .purge': 'purge',
-        'click .export': 'export'
+        'click .purge': 'purgeKey',
+        'click .export': 'exportX509'
       };
 
       function Toolsbar() {
+        this.doExportX509 = __bind(this.doExportX509, this);
+
         this.render = __bind(this.render, this);
         Toolsbar.__super__.constructor.apply(this, arguments);
         this.bind('release', function() {
-          return delete this.app;
+          return delete this.controller;
         });
       }
 
-      Toolsbar.templ = require('views/key-mgr/toolsbar.key');
+      Toolsbar.templ = require("views/key-mgr/toolsbar.X509");
 
       Toolsbar.prototype.render = function() {
-        return this.html(Toolsbar.templ());
+        return this.html(X509View.Toolsbar.templ());
       };
 
-      Toolsbar.prototype.purge = function(evt) {
-        this.log('purge');
+      Toolsbar.prototype.purgeKey = function(evt) {
+        var df,
+          _this = this;
+        this.log("purgeKey:@delete:" + this.id);
+        df = app.Loading();
+        evt.stopPropagation();
         evt.preventDefault();
-        return false;
+        return Façade.DelX509(this.id, function(ok) {
+          df();
+          if (!ok) {
+            _this.controller.app.alert({
+              msg: "An error occured while deleting the certificate, please try again",
+              closable: true
+            });
+            return false;
+          }
+          _this.controller.app.info({
+            msg: "The X509.Certificate was successfully deleted",
+            closable: true
+          });
+          _this.controller.app.delay((function() {
+            return this.navigate("#/keys");
+          }), 100);
+          return false;
+        });
       };
 
-      Toolsbar.prototype["export"] = function(evt) {
-        this.log('export');
+      Toolsbar.prototype.doExportX509 = function(params) {
+        var df,
+          _this = this;
+        this.log("X509Certificate:@doExportX509:" + this.controller._key.id);
+        df = app.Loading();
+        return Façade.ExportX509(this.id, params.fileName, params.format, function(ok) {
+          df();
+          if (!ok) {
+            _this.controller.app.alert({
+              msg: "Failed to export the certificate, please try again",
+              closable: true
+            });
+            _this.doExportX509.err();
+            return false;
+          }
+          _this.controller.app.info({
+            msg: "The X509 Certificate was successfully exported",
+            closable: true
+          });
+          _this.doExportX509.close();
+          return false;
+        });
+      };
+
+      Toolsbar.prototype.exportX509 = function(evt) {
+        this.log("X509Certificate:@exportX509:" + this.id);
+        evt.stopPropagation();
         evt.preventDefault();
+        window.jQuery((new KeyMgr.KeyList.X509Certificate.ExportForm({
+          key: this.controller._key,
+          controller: this.controller.app,
+          close: (function(f) {
+            return f.el.closest('.dlg').modal('hide');
+          }),
+          fn: this.doExportX509
+        })).render().el).modal({});
         return false;
       };
 
@@ -12748,31 +12957,43 @@ module.exports = jQuery;}, "D:/Users\\amadou\\Documents\\Visual Studio 2010\\Pro
 
     })(Spine.Controller);
 
-    KeyView.prototype.className = 'key-view v-scroll';
+    X509View.prototype.className = 'key-view v-scroll';
 
-    KeyView.templ = require('views/key-mgr/key');
+    X509View.tmpl = require('views/key-mgr/x509-certificate');
 
-    KeyView.prototype.render = function() {
-      var _this = this;
-      this.log("KeyView@rendered:" + this.id);
-      return Façade.getKey(this.id, function(key, err) {
+    X509View.prototype.render = function() {
+      this.key.html('<div class="spinner" style="margin: 3.5em 2em;"></div>');
+      return this;
+    };
+
+    X509View.prototype.rendered = function() {
+      var df,
+        _this = this;
+      this.log("X509View@rendered:" + this.id);
+      df = app.Loading();
+      return Façade["Get" + this.type](this.id, function(key, err) {
+        df();
+        _this._key = key;
         if (err) {
           return _this;
         }
         _this.log("Found key: " + key.id);
-        _this.key.html(KeyView.templ(key));
+        _this.key.html(X509View.tmpl(key));
         return _this;
       });
     };
 
-    function KeyView() {
+    function X509View() {
+      this.rendered = __bind(this.rendered, this);
+
       this.render = __bind(this.render, this);
-      KeyView.__super__.constructor.apply(this, arguments);
-      this.toolsbar = new KeyView.Toolsbar({
-        app: this.app
+      X509View.__super__.constructor.apply(this, arguments);
+      this.toolsbar = new X509View.Toolsbar({
+        id: this.id,
+        controller: this
       });
       this.key = new Spine.Controller({
-        className: 'key'
+        className: 'v-scroll key'
       });
       this.bind('release', function() {
         this.toolsbar.release();
@@ -12785,7 +13006,7 @@ module.exports = jQuery;}, "D:/Users\\amadou\\Documents\\Visual Studio 2010\\Pro
       });
     }
 
-    return KeyView;
+    return X509View;
 
   }).call(this, Spine.Controller);
 
@@ -12795,15 +13016,26 @@ module.exports = jQuery;}, "D:/Users\\amadou\\Documents\\Visual Studio 2010\\Pro
 
     KeyList.prototype.logPrefix = '(KeyList)';
 
-    KeyList.prototype.selectKeys = [];
+    KeyList.prototype.selectedKeys = [];
+
+    KeyList.prototype.getSelectedKeys = function() {
+      return this.selectedKeys;
+    };
 
     function KeyList() {
+      this.rendered = __bind(this.rendered, this);
+
       this.render = __bind(this.render, this);
 
+      this.addKeys = __bind(this.addKeys, this);
+
       this.selectionChanged = __bind(this.selectionChanged, this);
+
+      this.getSelectedKeys = __bind(this.getSelectedKeys, this);
       KeyList.__super__.constructor.apply(this, arguments);
       this.toolsbar = new KeyList.Toolsbar({
-        app: this.app
+        app: this.app,
+        keyList: this
       });
       this.keys = new Spine.Controller({
         className: 'keys'
@@ -12822,31 +13054,66 @@ module.exports = jQuery;}, "D:/Users\\amadou\\Documents\\Visual Studio 2010\\Pro
     }
 
     KeyList.prototype.selectionChanged = function(key, hasSelection) {
-      this.log('KeyList.Toolsbar#selectionChanged');
-      if (hasSelection) {
-        this.selectKeys.push(key);
-      } else {
-        this.selectKeys.splice(this.selectKeys.indexOf(key), 1);
+      if (hasSelection == null) {
+        hasSelection = true;
       }
-      return this.el.toggleClass('has-selection', this.selectKeys.length > 0);
+      this.log('KeyList.Toolsbar#selectionChanged');
+      if (key) {
+        if (hasSelection) {
+          this.selectedKeys.push(key);
+        } else {
+          this.selectedKeys.splice(this.selectedKeys.indexOf(key), 1);
+        }
+      }
+      return this.el.toggleClass('has-selection', this.selectedKeys.length > 0);
     };
 
     KeyList.prototype.className = 'key-list v-scroll';
 
+    KeyList.prototype.addKeys = function(keys) {
+      var key, _i, _len, _results;
+      _results = [];
+      for (_i = 0, _len = keys.length; _i < _len; _i++) {
+        key = keys[_i];
+        _results.push(this.keys.append((new KeyMgr.KeyList[key.type]({
+          key: key,
+          app: this.app,
+          keyList: this
+        })).render()));
+      }
+      return _results;
+    };
+
     KeyList.prototype.render = function() {
-      var _this = this;
       this.log('KeyList@rendered');
-      return Façade.getKeys(function(keys) {
-        var key, _i, _len;
-        for (_i = 0, _len = keys.length; _i < _len; _i++) {
-          key = keys[_i];
-          _this.keys.append(new KeyList.Key({
-            key: key,
-            app: _this.app
-          }).render());
-        }
-        return _this;
-      });
+      this.keys.html('<div class="spinner" style="margin: 3.5em 2em;"></div>');
+      return this;
+    };
+
+    KeyList.prototype.rendered = function() {
+      this.selectedKeys = [];
+      this.selectionChanged();
+      return this.delay((function() {
+        var _this = this;
+        return Façade.GetCerts(function(keys) {
+          if (keys.length) {
+            _this.$('.spinner').remove();
+          }
+          _this.addKeys(keys);
+          return _this.delay((function() {
+            var _this = this;
+            return Façade.GetPrKeys(function(keys) {
+              if (keys.length) {
+                _this.$('.spinner').remove();
+              }
+              _this.addKeys(keys);
+              if (keys.length === 0 && _this.$('.spinner').length) {
+                return _this.keys.html('<div style="margin: 3.5em 2em;">No keys founds :-(</div>');
+              }
+            });
+          }), 10);
+        });
+      }), 10);
     };
 
     KeyList.Key = (function(_super1) {
@@ -12855,12 +13122,9 @@ module.exports = jQuery;}, "D:/Users\\amadou\\Documents\\Visual Studio 2010\\Pro
 
       Key.prototype.events = {
         'click': 'toggle',
-        'click .action-delete': 'purge',
         'click .action-export': 'export',
         'click .action-view': 'view'
       };
-
-      Key.prototype.className = 'key entry';
 
       Key.prototype.tag = 'li';
 
@@ -12868,13 +13132,6 @@ module.exports = jQuery;}, "D:/Users\\amadou\\Documents\\Visual Studio 2010\\Pro
         evt.preventDefault();
         evt.stopPropagation();
         this.trigger("selectionChanged", this.key, (this.checked = !this.checked, this.checked));
-        return false;
-      };
-
-      Key.prototype.purge = function(evt) {
-        evt.preventDefault();
-        evt.stopPropagation();
-        this.log("delete:" + this.key.id);
         return false;
       };
 
@@ -12888,7 +13145,7 @@ module.exports = jQuery;}, "D:/Users\\amadou\\Documents\\Visual Studio 2010\\Pro
       Key.prototype.view = function(evt) {
         evt.preventDefault();
         evt.stopPropagation();
-        this.navigate("#/key/" + this.key.id);
+        this.navigate("#/" + this.key.type + "/" + this.key.id);
         return false;
       };
 
@@ -12907,19 +13164,293 @@ module.exports = jQuery;}, "D:/Users\\amadou\\Documents\\Visual Studio 2010\\Pro
           }
         });
         this.bind('release', function() {
-          return delete _this.app;
+          delete _this.app;
+          return delete _this.keyList;
         });
       }
-
-      Key.templ = require('views/key-mgr/_key');
-
-      Key.prototype.render = function() {
-        return this.html(Key.templ(this.key));
-      };
 
       return Key;
 
     })(Spine.Controller);
+
+    KeyList.PrKey = (function(_super1) {
+
+      __extends(PrKey, _super1);
+
+      PrKey.prototype.events = {
+        'click': 'toggle',
+        'click .action-delete': 'purgePrKey',
+        'click .action-gen-csr': 'genCSR'
+      };
+
+      PrKey.prototype.className = 'key prkey entry';
+
+      function PrKey() {
+        this.render = __bind(this.render, this);
+        PrKey.__super__.constructor.apply(this, arguments);
+      }
+
+      PrKey.templ = require('views/key-mgr/_prkey');
+
+      PrKey.prototype.render = function() {
+        return this.html(this.constructor.templ(this.key));
+      };
+
+      PrKey.prototype.purgePrKey = function(evt) {
+        var df,
+          _this = this;
+        this.log("PrKey:@delete:" + this.key.id);
+        df = app.Loading();
+        evt.stopPropagation();
+        evt.preventDefault();
+        return Façade.DelPrKey(this.key.id, function(ok) {
+          df();
+          if (!ok) {
+            _this.app.alert({
+              msg: "An error occured while deleting the key, please try again",
+              closable: true
+            });
+            return false;
+          }
+          _this.keyList.selectionChanged(_this.key, false);
+          _this.el.remove();
+          _this.app.info({
+            msg: "The Private Key was successfully deleted",
+            closable: true
+          });
+          return false;
+        });
+      };
+
+      PrKey.prototype.genCSR = function(evt) {
+        evt.stopPropagation();
+        evt.preventDefault();
+        this.log("PrKey.genCSR");
+        this.navigate("#/gen-csr/" + this.key.id);
+        return false;
+      };
+
+      return PrKey;
+
+    })(KeyList.Key);
+
+    KeyList.PubKey = (function(_super1) {
+
+      __extends(PubKey, _super1);
+
+      PubKey.prototype.className = 'key pubkey entry';
+
+      function PubKey() {
+        this.render = __bind(this.render, this);
+        PubKey.__super__.constructor.apply(this, arguments);
+      }
+
+      PubKey.templ = require('views/key-mgr/_pubkey');
+
+      PubKey.prototype.render = function() {
+        return this.html(this.constructor.templ(this.key));
+      };
+
+      return PubKey;
+
+    })(KeyList.Key);
+
+    KeyList.X509Certificate = (function(_super1) {
+
+      __extends(X509Certificate, _super1);
+
+      X509Certificate.prototype.events = {
+        'click': 'toggle',
+        'click .action-delete': 'purgeX509',
+        'click .action-export': 'exportX509',
+        'click .action-view': 'view'
+      };
+
+      X509Certificate.prototype.className = 'key x509-certificate entry';
+
+      function X509Certificate() {
+        this.doExportX509 = __bind(this.doExportX509, this);
+
+        this.render = __bind(this.render, this);
+        X509Certificate.__super__.constructor.apply(this, arguments);
+      }
+
+      X509Certificate.templ = require('views/key-mgr/_x509-certificate');
+
+      X509Certificate.prototype.render = function() {
+        return this.html(this.constructor.templ(this.key));
+      };
+
+      X509Certificate.prototype.doExportX509 = function(params) {
+        var df,
+          _this = this;
+        this.log("X509Certificate:@doExportX509:" + this.key.id);
+        df = app.Loading();
+        return Façade.ExportX509(this.key.id, params.fileName, params.format, function(ok) {
+          df();
+          if (!ok) {
+            _this.app.alert({
+              msg: "Failed to export the certificate, please try again",
+              closable: true
+            });
+            _this.doExportX509.err();
+            return false;
+          }
+          _this.app.info({
+            msg: "The X509 Certificate was successfully exported",
+            closable: true
+          });
+          _this.doExportX509.close();
+          return false;
+        });
+      };
+
+      X509Certificate.prototype.exportX509 = function(evt) {
+        this.log("X509Certificate:@exportX509:" + this.key.id);
+        evt.stopPropagation();
+        evt.preventDefault();
+        window.jQuery((new this.constructor.ExportForm({
+          key: this.key,
+          controller: this.app,
+          close: (function(f) {
+            return f.el.closest('.dlg').modal('hide');
+          }),
+          fn: this.doExportX509
+        })).render().el).modal({});
+        return false;
+      };
+
+      X509Certificate.ExportForm = (function(_super2) {
+
+        __extends(ExportForm, _super2);
+
+        ExportForm.prototype.className = 'export-x509 dlg fade';
+
+        ExportForm.templ = require('views/key-mgr/export_x509');
+
+        ExportForm.events = {
+          'submit form': 'submit',
+          'click form .cancel': 'cancel'
+        };
+
+        ExportForm.elements = {
+          "[name=fileName]": "fileName",
+          "[name=format]": "format",
+          "[type=submit]": 'submitBtn'
+        };
+
+        function ExportForm() {
+          var _this = this;
+          ExportForm.__super__.constructor.apply(this, arguments);
+          this.bind('release', function() {
+            return delete _this.controller;
+          });
+          this.viewopts = {
+            fileName: this.constructor.GetFileName(this.key.label)
+          };
+          this.fn.err = function() {
+            return _this.delay((function() {
+              _this.submitBtn.enable();
+              return _this.fileName[0].focus();
+            }));
+          };
+          this.fn.close = function() {
+            return _this.close(_this);
+          };
+        }
+
+        ExportForm.prototype.render = function() {
+          this.html(this.constructor.templ(this.viewopts));
+          return this;
+        };
+
+        ExportForm.prototype.params = function() {
+          var cleaned,
+            _this = this;
+          cleaned = function(key) {
+            return (_this[key].val() || '').trim();
+          };
+          return {
+            "fileName": cleaned('fileName'),
+            "format": cleaned('format')
+          };
+        };
+
+        ExportForm.prototype.submit = function(e) {
+          var msg, params, _base;
+          this.submitBtn.enable(false);
+          e.preventDefault();
+          params = this.params();
+          if (msg = this.constructor.valid(this, params)) {
+            this.controller.alert({
+              msg: msg,
+              closable: true
+            });
+            if (typeof (_base = this.fn).err === "function") {
+              _base.err();
+            }
+            return false;
+          }
+          this.delay(function() {
+            return this.fn(params);
+          });
+          return false;
+        };
+
+        ExportForm.prototype.cancel = function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          this.close(this);
+          return false;
+        };
+
+        ExportForm.valid = function(self, params) {
+          if (!params['fileName'].length) {
+            return "File Name is required.";
+          }
+        };
+
+        ExportForm.GetFileName = function(label) {
+          if (label.indexOf('/') === -1) {
+            return label;
+          }
+          return label;
+        };
+
+        return ExportForm;
+
+      })(Spine.Controller);
+
+      X509Certificate.prototype.purgeX509 = function(evt) {
+        var df,
+          _this = this;
+        this.log("X509Certificate:@delete:" + this.key.id);
+        df = app.Loading();
+        evt.stopPropagation();
+        evt.preventDefault();
+        Façade.DelX509(this.key.id, function(ok) {
+          df();
+          if (!ok) {
+            _this.app.alert({
+              msg: "An error occured while deleting the certificate, please try again",
+              closable: true
+            });
+            return false;
+          }
+          _this.keyList.selectionChanged(_this.key, false);
+          _this.el.remove();
+          _this.app.info({
+            msg: "The X509.Certificate was successfully deleted",
+            closable: true
+          });
+          return false;
+        });
+        return false;
+      };
+
+      return X509Certificate;
+
+    }).call(this, KeyList.Key);
 
     KeyList.Toolsbar = (function(_super1) {
 
@@ -12930,39 +13461,96 @@ module.exports = jQuery;}, "D:/Users\\amadou\\Documents\\Visual Studio 2010\\Pro
       Toolsbar.prototype.className = 'toolsbar toolsbar-keys';
 
       Toolsbar.prototype.events = {
-        'click .reload': 'reload',
-        'click .purge': 'purge',
-        'click .export': 'export'
+        'click .reload': 'reloadKeys',
+        'click .purge': 'purgeSelection',
+        'click .export': 'exportSelection'
       };
 
       function Toolsbar() {
         this.render = __bind(this.render, this);
         Toolsbar.__super__.constructor.apply(this, arguments);
         this.bind('release', function() {
-          return delete this.app;
+          delete this.app;
+          return delete this.keyList;
         });
       }
 
       Toolsbar.templ = require('views/key-mgr/toolsbar.keys');
 
-      Toolsbar.prototype.purge = function(evt) {
+      Toolsbar.prototype.purgeSelection = function(evt) {
+        var df, keys, removeKeys,
+          _this = this;
+        this.log("@purgeSelection:delete keys");
+        df = app.Loading();
         evt.preventDefault();
         evt.stopPropagation();
-        this.log("delete keys");
+        keys = this.keyList.getSelectedKeys();
+        removeKeys = function() {
+          var key;
+          if (!(key = keys[keys.length - 1])) {
+            return (df(), !_this.keyList.keys.$('.key').length ? _this.reloadKeys.apply(_this, [evt]) : void 0);
+          }
+          switch (key.type) {
+            case 'X509Certificate':
+              return Façade.DelX509(key.id, function(ok) {
+                if (ok) {
+                  _this.keyList.selectionChanged(key, false);
+                  jQuery("#key-" + key.id).remove();
+                  _this.app.info({
+                    msg: "The X509.Certificate <b>" + key.label + "</b> was successfully deleted",
+                    closable: true,
+                    duration: 300
+                  });
+                  return _this.delay((function() {
+                    return removeKeys();
+                  }), 100);
+                } else {
+                  _this.app.alert({
+                    msg: "The was an error while deleting <b>" + key.label + "</b>, please try again",
+                    closable: true
+                  });
+                  return df();
+                }
+              });
+            case 'PrKey':
+              return Façade.DelPrKey(key.id, function(ok) {
+                if (ok) {
+                  _this.keyList.selectionChanged(key, false);
+                  jQuery("#key-" + key.id).remove();
+                  _this.app.info({
+                    msg: "The Private Key <b>" + key.label + "</b> was successfully deleted",
+                    closable: true,
+                    duration: 300
+                  });
+                  return _this.delay((function() {
+                    return removeKeys();
+                  }), 100);
+                } else {
+                  _this.app.alert({
+                    msg: "The was an error while deleting <b>" + key.label + "</b>, please try again",
+                    closable: true
+                  });
+                  return df();
+                }
+              });
+          }
+        };
+        removeKeys();
         return false;
       };
 
-      Toolsbar.prototype["export"] = function(evt) {
+      Toolsbar.prototype.exportSelection = function(evt) {
         evt.preventDefault();
         evt.stopPropagation();
         this.log("export keys");
         return false;
       };
 
-      Toolsbar.prototype.reload = function(evt) {
+      Toolsbar.prototype.reloadKeys = function(evt) {
         evt.preventDefault();
         evt.stopPropagation();
-        this.log("reload");
+        this.keyList.render();
+        this.keyList.rendered();
         return false;
       };
 
@@ -12982,37 +13570,516 @@ module.exports = jQuery;}, "D:/Users\\amadou\\Documents\\Visual Studio 2010\\Pro
 
     __extends(GenForm, _super);
 
-    function GenForm() {
-      return GenForm.__super__.constructor.apply(this, arguments);
-    }
+    GenForm.HEADER = 'Generate Private Key';
 
-    GenForm.prototype.className = 'gen-form';
+    GenForm.prototype.hasCancel = true;
 
-    GenForm.prototype.render = function() {
-      return this;
+    GenForm.prototype.doGenKey = function(params) {
+      var df,
+        _this = this;
+      this.log("doGenKey: " + params);
+      df = app.Loading();
+      return Façade.GenKey(params.label, function(ok, keyid) {
+        var goBack, hideDlg, _base, _yes;
+        console.log("doGenKey" + ok);
+        /* Hide loading indicator
+        */
+
+        df();
+        if (ok) {
+          hideDlg = function(el) {
+            return window.jQuery(el || '.modal').closest('.dlg').modal('hide');
+          };
+          goBack = function() {
+            return _this.delay((function() {
+              return _this.navigate("/");
+            }));
+          };
+          _yes = false;
+          _this.controller.app.dlg({
+            msg: '<p>La cle a ete genere avec success.</p><p>Do you want generate a <b><i>Certificate Signing Request</i></b>?</p>',
+            hidden: function() {
+              if (!_yes) {
+                return goBack();
+              }
+            },
+            buttons: [
+              {
+                id: 'dlg-yes',
+                title: 'Yes',
+                primary: true,
+                fn: function(evt) {
+                  _yes = true;
+                  hideDlg(evt.target);
+                  _this.controller.steps.unshift({
+                    Clss: KeyMgr.GenForm.GetX509ReqInfo,
+                    args: {
+                      id: keyid,
+                      className: 'get-x509-req-info v-scroll gen-key',
+                      controller: _this.controller,
+                      fn: _this.controller.app.doGenX509Req
+                    }
+                  });
+                  return _this.controller.next(_this, {});
+                }
+              }, {
+                id: 'dlg-no',
+                title: 'No',
+                fn: function(evt) {
+                  return hideDlg(evt.target);
+                }
+              }
+            ]
+          });
+          return false;
+        }
+        _this.controller.alert({
+          msg: "Il y a eu une erreur, essayer de nouveau.",
+          closable: true
+        });
+        return typeof (_base = _this.controller.doGenKey).err === "function" ? _base.err() : void 0;
+      });
     };
+
+    GenForm.GetX509ReqInfo = (function(_super1) {
+
+      __extends(GetX509ReqInfo, _super1);
+
+      GetX509ReqInfo.prototype.className = 'get-x509-req-info v-scroll';
+
+      GetX509ReqInfo.templ = require('views/key-mgr/get-x509-req-info');
+
+      GetX509ReqInfo.events = {
+        'submit form': 'submit',
+        'click form .cancel': 'cancel'
+      };
+
+      GetX509ReqInfo.elements = {
+        "[name=cn]": "cn",
+        "[name=o]": "o",
+        "[name=ou]": "ou",
+        "[name=city]": "city",
+        "[name=region]": "region",
+        "[name=country]": "country",
+        "[name=emailAddress]": "emailAddress",
+        "[type=submit]": 'submitBtn'
+      };
+
+      function GetX509ReqInfo() {
+        var _this = this;
+        GetX509ReqInfo.__super__.constructor.apply(this, arguments);
+        this.bind('release', function() {
+          return delete _this.controller;
+        });
+        this.fn.err = function() {
+          return _this.delay((function() {
+            _this.submitBtn.enable();
+            return _this.cn[0].focus();
+          }));
+        };
+      }
+
+      GetX509ReqInfo.viewopts = function() {
+        return {
+          countries: window.countries
+        };
+      };
+
+      GetX509ReqInfo.prototype.render = function() {
+        return this.html(GetX509ReqInfo.templ(GetX509ReqInfo.viewopts()));
+      };
+
+      GetX509ReqInfo.prototype.params = function() {
+        var cleaned,
+          _this = this;
+        cleaned = function(key) {
+          return (_this[key].val() || '').trim();
+        };
+        return {
+          "cn": cleaned('cn'),
+          "o": cleaned('o'),
+          "ou": cleaned('ou'),
+          "city": cleaned('city'),
+          "region": cleaned('region'),
+          "country": cleaned('country'),
+          "emailAddress": cleaned('emailAddress')
+        };
+      };
+
+      GetX509ReqInfo.prototype.submit = function(e) {
+        var msg, params, _base;
+        this.submitBtn.enable(false);
+        e.preventDefault();
+        params = this.params();
+        if (msg = GetX509ReqInfo.valid(this, params)) {
+          this.controller.alert({
+            msg: msg,
+            closable: true
+          });
+          if (typeof (_base = this.fn).err === "function") {
+            _base.err();
+          }
+          return false;
+        }
+        params.id = this.id;
+        this.delay(function() {
+          return this.fn(params);
+        });
+        return false;
+      };
+
+      GetX509ReqInfo.prototype.cancel = function(e) {
+        var _base;
+        e.preventDefault();
+        e.stopPropagation();
+        if (typeof (_base = this.controller).cancelled === "function") {
+          _base.cancelled(this);
+        }
+        return false;
+      };
+
+      GetX509ReqInfo.valid = function(self, params) {
+        var ValidateEmail;
+        ValidateEmail = function(emailAddress) {
+          return emailRegex.test(emailAddress);
+        };
+        if (!params['cn'].length) {
+          return "Full Name is required.";
+        }
+        if (!params['emailAddress'].length) {
+          return "Email address is required.";
+        }
+        if (!ValidateEmail(params['emailAddress'])) {
+          return "Email address is invalid.";
+        }
+      };
+
+      return GetX509ReqInfo;
+
+    })(Spine.Controller);
+
+    function GenForm() {
+      GenForm.__super__.constructor.apply(this, arguments);
+      this.steps = [
+        {
+          Clss: GetLabel,
+          args: {
+            name: 'get-info',
+            title: 'Key Name',
+            header: KeyMgr.GenForm.HEADER,
+            className: 'get-label gen-key',
+            controller: this,
+            fn: this.doGenKey
+          }
+        }
+      ];
+    }
 
     return GenForm;
 
-  })(Spine.Controller);
+  }).call(this, Wizard);
 
-  KeyMgr.ImportForm = (function(_super) {
+  KeyMgr.GetKeyInfo = (function(_super) {
 
-    __extends(ImportForm, _super);
+    __extends(GetKeyInfo, _super);
 
-    function ImportForm() {
-      return ImportForm.__super__.constructor.apply(this, arguments);
+    GetKeyInfo.prototype.className = 'get-key-info';
+
+    GetKeyInfo.templ = require('views/key-mgr/get-key-info');
+
+    GetKeyInfo.events = {
+      'submit form': 'submit',
+      'click form .cancel': 'cancel'
+    };
+
+    GetKeyInfo.elements = {
+      "[name=label]": "label",
+      "[name=path]": "path",
+      "[name=passphrase]": "passphrase",
+      "[type=submit]": 'submitBtn'
+    };
+
+    function GetKeyInfo() {
+      var _this = this;
+      GetKeyInfo.__super__.constructor.apply(this, arguments);
+      this.bind('release', function() {
+        return delete _this.controller;
+      });
+      this.viewopts = {
+        title: this.title,
+        header: this.header,
+        hasPassphrase: this.hasPassphrase
+      };
+      this.fn.err = function() {
+        return _this.delay((function() {
+          _this.submitBtn.enable();
+          return _this.label[0].focus();
+        }));
+      };
     }
 
-    ImportForm.prototype.className = 'import-form';
-
-    ImportForm.prototype.render = function() {
+    GetKeyInfo.prototype.render = function() {
+      this.html(KeyMgr.GetKeyInfo.templ(this.viewopts));
+      if (this.hasPassphrase) {
+        this.el.addClass('has-passphrase');
+      }
       return this;
     };
 
-    return ImportForm;
+    GetKeyInfo.prototype.params = function() {
+      var cleaned,
+        _this = this;
+      cleaned = function(key) {
+        return (_this[key].val() || '').trim();
+      };
+      return {
+        "label": cleaned('label'),
+        "path": cleaned('path'),
+        "passphrase": cleaned('passphrase')
+      };
+    };
+
+    GetKeyInfo.prototype.submit = function(e) {
+      var f, msg, params, reader, self, _base;
+      this.submitBtn.enable(false);
+      e.preventDefault();
+      params = this.params();
+      if (msg = KeyMgr.GetKeyInfo.valid(this, params)) {
+        this.controller.alert({
+          msg: msg,
+          closable: true
+        });
+        if (typeof (_base = this.fn).err === "function") {
+          _base.err();
+        }
+        return false;
+      }
+      params['format'] = KeyMgr.GetKeyInfo.GetFormat(KeyMgr.GetKeyInfo.GetExt(params['path']));
+      self = this;
+      f = this.path[0].files[0];
+      reader = new FileReader;
+      reader.onload = function(evt) {
+        params['data'] = evt.target.result.split(',')[1];
+        params['data_len'] = f.size;
+        return self.delay(function() {
+          return self.fn(params);
+        });
+      };
+      reader.readAsDataURL(f);
+      return false;
+    };
+
+    GetKeyInfo.prototype.cancel = function(e) {
+      var _base;
+      e.preventDefault();
+      e.stopPropagation();
+      if (typeof (_base = this.controller).cancelled === "function") {
+        _base.cancelled(this);
+      }
+      return false;
+    };
+
+    GetKeyInfo.valid = function(self, params) {
+      if (!params['label'].length) {
+        return "" + self.title + " is required.";
+      }
+      if (!params['path'].length) {
+        return "File name is required.";
+      }
+    };
+
+    GetKeyInfo.GetExt = function(path) {
+      return (path.substring(path.lastIndexOf('.') + 1)).toLowerCase();
+    };
+
+    GetKeyInfo.GetFormat = function(ext) {
+      var formats;
+      formats = {
+        'p12': 'PKCS12',
+        'pfx': 'PKCS12',
+        'der': 'DER',
+        'cer': 'DER',
+        'crt': 'PEM',
+        'pem': 'PEM'
+      };
+      return formats[ext] || 'PEM';
+    };
+
+    return GetKeyInfo;
 
   })(Spine.Controller);
+
+  KeyMgr.ImportPrKey = (function(_super) {
+
+    __extends(ImportPrKey, _super);
+
+    ImportPrKey.HEADER = 'Import Private Key';
+
+    ImportPrKey.prototype.doImportPrKey = function(params) {
+      var df,
+        _this = this;
+      this.controller.log("doImportPrKey:" + params);
+      df = app.Loading();
+      return Façade.ImportPrKey(params.data, params.data_len, params.label, params.format, params.passphrase, function(ok) {
+        var _base;
+        console.log("" + ok);
+        /* Hide loading indicator
+        */
+
+        df();
+        if (ok) {
+          _this.controller.info({
+            msg: "La cle privee a ete ajoute avec success.",
+            closable: true
+          });
+          _this.delay((function() {
+            return _this.navigate("/");
+          }), 700);
+          return false;
+        }
+        _this.controller.alert({
+          msg: "Il y a eu une erreur, essayer de nouveau.",
+          closable: true
+        });
+        return typeof (_base = _this.controller.doImportPrKey).err === "function" ? _base.err() : void 0;
+      });
+    };
+
+    function ImportPrKey() {
+      ImportPrKey.__super__.constructor.apply(this, arguments);
+      this.steps = [
+        {
+          Clss: KeyMgr.GetKeyInfo,
+          args: {
+            name: 'get-key-info',
+            controller: this,
+            header: KeyMgr.ImportPrKey.HEADER,
+            title: "Key Name",
+            className: 'v-scroll import-key prkey',
+            hasPassphrase: true,
+            fn: this.doImportPrKey
+          }
+        }
+      ];
+    }
+
+    return ImportPrKey;
+
+  })(Wizard);
+
+  KeyMgr.ImportPubKey = (function(_super) {
+
+    __extends(ImportPubKey, _super);
+
+    ImportPubKey.HEADER = 'Import Public Key';
+
+    ImportPubKey.prototype.doImportPubKey = function(params) {
+      var df,
+        _this = this;
+      this.controller.log("doImportPubKey:" + params);
+      df = app.Loading();
+      return Façade.ImportPubKey(params.data, params.data_len, params.label, params.format, function(ok) {
+        var _base;
+        console.log("" + ok);
+        /* Hide loading indicator
+        */
+
+        df();
+        if (ok) {
+          _this.controller.info({
+            msg: "La cle publique a ete ajoute avec success.",
+            closable: true
+          });
+          _this.delay((function() {
+            return _this.navigate("/");
+          }), 700);
+          return false;
+        }
+        _this.controller.alert({
+          msg: "Il y a eu une erreur, essayer de nouveau.",
+          closable: true
+        });
+        return typeof (_base = _this.controller.doImportPubKey).err === "function" ? _base.err() : void 0;
+      });
+    };
+
+    function ImportPubKey() {
+      ImportPubKey.__super__.constructor.apply(this, arguments);
+      this.steps = [
+        {
+          Clss: KeyMgr.GetKeyInfo,
+          args: {
+            name: 'get-key-info',
+            controller: this,
+            header: KeyMgr.ImportPubKey.HEADER,
+            title: "Key Name",
+            className: 'import-key pubkey',
+            fn: this.doImportPubKey
+          }
+        }
+      ];
+    }
+
+    return ImportPubKey;
+
+  })(Wizard);
+
+  KeyMgr.ImportX509Certificate = (function(_super) {
+
+    __extends(ImportX509Certificate, _super);
+
+    ImportX509Certificate.HEADER = 'Import X.509 Certificate';
+
+    ImportX509Certificate.prototype.doImportX509Certificate = function(params) {
+      var df,
+        _this = this;
+      this.controller.log("doImportX509Certificate:" + params);
+      df = app.Loading();
+      return Façade.ImportX509Certificate(params.data, params.data_len, params.label, params.format, function(ok) {
+        var _base;
+        console.log("" + ok);
+        /* Hide loading indicator
+        */
+
+        df();
+        if (ok) {
+          _this.controller.info({
+            msg: "Le certificat a ete ajoute avec success.",
+            closable: true
+          });
+          _this.delay((function() {
+            return _this.navigate("/");
+          }), 700);
+          return false;
+        }
+        _this.controller.alert({
+          msg: "Il y a eu une erreur, essayer de nouveau.",
+          closable: true
+        });
+        return typeof (_base = _this.controller.doImportX509Certificate).err === "function" ? _base.err() : void 0;
+      });
+    };
+
+    function ImportX509Certificate() {
+      ImportX509Certificate.__super__.constructor.apply(this, arguments);
+      this.steps = [
+        {
+          Clss: KeyMgr.GetKeyInfo,
+          args: {
+            name: 'get-key-info',
+            controller: this,
+            header: KeyMgr.ImportX509Certificate.HEADER,
+            title: "Certificate Name",
+            className: 'import-key x509_certificate',
+            fn: this.doImportX509Certificate
+          }
+        }
+      ];
+    }
+
+    return ImportX509Certificate;
+
+  })(Wizard);
 
   module.exports = KeyMgr;
 
@@ -13042,6 +14109,13 @@ module.exports = jQuery;}, "D:/Users\\amadou\\Documents\\Visual Studio 2010\\Pro
       this.bind('release', function() {
         return delete _this.controller;
       });
+      this.doLogin.err = function() {
+        _this.pin.val('');
+        _this.submitBtn.enable();
+        return _this.delay(function() {
+          return _this.pin[0].focus();
+        });
+      };
       this.delay(function() {
         return Façade.SetWindowText('Login');
       });
@@ -13098,14 +14172,13 @@ module.exports = jQuery;}, "D:/Users\\amadou\\Documents\\Visual Studio 2010\\Pro
           msg: msg,
           closable: true
         });
-        this.submitBtn.enable();
+        this.doLogin.err();
         return false;
       }
       df = app.Loading();
       this.delay((function() {
         _this.doLogin(params);
-        df();
-        return _this.submitBtn.enable();
+        return df();
       }));
       return false;
     };
@@ -13123,7 +14196,7 @@ module.exports = jQuery;}, "D:/Users\\amadou\\Documents\\Visual Studio 2010\\Pro
     Login.valid = function(params) {
       var _this = this;
       return Façade.GetPINOpts(function(opts) {
-        if (!(params.pin.length > opts['minlen'] && params.pin.length < opts['maxlen'])) {
+        if (!(params.pin.length >= opts['minlen'] && params.pin.length <= opts['maxlen'])) {
           return "PIN must be between " + opts['minlen'] + " and " + opts['maxlen'] + " caracters.";
         }
       });
@@ -13134,94 +14207,6 @@ module.exports = jQuery;}, "D:/Users\\amadou\\Documents\\Visual Studio 2010\\Pro
   })(Spine.Controller);
 
   module.exports = Login;
-
-}).call(this);
-}, "controllers/personalinfo": function(exports, require, module) {(function() {
-  var PersonalInfo, Spine,
-    __hasProp = {}.hasOwnProperty,
-    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
-
-  Spine = require('spine');
-
-  PersonalInfo = (function(_super) {
-
-    __extends(PersonalInfo, _super);
-
-    PersonalInfo.prototype.elements = {
-      '[name=fullName]': 'fullName'
-    };
-
-    PersonalInfo.prototype.events = {
-      'submit form': 'submit',
-      'click form .cancel': 'cancel'
-    };
-
-    PersonalInfo.prototype.className = 'personal-info v-scroll';
-
-    PersonalInfo.templ = require('views/personal-info');
-
-    PersonalInfo.prototype.params = function() {
-      var cleaned,
-        _this = this;
-      cleaned = function(key) {
-        return (_this[key].val() || '').trim();
-      };
-      return {
-        fullName: cleaned('fullName')
-      };
-    };
-
-    PersonalInfo.viewopts = function() {
-      return {};
-    };
-
-    function PersonalInfo() {
-      var _this = this;
-      PersonalInfo.__super__.constructor.apply(this, arguments);
-      this.bind('release', function() {
-        return delete _this.controller;
-      });
-    }
-
-    PersonalInfo.prototype.render = function() {
-      return this.html(PersonalInfo.templ(PersonalInfo.viewopts()));
-    };
-
-    PersonalInfo.prototype.submit = function(e) {
-      var msg, params,
-        _this = this;
-      e.preventDefault();
-      params = this.params();
-      if (msg = PersonalInfo.valid(params)) {
-        this.controller.alert({
-          msg: msg,
-          closable: true
-        });
-        return false;
-      }
-      this.delay(function() {
-        return _this.fn(params);
-      });
-      return false;
-    };
-
-    PersonalInfo.prototype.cancel = function(e) {
-      var _base;
-      e.preventDefault();
-      e.stopPropagation();
-      if (typeof (_base = this.controller).cancelled === "function") {
-        _base.cancelled(this);
-      }
-      return false;
-    };
-
-    PersonalInfo.valid = function(params) {};
-
-    return PersonalInfo;
-
-  })(Spine.Controller);
-
-  module.exports = PersonalInfo;
 
 }).call(this);
 }, "controllers/resetPIN": function(exports, require, module) {(function() {
@@ -13249,6 +14234,7 @@ module.exports = jQuery;}, "D:/Users\\amadou\\Documents\\Visual Studio 2010\\Pro
       var df,
         _this = this;
       this.log('ResetPIN@doSetPIN');
+      this.controller.fn.err = this.controller.doSetPIN.err;
       df = app.Loading();
       return this.delay((function() {
         _this.controller.fn(params);
@@ -13347,7 +14333,7 @@ module.exports = jQuery;}, "D:/Users\\amadou\\Documents\\Visual Studio 2010\\Pro
       this.app.el.attr('class', "" + this.app.className + " detecting");
       this.el.attr('class', "" + this.className + " detecting");
       this.app.info('Detection en cour . . .');
-      return this.delay(this.app.detectToken, 3000);
+      return this.delay(this.app.detectToken, 1500);
     };
 
     return Start;
@@ -13355,60 +14341,6 @@ module.exports = jQuery;}, "D:/Users\\amadou\\Documents\\Visual Studio 2010\\Pro
   })(Spine.Controller);
 
   module.exports = Start;
-
-}).call(this);
-}, "controllers/topbar": function(exports, require, module) {(function() {
-  var Spine, Token, Topbar,
-    __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
-    __hasProp = {}.hasOwnProperty,
-    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
-
-  Spine = require('spine');
-
-  Token = require('models/token');
-
-  Topbar = (function(_super) {
-
-    __extends(Topbar, _super);
-
-    function Topbar() {
-      this.statusChanged = __bind(this.statusChanged, this);
-
-      var _this = this;
-      Topbar.__super__.constructor.apply(this, arguments);
-      this.app.bind('statusChanged', this.statusChanged);
-      this.bind('release', function() {
-        _this.app.unbind('statusChanged', _this.statusChanged);
-        return delete _this.app;
-      });
-    }
-
-    Topbar.prototype.statusChanged = function(status) {
-      this.log("Topbar#statusChanged:" + status);
-      switch (status) {
-        case Token.Blocked:
-          break;
-        case Token.AuthRequired:
-          break;
-        case Token.Absent:
-          break;
-        case Token.ChangePIN:
-          break;
-        case Token.LoggedIn:
-          break;
-        case Token.Locked:
-          break;
-        case Token.Blank:
-          break;
-        case null:
-      }
-    };
-
-    return Topbar;
-
-  })(Spine.Controller);
-
-  module.exports = Topbar;
 
 }).call(this);
 }, "controllers/unblock": function(exports, require, module) {(function() {
@@ -13432,6 +14364,13 @@ module.exports = jQuery;}, "D:/Users\\amadou\\Documents\\Visual Studio 2010\\Pro
       this.bind('release', function() {
         return delete _this.controller;
       });
+      this.doUnblock.err = function() {
+        _this.puk.val('');
+        _this.submitBtn.enable();
+        return _this.delay(function() {
+          return _this.puk[0].focus();
+        });
+      };
       this.delay(function() {
         return Façade.SetWindowText('Unblock');
       });
@@ -13486,17 +14425,16 @@ module.exports = jQuery;}, "D:/Users\\amadou\\Documents\\Visual Studio 2010\\Pro
           msg: msg,
           closable: true
         });
-        this.submitBtn.enable();
+        this.doUnblock.err();
         return false;
       }
-      this.doUnblock(params.puk);
-      return this.submitBtn.enable();
+      return this.doUnblock(params.puk);
     };
 
     Unblock.valid = function(params) {
       var _this = this;
       return Façade.GetPINOpts(function(opts) {
-        if (!(params.puk.length > opts['minlen'] && params.puk.length < opts['maxlen'])) {
+        if (!(params.puk.length >= opts['minlen'] && params.puk.length <= opts['maxlen'])) {
           return "PUK must be between " + opts['minlen'] + " and " + opts['maxlen'] + " caracters.";
         }
       });
@@ -13510,7 +14448,7 @@ module.exports = jQuery;}, "D:/Users\\amadou\\Documents\\Visual Studio 2010\\Pro
 
 }).call(this);
 }, "index": function(exports, require, module) {(function() {
-  var App, ChangePIN, Dlg, Façade, Init, KeyMgr, Login, PersonalInfo, ResetPIN, Spine, Start, Token, Topbar, Unblock,
+  var App, ChangePIN, Dlg, Façade, GetLabel, Init, KeyMgr, Login, ResetPIN, Spine, Start, Token, Unblock, Wizard,
     __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
     __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -13521,13 +14459,11 @@ module.exports = jQuery;}, "D:/Users\\amadou\\Documents\\Visual Studio 2010\\Pro
 
   Token = require('models/token');
 
-  Topbar = require('controllers/topbar');
-
   Start = require('controllers/start');
 
   Login = require('controllers/login');
 
-  PersonalInfo = require('controllers/personalinfo');
+  GetLabel = require('controllers/get-label');
 
   Unblock = require('controllers/unblock');
 
@@ -13538,6 +14474,8 @@ module.exports = jQuery;}, "D:/Users\\amadou\\Documents\\Visual Studio 2010\\Pro
   Init = require('controllers/init');
 
   Façade = require('lib/façade');
+
+  Wizard = require('lib/wizard');
 
   ResetPIN = require('controllers/resetPIN');
 
@@ -13617,11 +14555,13 @@ module.exports = jQuery;}, "D:/Users\\amadou\\Documents\\Visual Studio 2010\\Pro
 
       this.routeInitPIN = __bind(this.routeInitPIN, this);
 
-      this.routePersonalInfo = __bind(this.routePersonalInfo, this);
+      this.routeGetLabel = __bind(this.routeGetLabel, this);
 
-      this.routeDetect = __bind(this.routeDetect, this);
+      this.routeDetectOne = __bind(this.routeDetectOne, this);
 
       this.detectToken = __bind(this.detectToken, this);
+
+      this.cancelled = __bind(this.cancelled, this);
 
       this.alert = __bind(this.alert, this);
 
@@ -13631,20 +14571,31 @@ module.exports = jQuery;}, "D:/Users\\amadou\\Documents\\Visual Studio 2010\\Pro
 
       var _this = this;
       App.__super__.constructor.apply(this, arguments);
-      app.setMessageCallback('log', function(name, _arg) {
+      Façade.Load();
+      app.setMessageCallback('debug', function(_arg) {
         var response;
         response = _arg[0];
         return console.log(response);
       });
-      app.setMessageCallback('token_removed', function(name, _arg) {
+      app.setMessageCallback('token_removed', function(_arg) {
         var response;
         response = _arg[0];
-        _this.alert("Le supporte a ete debranche!");
-        return _this.delay(function() {
-          return _this.become(_this.start(Token.Absent, {
-            alert: "Le supporte a ete debranche"
-          }), 2000);
-        });
+        if (Façade.reader) {
+          if (Façade.reader === response.reader) {
+            delete Façade.reader;
+            return _this.delay(_this.reload);
+          }
+        } else {
+          return _this.reload();
+        }
+      });
+      app.setMessageCallback('token_inserted', function(_arg) {
+        var response;
+        response = _arg[0];
+        if (!(Façade.reader && Façade.reader === response.reader)) {
+          Façade.reader = response.reader;
+          return _this.delay(_this.reload);
+        }
       });
       this.routes({
         '/unblock': function() {
@@ -13660,34 +14611,64 @@ module.exports = jQuery;}, "D:/Users\\amadou\\Documents\\Visual Studio 2010\\Pro
           return this.setStatus(Token.AuthRequired);
         },
         '/erase': this.routeErase,
+        '/gen-csr/:id': function(params) {
+          var _this = this;
+          return this.ifLoggedIn()(function() {
+            return _this.become(_this.any(KeyMgr.GenForm.GetX509ReqInfo, {
+              controller: _this,
+              id: params.id,
+              fn: _this.doGenX509Req
+            }));
+          });
+        },
+        '/key/gen': function() {
+          var _this = this;
+          return this.ifLoggedIn()(function() {
+            return _this.become(_this.any(KeyMgr.GenForm, {
+              app: _this
+            }));
+          });
+        },
+        '/ImportX509Certificate': function() {
+          var _this = this;
+          return this.ifLoggedIn()(function() {
+            return _this.become(_this.any(KeyMgr.ImportX509Certificate, {
+              app: _this
+            }));
+          });
+        },
+        '/ImportPrKey': function() {
+          var _this = this;
+          return this.ifLoggedIn()(function() {
+            return _this.become(_this.any(KeyMgr.ImportPrKey, {
+              app: _this
+            }));
+          });
+        },
+        '/ImportPubKey': function() {
+          var _this = this;
+          return this.ifLoggedIn()(function() {
+            return _this.become(_this.any(KeyMgr.ImportPubKey, {
+              app: _this
+            }));
+          });
+        },
+        '/X509Certificate/:id': function(params) {
+          var _this = this;
+          return this.ifLoggedIn()(function() {
+            return _this.become(_this.any(KeyMgr.X509View, {
+              id: params.id,
+              type: 'X509Certificate',
+              app: _this
+            }));
+          });
+        },
         '/keys': function() {
           var _this = this;
           return this.ifLoggedIn()(function() {
             return _this.become(_this.any(KeyMgr.KeyList, {
               app: _this
             }));
-          });
-        },
-        '/key/:id': function(params) {
-          var _this = this;
-          return this.ifLoggedIn()(function() {
-            params.app = _this;
-            return _this.become(_this.loggedin(KeyMgr.KeyView, params));
-          });
-        },
-        '/key/gen': function() {
-          var _this = this;
-          return this.ifLoggedIn()(function() {
-            return _this.become(_this.loggedin(KeyMgr.GenForm, {
-              app: _this
-            }));
-          });
-        },
-        '/key/import/:type': function(params) {
-          var _this = this;
-          return this.ifLoggedIn()(function() {
-            params.app = _this;
-            return _this.become(_this.loggedin(KeyMgr.ImportForm, params));
           });
         },
         '/logout': this.routeLogout,
@@ -13704,7 +14685,7 @@ module.exports = jQuery;}, "D:/Users\\amadou\\Documents\\Visual Studio 2010\\Pro
             controller: this
           }));
         },
-        '/': this.routeDetect
+        '/': this.routeDetectOne
       });
       this.bind('statusChanged', this.statusChanged);
       this.body = new Spine.Controller({
@@ -13714,10 +14695,18 @@ module.exports = jQuery;}, "D:/Users\\amadou\\Documents\\Visual Studio 2010\\Pro
         el: '#msg'
       });
       Spine.Route.setup();
+      this.delay(function() {
+        return Façade.SetWindowText();
+      });
     }
 
     App.prototype.reload = function() {
-      return document.location.reload();
+      var _ref;
+      if ((_ref = document.location.hash) === '#/' || _ref === '') {
+        return document.location.reload();
+      } else {
+        return this.navigate('/');
+      }
     };
 
     App.prototype.ifLoggedIn = function() {
@@ -13725,6 +14714,8 @@ module.exports = jQuery;}, "D:/Users\\amadou\\Documents\\Visual Studio 2010\\Pro
       return function(fn) {
         if (Façade.authData) {
           return fn();
+        } else {
+          return _this.navigate("/");
         }
       };
     };
@@ -13885,13 +14876,13 @@ module.exports = jQuery;}, "D:/Users\\amadou\\Documents\\Visual Studio 2010\\Pro
     };
 
     App.prototype.changeView = function(view) {
-      var _base, _base1;
+      var _base;
+      if (view instanceof Wizard) {
+        return typeof view.rendered === "function" ? view.rendered() : void 0;
+      }
       if (this.currentView) {
         if (typeof (_base = this.currentView).release === "function") {
           _base.release();
-        }
-        if (typeof (_base1 = this.currentView).unRendered === "function") {
-          _base1.unRendered();
         }
         delete this.currentView;
       }
@@ -13925,9 +14916,6 @@ module.exports = jQuery;}, "D:/Users\\amadou\\Documents\\Visual Studio 2010\\Pro
       }
       return {
         msg: 'Are you sure?',
-        options: {
-          show: true
-        },
         hidden: hidden,
         buttons: [
           {
@@ -13949,15 +14937,22 @@ module.exports = jQuery;}, "D:/Users\\amadou\\Documents\\Visual Studio 2010\\Pro
     App.prototype.dlg = function(meta) {
       return this.delay(function() {
         var dlg;
-        dlg = window.jQuery((new Dlg(meta)).render().el).modal(meta.options);
-        return dlg.on('hide', meta.hidden);
+        dlg = window.jQuery((new Dlg(meta)).render().el).modal(meta.options || {});
+        if (meta.hidden) {
+          return dlg.on('hide', meta.hidden);
+        }
       });
+    };
+
+    App.prototype.cancelled = function() {
+      this.log("App.cancelled");
+      return this.navigate("/");
     };
 
     App.prototype.detectToken = function() {
       var _this = this;
       this.log("@detectToken");
-      Façade.getStatus(function(status, err) {
+      Façade.GetStatus(function(status, err) {
         _this.clearAllMsgs();
         if (err) {
           return false;
@@ -13984,36 +14979,65 @@ module.exports = jQuery;}, "D:/Users\\amadou\\Documents\\Visual Studio 2010\\Pro
     };
 
     App.prototype.selectKey = function(key) {
-      return this.trigger('selectionChanged', key, true);
+      return this.trigger('selectionChanged', key);
     };
 
     App.prototype.unSelectKey = function(key) {
       return this.trigger('selectionChanged', key, false);
     };
 
-    App.prototype.routeDetect = function() {
-      this.log('@routeDetect');
+    App.prototype.routeDetectOne = function() {
+      this.log('@routeDetectOne');
       return this.detectToken();
     };
 
-    App.prototype.routePersonalInfo = function(params) {
+    App.prototype.routeGetLabel = function(params) {
       var _this = this;
-      this.log('@routePersonalInfo');
+      this.log('@routeGetLabel');
       return this.delay((function() {
         _this.navigate('#/keys');
         return _this.delay((function() {
           return this.info({
-            msg: 'Your personal information was successfully saved.',
+            msg: 'Your information was successfully saved.',
             closable: true
           });
         }), 100);
       }));
     };
 
+    App.prototype.doGenX509Req = function(params) {
+      var df,
+        _this = this;
+      this.log("doGenX509Req: " + params);
+      df = app.Loading();
+      return Façade.GenX509Req(params.id, params.cn, params.o, params.ou, params.city, params.region, params.country, params.emailAddress, function(ok) {
+        var _base;
+        console.log("doGenX509Req:" + ok);
+        df();
+        if (ok) {
+          _this.controller.info({
+            msg: "La requete a ete genere avec success.",
+            closable: true,
+            duration: 1500
+          });
+          _this.delay((function() {
+            return _this.navigate("/");
+          }), 1500);
+          return false;
+        }
+        _this.controller.alert({
+          msg: "Il y a eu une erreur, essayer de nouveau.",
+          closable: true
+        });
+        return typeof (_base = _this.controller.doGenX509Req).err === "function" ? _base.err() : void 0;
+      });
+    };
+
     App.prototype.routeInitPIN = function(params) {
       var _this = this;
       this.log('@routeInitPIN');
       return Façade.InitPIN(params.pin, params.puk, function(err) {
+        var _base;
         if (ok) {
           _this.delay((function() {
             _this.info({
@@ -14025,6 +15049,9 @@ module.exports = jQuery;}, "D:/Users\\amadou\\Documents\\Visual Studio 2010\\Pro
             }), 1000);
           }));
           return false;
+        }
+        if (typeof (_base = _this.routeInitPIN).err === "function") {
+          _base.err();
         }
         return _this.alert({
           msg: 'An unknown error occured, please try again.',
@@ -14037,6 +15064,7 @@ module.exports = jQuery;}, "D:/Users\\amadou\\Documents\\Visual Studio 2010\\Pro
       var _this = this;
       this.log('@routeChangePIN');
       return Façade.ChangePIN(params.oldpin, params.pin, function(ok) {
+        var _base;
         if (ok) {
           _this.delay((function() {
             _this.info({
@@ -14049,6 +15077,9 @@ module.exports = jQuery;}, "D:/Users\\amadou\\Documents\\Visual Studio 2010\\Pro
           }));
           return false;
         }
+        if (typeof (_base = _this.routeChangePIN).err === "function") {
+          _base.err();
+        }
         return _this.alert({
           msg: 'An unknown error occured, please try again.',
           closable: true
@@ -14060,22 +15091,28 @@ module.exports = jQuery;}, "D:/Users\\amadou\\Documents\\Visual Studio 2010\\Pro
       var _this = this;
       this.log('@routeLogin');
       return Façade.Login(params.pin, function(err) {
+        var _base;
         if (err === null) {
           _this.setStatus(Token.LoggedIn);
           return _this.navigate('#/keys');
         }
         if (err === 0) {
           _this.navigate('/');
-        } else if (err <= 3) {
-          _this.alert({
-            msg: "PIN invalide, il ne vous reste que " + err + " essaie" + (err > 1 ? 's' : '') + " avant le blockage de votre PIN.",
-            closable: true
-          });
         } else {
-          _this.alert({
-            msg: "PIN invalide, essayer encore.",
-            closable: true
-          });
+          if (err <= 3) {
+            _this.alert({
+              msg: "PIN invalide, il ne vous reste que " + err + " essaie" + (err > 1 ? 's' : '') + " avant le blockage de votre PIN.",
+              closable: true
+            });
+          } else {
+            _this.alert({
+              msg: "PIN invalide, essayer encore.",
+              closable: true
+            });
+          }
+          if (typeof (_base = _this.routeLogin).err === "function") {
+            _base.err();
+          }
         }
         return false;
       });
@@ -14085,6 +15122,7 @@ module.exports = jQuery;}, "D:/Users\\amadou\\Documents\\Visual Studio 2010\\Pro
       var _this = this;
       this.log('@routeInit');
       return Façade.InitToken(pin, puk, label, function(ok) {
+        var _base;
         if (ok) {
           _this.delay((function() {
             _this.info({
@@ -14097,10 +15135,16 @@ module.exports = jQuery;}, "D:/Users\\amadou\\Documents\\Visual Studio 2010\\Pro
           }));
           return false;
         }
-        return _this.alert({
+        if (typeof (_base = _this.routeInit).err === "function") {
+          _base.err();
+        }
+        _this.alert({
           msg: 'An unknown error occured, please try again.',
           closable: true
         });
+        return _this.delay((function() {
+          return _this.navigate("/");
+        }), 700);
       });
     };
 
@@ -14154,6 +15198,7 @@ module.exports = jQuery;}, "D:/Users\\amadou\\Documents\\Visual Studio 2010\\Pro
       var _this = this;
       this.log('@routeUnblock');
       return Façade.Unblock(params.puk, params.pin, function(ok) {
+        var _base;
         if (ok) {
           _this.delay((function() {
             _this.info({
@@ -14165,6 +15210,9 @@ module.exports = jQuery;}, "D:/Users\\amadou\\Documents\\Visual Studio 2010\\Pro
             }), 1000);
           }));
           return false;
+        }
+        if (typeof (_base = _this.routeUnblock).err === "function") {
+          _base.err();
         }
         return _this.delay((function() {
           _this.navigate('/');
@@ -14190,11 +15238,11 @@ module.exports = jQuery;}, "D:/Users\\amadou\\Documents\\Visual Studio 2010\\Pro
     __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
+  Spine = require('spine');
+
   Token = require('models/token');
 
   Key = require('models/key');
-
-  Spine = require('spine');
 
   Façade = (function(_super) {
 
@@ -14213,126 +15261,63 @@ module.exports = jQuery;}, "D:/Users\\amadou\\Documents\\Visual Studio 2010\\Pro
     Façade.cnt = 0;
 
     Façade.SetWindowText = function(text) {
-      return document.title = "" + text + " | Epsilon Token Manager";
+      if (text) {
+        return document.title = "" + text + " | Epsilon Token Manager";
+      } else {
+        return document.title = "Epsilon Token Manager";
+      }
     };
 
     Façade.GetPINOpts = function(fn) {
       return fn(Façade._pinopts);
     };
 
-    Façade.data = {
-      status: Token.Absent,
-      pin: '1234',
-      puk: '1111',
-      sopin: '5678',
-      sopuk: '2222',
-      keys: [
-        Key.create({
-          friendlyName: 'Key 1'
-        }), Key.create({
-          friendlyName: 'Key 2'
-        }), Key.create({
-          friendlyName: 'Key 3'
-        }), Key.create({
-          friendlyName: 'Key 4'
-        }), Key.create({
-          friendlyName: 'Key 5'
-        }), Key.create({
-          friendlyName: 'Key 6'
-        }), Key.create({
-          friendlyName: 'Key 7'
-        }), Key.create({
-          friendlyName: 'Key 8'
-        }), Key.create({
-          friendlyName: 'Key 9'
-        }), Key.create({
-          friendlyName: 'Key 10'
-        }), Key.create({
-          friendlyName: 'Key 11'
-        }), Key.create({
-          friendlyName: 'Key 12'
-        }), Key.create({
-          friendlyName: 'Key 13'
-        }), Key.create({
-          friendlyName: 'Key 14'
-        }), Key.create({
-          friendlyName: 'Key 15'
-        }), Key.create({
-          friendlyName: 'Key 16'
-        }), Key.create({
-          friendlyName: 'Key 17'
-        }), Key.create({
-          friendlyName: 'Key 18'
-        }), Key.create({
-          friendlyName: 'Key 19'
-        }), Key.create({
-          friendlyName: 'Key 20'
-        }), Key.create({
-          friendlyName: 'Key 21'
-        }), Key.create({
-          friendlyName: 'Key 22'
-        }), Key.create({
-          friendlyName: 'Key 23'
-        }), Key.create({
-          friendlyName: 'Key 24'
-        }), Key.create({
-          friendlyName: 'Key 25'
-        }), Key.create({
-          friendlyName: 'Key 26'
-        }), Key.create({
-          friendlyName: 'Key 27'
-        }), Key.create({
-          friendlyName: 'Key 28'
-        }), Key.create({
-          friendlyName: 'Key 29'
-        }), Key.create({
-          friendlyName: 'Key 30'
-        }), Key.create({
-          friendlyName: 'Key 31'
-        }), Key.create({
-          friendlyName: 'Key 32'
-        })
-      ],
-      options: {
-        'min-pin-length': 3,
-        'max-pin-length': 8,
-        'min-puk-length': 3,
-        'max-puk-length': 8,
-        'pin-attempts': 3,
-        'puk-attempts': 3,
-        'remaining-pin-attempts': 3,
-        'remaining-puk-attempts': 3,
-        'min-so-pin-length': 3,
-        'max-so-pin-length': 8,
-        'min-so-puk-length': 3,
-        'max-so-puk-length': 8,
-        'so-pin-attempts': 3,
-        'so-puk-attempts': 3,
-        'remaining-so-pin-attempts': 3,
-        'remaining-so-puk-attempts': 3,
-        'onepin': false
-      }
-    };
-
-    Façade.getKeys = function(fn) {
-      return fn(this.data['keys']);
-    };
-
-    Façade.getKey = function(id, fn) {
-      try {
-        return fn(Key.find(id));
-      } catch (e) {
-        return fn(void 0, true);
-      }
-    };
-
-    Façade.getStatus = function(fn) {
-      var callback, replyto, req,
-        _this = this;
-      callback = function(kMessageName, _arg) {
-        var response, _ref;
+    Façade.Load = function() {
+      var GetFn;
+      app._fns = [];
+      GetFn = function(key) {
+        var fn, i, _i, _len, _ref;
+        _ref = app._fns;
+        for (i = _i = 0, _len = _ref.length; _i < _len; i = ++_i) {
+          fn = _ref[i];
+          if (fn.MsgKey === key) {
+            return {
+              i: i,
+              fnObj: fn
+            };
+          }
+        }
+      };
+      app.addFn = function(MsgKey, fn) {
+        return app._fns.push({
+          MsgKey: MsgKey,
+          fn: fn
+        });
+      };
+      app.delFn = function(key, fn) {
+        var f;
+        f = GetFn(key);
+        if (f) {
+          return app._fns.splice(f.i, 1);
+        }
+      };
+      return app.setMessageCallback('kMsg', function(_arg) {
+        var response, ret;
         response = _arg[0];
-        console.log("@getStatus: Reply from " + kMessageName + ": " + response.status);
+        ret = GetFn(response.MsgKey);
+        if (ret && ret.fnObj.MsgKey === response.MsgKey && ret.fnObj.fn.MsgId === response.MsgId) {
+          ret.fnObj.fn(response);
+          return app.delFn(response.MsgKey);
+        }
+      });
+    };
+
+    Façade.GetStatus = function(fn) {
+      var callback, req,
+        _this = this;
+      callback = function(response) {
+        var _ref;
+        console.log("@GetStatus: Reply: " + response.status);
         if (Façade.authData && response.status !== Token.LoggedIn) {
           delete Façade.authData;
         }
@@ -14350,61 +15335,340 @@ module.exports = jQuery;}, "D:/Users\\amadou\\Documents\\Visual Studio 2010\\Pro
             tries_left: response.tries_left
           };
         }
+        if (response.reader) {
+          Façade.reader = response.reader;
+        }
         return callback.fn(response.status);
       };
       callback.fn = fn;
-      replyto = "getstatus." + (++Façade.cnt);
+      callback.MsgId = "" + (++Façade.cnt);
       req = {
-        replyto: replyto
+        MsgId: callback.MsgId
       };
       if (Façade.authData) {
         req.authData = Façade.authData;
       }
-      app.setMessageCallback(replyto, callback);
+      /* TODO(When to include reader option)
+      */
+
+      if (Façade.reader) {
+        req.reader = Façade.reader;
+      }
+      app.addFn("getstatus", callback);
       return app.sendMessage("getstatus", [req]);
     };
 
-    Façade.getOptions = function(fn) {
-      return fn(Façade['data']['options']);
+    Façade.GetKey = function(id, kMessageName, callback) {
+      app.addFn(kMessageName, callback);
+      return app.sendMessage(kMessageName, [
+        {
+          MsgId: callback.MsgId,
+          id: id,
+          authData: Façade.authData
+        }
+      ]);
     };
 
-    Façade.SetPIN = function(pin, fn) {
-      var callback, replyto,
+    Façade.GetPrKey = function(id, fn) {
+      var callback,
         _this = this;
-      this.log("@SetPIN");
-      callback = function(kMessageName, _arg) {
-        var response;
-        response = _arg[0];
-        console.log("@SetPIN: Reply from " + kMessageName + ": " + response.status);
+      this.log("GetPrKey:" + id);
+      callback = function(response) {
+        console.log("@GetPrKey: Reply: " + response.ok);
+        return callback.fn(response.key);
+      };
+      callback.fn = fn;
+      callback.MsgId = "" + (++Façade.cnt);
+      return Façade.GetKey(id, 'get.prkey', callback);
+    };
+
+    Façade.GetPubKey = function(id, fn) {
+      var callback,
+        _this = this;
+      this.log("GetPubKey:" + id);
+      callback = function(response) {
+        console.log("@GetPubKey: Reply: " + response.ok);
+        return callback.fn(response.key);
+      };
+      callback.fn = fn;
+      callback.MsgId = "" + (++Façade.cnt);
+      return Façade.GetKey(id, 'get.pubkey', callback);
+    };
+
+    Façade.GetX509Certificate = function(id, fn) {
+      var callback,
+        _this = this;
+      this.log("GetX509Certificate:" + id);
+      callback = function(response) {
+        console.log("@GetX509Certificate: Reply: " + response.ok);
+        return callback.fn(response.key);
+      };
+      callback.fn = fn;
+      callback.MsgId = "" + (++Façade.cnt);
+      return Façade.GetKey(id, 'get.x509-certificate', callback);
+    };
+
+    Façade.GetPubKeys = function(fn) {
+      var callback,
+        _this = this;
+      this.log("GetPubKeys");
+      callback = function(response) {
+        console.log("@GetPubKeys: Reply: " + response.ok);
+        return callback.fn(response.keys);
+      };
+      callback.fn = fn;
+      callback.MsgId = "" + (++Façade.cnt);
+      app.addFn("get.pubkeys", callback);
+      return app.sendMessage("get.pubkeys", [
+        {
+          MsgId: callback.MsgId,
+          authData: Façade.authData
+        }
+      ]);
+    };
+
+    Façade.GetPrKeys = function(fn) {
+      var callback,
+        _this = this;
+      this.log("GetPrKeys");
+      callback = function(response) {
+        console.log("@GetPrKeys: Reply: " + response.ok);
+        return callback.fn(response.keys);
+      };
+      callback.fn = fn;
+      callback.MsgId = "" + (++Façade.cnt);
+      app.addFn("get.prkeys", callback);
+      return app.sendMessage("get.prkeys", [
+        {
+          MsgId: callback.MsgId,
+          authData: Façade.authData
+        }
+      ]);
+    };
+
+    Façade.GetCerts = function(fn) {
+      var callback,
+        _this = this;
+      this.log("GetCerts");
+      callback = function(response) {
+        console.log("@GetCerts: Reply: " + response.ok);
+        return callback.fn(response.keys);
+      };
+      callback.fn = fn;
+      callback.MsgId = "" + (++Façade.cnt);
+      app.addFn("get.x509-certificates", callback);
+      return app.sendMessage("get.x509-certificates", [
+        {
+          MsgId: callback.MsgId,
+          authData: Façade.authData
+        }
+      ]);
+    };
+
+    Façade.GenKey = function(label, fn) {
+      var callback, req,
+        _this = this;
+      this.log("GenKey:" + label);
+      callback = function(response) {
+        console.log("@GenKey: Reply: " + response.ok);
+        return callback.fn(response.ok, response.keyid);
+      };
+      callback.fn = fn;
+      callback.MsgId = "" + (++Façade.cnt);
+      req = {
+        MsgId: callback.MsgId,
+        label: label,
+        authData: Façade.authData
+      };
+      app.addFn("keygen", callback);
+      return app.sendMessage("keygen", [req]);
+    };
+
+    Façade.GenX509Req = function(id, cn, o, ou, city, region, country, emailAddress, fn) {
+      var callback, req,
+        _this = this;
+      this.log("GenX509Req");
+      callback = function(response) {
+        console.log("@GenX509Req: Reply: " + response.ok);
         return callback.fn(response.ok);
       };
       callback.fn = fn;
-      replyto = "setpin." + (++Façade.cnt);
-      app.setMessageCallback(replyto, callback);
+      callback.MsgId = "" + (++Façade.cnt);
+      req = {
+        MsgId: callback.MsgId,
+        id: id,
+        cn: cn,
+        o: o,
+        ou: ou,
+        city: city,
+        region: region,
+        country: country,
+        emailAddress: emailAddress,
+        authData: Façade.authData
+      };
+      app.addFn("csr.gen", callback);
+      return app.sendMessage("csr.gen", [req]);
+    };
+
+    Façade.ImportPrKey = function(data, data_len, label, format, passphrase, fn) {
+      var callback, req,
+        _this = this;
+      this.log("ImportPrKey(" + data_len + ", " + label + ", " + format + ")");
+      callback = function(response) {
+        console.log("@GenKey: Reply: " + response.ok);
+        return callback.fn(response.ok);
+      };
+      callback.fn = fn;
+      callback.MsgId = "" + (++Façade.cnt);
+      req = {
+        MsgId: callback.MsgId,
+        data: data,
+        data_len: data_len,
+        label: label,
+        format: format,
+        passphrase: passphrase,
+        authData: Façade.authData
+      };
+      app.addFn("import.prkey", callback);
+      return app.sendMessage("import.prkey", [req]);
+    };
+
+    Façade.ImportPubKey = function(data, data_len, label, format, fn) {
+      var callback, req,
+        _this = this;
+      this.log("ImportPubKey(" + data_len + ", " + label + ", " + format + ")");
+      callback = function(response) {
+        console.log("@ImportPubKey: Reply: " + response.ok);
+        return callback.fn(response.ok);
+      };
+      callback.fn = fn;
+      callback.MsgId = "" + (++Façade.cnt);
+      req = {
+        MsgId: callback.MsgId,
+        data: data,
+        data_len: data_len,
+        label: label,
+        format: format,
+        authData: Façade.authData
+      };
+      app.addFn("import.pubkey", callback);
+      return app.sendMessage("import.pubkey", [req]);
+    };
+
+    Façade.ImportX509Certificate = function(data, data_len, label, format, fn) {
+      var callback, req,
+        _this = this;
+      this.log("ImportX509Certificate(" + data_len + ", " + label + ", " + format + ")");
+      callback = function(response) {
+        console.log("@ImportX509Certificate: Reply: " + response.ok);
+        return callback.fn(response.ok);
+      };
+      callback.fn = fn;
+      callback.MsgId = "" + (++Façade.cnt);
+      req = {
+        MsgId: callback.MsgId,
+        data: data,
+        data_len: data_len,
+        label: label,
+        format: format,
+        authData: Façade.authData
+      };
+      app.addFn("import.x509", callback);
+      return app.sendMessage("import.x509", [req]);
+    };
+
+    Façade.ExportX509 = function(id, fileName, format, fn) {
+      var callback, req,
+        _this = this;
+      this.log("ExportX509(" + id + ", " + format + ")");
+      callback = function(response) {
+        console.log("@ExportX509: Reply: " + response.ok);
+        return callback.fn(response.ok);
+      };
+      callback.fn = fn;
+      callback.MsgId = "" + (++Façade.cnt);
+      req = {
+        MsgId: callback.MsgId,
+        id: id,
+        format: format,
+        fileName: fileName,
+        authData: Façade.authData
+      };
+      app.addFn("export.x509", callback);
+      return app.sendMessage("export.x509", [req]);
+    };
+
+    Façade.DelX509 = function(id, fn) {
+      var callback, req,
+        _this = this;
+      this.log("DelX509(" + id + ")");
+      callback = function(response) {
+        console.log("@DelX509: Reply: " + response.ok);
+        return callback.fn(response.ok);
+      };
+      callback.fn = fn;
+      callback.MsgId = "" + (++Façade.cnt);
+      req = {
+        MsgId: callback.MsgId,
+        id: id,
+        authData: Façade.authData
+      };
+      app.addFn("del.x509", callback);
+      return app.sendMessage("del.x509", [req]);
+    };
+
+    Façade.DelPrKey = function(id, fn) {
+      var callback, req,
+        _this = this;
+      this.log("DelPrKey(" + id + ")");
+      callback = function(response) {
+        console.log("@DelPrKey: Reply: " + response.ok);
+        return callback.fn(response.ok);
+      };
+      callback.fn = fn;
+      callback.MsgId = "" + (++Façade.cnt);
+      req = {
+        MsgId: callback.MsgId,
+        id: id,
+        authData: Façade.authData
+      };
+      app.addFn("del.prkey", callback);
+      return app.sendMessage("del.prkey", [req]);
+    };
+
+    Façade.SetPIN = function(pin, fn) {
+      var callback,
+        _this = this;
+      this.log("@SetPIN");
+      callback = function(response) {
+        console.log("@SetPIN: Reply: " + response.status);
+        return callback.fn(response.ok);
+      };
+      callback.fn = fn;
+      callback.MsgId = "" + (++Façade.cnt);
+      app.addFn("setpin", callback);
       return app.sendMessage("setpin", [
         {
-          replyto: replyto,
+          MsgId: callback.MsgId,
           pin: pin
         }
       ]);
     };
 
     Façade.ChangePIN = function(pincode, pin, fn) {
-      var callback, replyto,
+      var callback,
         _this = this;
       this.log("@ChangePIN");
-      callback = function(kMessageName, _arg) {
-        var response;
-        response = _arg[0];
-        console.log("@ChangePIN: Reply from " + kMessageName + ": " + response.status);
+      callback = function(response) {
+        console.log("@ChangePIN: Reply: " + response.status);
         return callback.fn(response.ok);
       };
       callback.fn = fn;
-      replyto = "changepin." + (++Façade.cnt);
-      app.setMessageCallback(replyto, callback);
+      callback.MsgId = "" + (++Façade.cnt);
+      app.addFn("changepin", callback);
       return app.sendMessage("changepin", [
         {
-          replyto: replyto,
+          MsgId: callback.MsgId,
           pincode: pincode,
           pin: pin
         }
@@ -14412,21 +15676,19 @@ module.exports = jQuery;}, "D:/Users\\amadou\\Documents\\Visual Studio 2010\\Pro
     };
 
     Façade.Unblock = function(puk, pin, fn) {
-      var callback, replyto,
+      var callback,
         _this = this;
       this.log("@UnblockPIN");
-      callback = function(kMessageName, _arg) {
-        var response;
-        response = _arg[0];
-        console.log("@Unblock: Reply from " + kMessageName + ": " + response.status);
+      callback = function(response) {
+        console.log("@Unblock: Reply: " + response.status);
         return callback.fn(response.ok);
       };
       callback.fn = fn;
-      replyto = "unblock." + (++Façade.cnt);
-      app.setMessageCallback(replyto, callback);
+      callback.MsgId = "" + (++Façade.cnt);
+      app.setMessageCallback("unblock", callback);
       return app.sendMessage("unblock", [
         {
-          replyto: replyto,
+          MsgId: callback.MsgId,
           puk: puk,
           pin: pin
         }
@@ -14434,41 +15696,37 @@ module.exports = jQuery;}, "D:/Users\\amadou\\Documents\\Visual Studio 2010\\Pro
     };
 
     Façade.EraseToken = function(fn) {
-      var callback, replyto,
+      var callback,
         _this = this;
       this.log("@EraseToken");
-      callback = function(kMessageName, _arg) {
-        var response;
-        response = _arg[0];
-        console.log("@EraseToken: Reply from " + kMessageName + ": " + response.status);
+      callback = function(response) {
+        console.log("@EraseToken: Reply: " + response.status);
         return callback.fn(response.ok);
       };
       callback.fn = fn;
-      replyto = "erase." + (++Façade.cnt);
-      app.setMessageCallback(replyto, callback);
+      callback.MsgId = "" + (++Façade.cnt);
+      app.addFn("erase", callback);
       return app.sendMessage("erase", [
         {
-          replyto: replyto
+          MsgId: callback.MsgId
         }
       ]);
     };
 
     Façade.InitToken = function(pin, puk, label, fn) {
-      var callback, replyto,
+      var callback,
         _this = this;
       this.log("@InitToken");
-      callback = function(kMessageName, _arg) {
-        var response;
-        response = _arg[0];
-        console.log("@InitToken: Reply from " + kMessageName + ": " + response.status);
+      callback = function(response) {
+        console.log("@InitToken: Reply: " + response.status);
         return callback.fn(response.ok);
       };
       callback.fn = fn;
-      replyto = "init." + (++Façade.cnt);
-      app.setMessageCallback(replyto, callback);
+      callback.MsgId = "" + (++Façade.cnt);
+      app.addFn("init", callback);
       return app.sendMessage("init", [
         {
-          replyto: replyto,
+          MsgId: callback.MsgId,
           pin: pin,
           puk: puk,
           label: label
@@ -14482,13 +15740,11 @@ module.exports = jQuery;}, "D:/Users\\amadou\\Documents\\Visual Studio 2010\\Pro
     };
 
     Façade.Login = function(pin, fn) {
-      var callback, replyto,
+      var callback,
         _this = this;
       this.log("@Login");
-      callback = function(kMessageName, _arg) {
-        var response;
-        response = _arg[0];
-        console.log("@Login: Reply from " + kMessageName + ": " + response.status);
+      callback = function(response) {
+        console.log("@Login: Reply: " + response.status);
         if (response.status === Token.LoggedIn) {
           Façade._pinopts = {
             minlen: response.minlen,
@@ -14505,76 +15761,19 @@ module.exports = jQuery;}, "D:/Users\\amadou\\Documents\\Visual Studio 2010\\Pro
         return callback.fn(response.tries_left);
       };
       callback.fn = fn;
-      replyto = "verifypin." + (++Façade.cnt);
-      app.setMessageCallback(replyto, callback);
+      callback.MsgId = "" + (++Façade.cnt);
+      app.addFn("verifypin", callback);
       return app.sendMessage("verifypin", [
         {
-          replyto: replyto,
+          MsgId: callback.MsgId,
           pin: pin
         }
       ]);
     };
 
-    Façade.soLogin = function(sopin, fn) {};
-
-    Façade.unblock = function(puk, fn) {
-      Façade.log("@unblock:puk-attempts=" + Façade['data']['options']['puk-attempts']);
-      Façade.log("@unblock:remaining-puk-attempts=" + Façade['data']['options']['remaining-puk-attempts']);
-      if (Façade['data']['options']['remaining-puk-attempts'] === 0) {
-        Façade['data']['status'] = Token.Locked;
-        return fn(0);
-      }
-      Façade['data']['options']['remaining-puk-attempts'] -= 1;
-      if (puk === Façade['data']['puk']) {
-        Façade['data']['options']['remaining-pin-attempts'] = Façade['data']['options']['pin-attempts'];
-        Façade['data']['options']['remaining-puk-attempts'] = Façade['data']['options']['puk-attempts'];
-        Façade['data']['status'] = Token.ChangePIN;
-        return fn();
-      } else {
-        return fn(Façade['data']['options']['remaining-puk-attempts']);
-      }
-    };
-
-    Façade.soUnblock = function(sopuk, fn) {};
-
-    Façade.logout = function(fn) {
-      Façade['data']['status'] = Token.AuthRequired;
-      return fn();
-    };
-
-    Façade.resetPIN = function(puk, newpin, fn) {
-      if (Façade['data']['puk'] === puk) {
-        Façade['data']['pin'] = newpin;
-        Façade['data']['status'] = Token.LoggedIn;
-        return fn();
-      } else {
-        return fn(true);
-      }
-    };
-
-    Façade.soResetPIN = function(newsopin, fn) {
-      Façade['data']['sopin'] = newsopin;
-      Façade['data']['status'] = Token.LoggedIn;
-      return fn();
-    };
-
-    Façade.changePIN = function(oldpin, pin, fn) {
-      if (oldpin === Façade['data']['pin']) {
-        Façade['data']['pin'] = pin;
-        Façade['data']['status'] = Token.LoggedIn;
-        return fn();
-      } else {
-        return fn(true);
-      }
-    };
-
-    Façade.soChangePIN = function(sopin, fn) {
-      return this.soSetPIN(sopin, fn);
-    };
-
     return Façade;
 
-  }).call(this, Spine.Module);
+  })(Spine.Module);
 
   module.exports = Façade;
 
@@ -14649,12 +15848,12 @@ module.exports = jQuery;}, "D:/Users\\amadou\\Documents\\Visual Studio 2010\\Pro
         this.app.become(step);
         if (step.alertMsg) {
           this.app.delay((function() {
-            return _this.alert(step.alertMsg);
+            return _this.app.alert(step.alertMsg);
           }));
         }
         if (step.infoMsg) {
           return this.app.delay((function() {
-            return _this.info(step.infoMsg);
+            return _this.app.info(step.infoMsg);
           }));
         }
       });
@@ -14689,12 +15888,13 @@ module.exports = jQuery;}, "D:/Users\\amadou\\Documents\\Visual Studio 2010\\Pro
         }), 200);
       }
       return this.app.delay((function() {
-        return _this.app.navigate('#/keys');
-      }), 750);
+        return _this.app.navigate('/');
+      }), 550);
     };
 
     Wizard.prototype.cancelled = function(step) {
-      return this.log("cancelled:" + step.name);
+      this.log("cancelled:" + step.name);
+      return this.app.navigate("/");
     };
 
     return Wizard;
@@ -14865,7 +16065,7 @@ module.exports = jQuery;}, "D:/Users\\amadou\\Documents\\Visual Studio 2010\\Pro
     
       __out.push('<div class="modal">\n  <div class="modal-header">\n    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>\n  </div>\n  <div class="modal-body">\n    <p>');
     
-      __out.push(__sanitize(this.msg));
+      __out.push(this.msg);
     
       __out.push('</p>\n  </div>\n  <div class="modal-footer">\n    ');
     
@@ -14890,6 +16090,67 @@ module.exports = jQuery;}, "D:/Users\\amadou\\Documents\\Visual Studio 2010\\Pro
       }
     
       __out.push('\n  </div>\n</div>');
+    
+    }).call(this);
+    
+  }).call(__obj);
+  __obj.safe = __objSafe, __obj.escape = __escape;
+  return __out.join('');
+}}, "views/get-label": function(exports, require, module) {module.exports = function(__obj) {
+  if (!__obj) __obj = {};
+  var __out = [], __capture = function(callback) {
+    var out = __out, result;
+    __out = [];
+    callback.call(this);
+    result = __out.join('');
+    __out = out;
+    return __safe(result);
+  }, __sanitize = function(value) {
+    if (value && value.ecoSafe) {
+      return value;
+    } else if (typeof value !== 'undefined' && value != null) {
+      return __escape(value);
+    } else {
+      return '';
+    }
+  }, __safe, __objSafe = __obj.safe, __escape = __obj.escape;
+  __safe = __obj.safe = function(value) {
+    if (value && value.ecoSafe) {
+      return value;
+    } else {
+      if (!(typeof value !== 'undefined' && value != null)) value = '';
+      var result = new String(value);
+      result.ecoSafe = true;
+      return result;
+    }
+  };
+  if (!__escape) {
+    __escape = __obj.escape = function(value) {
+      return ('' + value)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    };
+  }
+  (function() {
+    (function() {
+    
+      __out.push('<div class="form-header">');
+    
+      __out.push(__sanitize(this.header));
+    
+      __out.push('</div>\n<form class="form get-label">\n  \n  <label>');
+    
+      __out.push(__sanitize(this.title));
+    
+      __out.push('</label>\n  <input name="label" type="text" class="span3" autofocus>\n  \n  <!-- <label>Email</label>\n  <input name="email" type="text" class="span3">\n  \n  <label>Telephone</label>\n  <input name="telephone" type="text" class="span3">\n  \n  <label>Address</label>\n  <textarea rows="3" name="address" class="span3"></textarea>\n  \n  <label>City</label>\n  <input name="country" type="text" class="span3">\n  \n  <label>Country</label>\n  <input name="country" type="text" class="span3"> -->\n\n  <br>\n\n  <button type="submit" class="btn default"><i class="icon-ok"></i> &nbsp;Ok</button>&nbsp;&nbsp;\n\n  ');
+    
+      if (this.hasCancel) {
+        __out.push(' <button type="button" class="cancel btn" style="margin-top:5px;">Cancel</button> ');
+      }
+    
+      __out.push('\n\n</form>');
     
     }).call(this);
     
@@ -14964,7 +16225,187 @@ module.exports = jQuery;}, "D:/Users\\amadou\\Documents\\Visual Studio 2010\\Pro
     
       __out.push(__sanitize(this.actionLabel));
     
-      __out.push('</button>  \n\n</form>');
+      __out.push('</button>&nbsp;&nbsp;\n\n  ');
+    
+      if (this.hasCancel) {
+        __out.push(' <button type="button" class="cancel btn" style="margin-top:5px;">Cancel</button> ');
+      }
+    
+      __out.push('\n\n</form>');
+    
+    }).call(this);
+    
+  }).call(__obj);
+  __obj.safe = __objSafe, __obj.escape = __escape;
+  return __out.join('');
+}}, "views/key-mgr\\export_x509": function(exports, require, module) {module.exports = function(__obj) {
+  if (!__obj) __obj = {};
+  var __out = [], __capture = function(callback) {
+    var out = __out, result;
+    __out = [];
+    callback.call(this);
+    result = __out.join('');
+    __out = out;
+    return __safe(result);
+  }, __sanitize = function(value) {
+    if (value && value.ecoSafe) {
+      return value;
+    } else if (typeof value !== 'undefined' && value != null) {
+      return __escape(value);
+    } else {
+      return '';
+    }
+  }, __safe, __objSafe = __obj.safe, __escape = __obj.escape;
+  __safe = __obj.safe = function(value) {
+    if (value && value.ecoSafe) {
+      return value;
+    } else {
+      if (!(typeof value !== 'undefined' && value != null)) value = '';
+      var result = new String(value);
+      result.ecoSafe = true;
+      return result;
+    }
+  };
+  if (!__escape) {
+    __escape = __obj.escape = function(value) {
+      return ('' + value)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    };
+  }
+  (function() {
+    (function() {
+    
+      __out.push('<div class="modal">\n  \n  <div class="modal-header">\n    Export X509 Certificate <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>\n  </div>\n\n  <form class="form export-x509">   \n  \n    <div class="modal-body">\n      <p>            \n        <label>File Name</label>\n        <input value="');
+    
+      __out.push(__sanitize(this.fileName));
+    
+      __out.push('" name="fileName" type="text" class="span3" autofocus>\n        \n        <label>Format</label>\n        <select name="format" classs="span3">\n          <option value="PEM">PEM-Encoded X509 Certificate</option>\n          <option value="DER">DER-Encoded X509 Certificate</option>\n        </select>        \n      </p>\n    </div> \n    \n    <div class="modal-footer">\n      <button type="submit" class="btn default"><i class="icon-ok"></i> &nbsp;Export</button>\n      <button type="button" class="cancel btn">Cancel</button>\n    </div>\n  </form>\n</div>');
+    
+    }).call(this);
+    
+  }).call(__obj);
+  __obj.safe = __objSafe, __obj.escape = __escape;
+  return __out.join('');
+}}, "views/key-mgr\\get-key-info": function(exports, require, module) {module.exports = function(__obj) {
+  if (!__obj) __obj = {};
+  var __out = [], __capture = function(callback) {
+    var out = __out, result;
+    __out = [];
+    callback.call(this);
+    result = __out.join('');
+    __out = out;
+    return __safe(result);
+  }, __sanitize = function(value) {
+    if (value && value.ecoSafe) {
+      return value;
+    } else if (typeof value !== 'undefined' && value != null) {
+      return __escape(value);
+    } else {
+      return '';
+    }
+  }, __safe, __objSafe = __obj.safe, __escape = __obj.escape;
+  __safe = __obj.safe = function(value) {
+    if (value && value.ecoSafe) {
+      return value;
+    } else {
+      if (!(typeof value !== 'undefined' && value != null)) value = '';
+      var result = new String(value);
+      result.ecoSafe = true;
+      return result;
+    }
+  };
+  if (!__escape) {
+    __escape = __obj.escape = function(value) {
+      return ('' + value)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    };
+  }
+  (function() {
+    (function() {
+    
+      __out.push('<div class="form-header">');
+    
+      __out.push(__sanitize(this.header));
+    
+      __out.push('</div>\n<form class="form get-key-info">\n  \n  <label>');
+    
+      __out.push(__sanitize(this.title));
+    
+      __out.push('</label>\n  <input name="label" type="text" class="span3" autofocus>\n\n  <label>');
+    
+      __out.push(__sanitize("File name"));
+    
+      __out.push('</label>\n  <input name="path" type="file" class="span3">  \n\n  <div class="passphrase">\n    <label>Enter passphrase</label>\n    <input name="passphrase" type="password" class="span3">\n    <cite class="help-block"><i class="icon-info-sign"></i> &nbsp;Leave blank if no passphrase.</cite>  \n  </div>\n\n  <br>\n  \n  <!-- <label>Email</label>\n  <input name="email" type="text" class="span3">\n  \n  <label>Telephone</label>\n  <input name="telephone" type="text" class="span3">\n  \n  <label>Address</label>\n  <textarea rows="3" name="address" class="span3"></textarea>\n  \n  <label>City</label>\n  <input name="country" type="text" class="span3">\n  \n  <label>Country</label>\n  <input name="country" type="text" class="span3"> -->\n\n  <button type="submit" class="btn default"><i class="icon-ok"></i> &nbsp;Ok</button>&nbsp;&nbsp;\n\n  <button type="button" class="cancel btn" style="margin-top:5px;">Cancel</button>\n\n</form>');
+    
+    }).call(this);
+    
+  }).call(__obj);
+  __obj.safe = __objSafe, __obj.escape = __escape;
+  return __out.join('');
+}}, "views/key-mgr\\get-x509-req-info": function(exports, require, module) {module.exports = function(__obj) {
+  if (!__obj) __obj = {};
+  var __out = [], __capture = function(callback) {
+    var out = __out, result;
+    __out = [];
+    callback.call(this);
+    result = __out.join('');
+    __out = out;
+    return __safe(result);
+  }, __sanitize = function(value) {
+    if (value && value.ecoSafe) {
+      return value;
+    } else if (typeof value !== 'undefined' && value != null) {
+      return __escape(value);
+    } else {
+      return '';
+    }
+  }, __safe, __objSafe = __obj.safe, __escape = __obj.escape;
+  __safe = __obj.safe = function(value) {
+    if (value && value.ecoSafe) {
+      return value;
+    } else {
+      if (!(typeof value !== 'undefined' && value != null)) value = '';
+      var result = new String(value);
+      result.ecoSafe = true;
+      return result;
+    }
+  };
+  if (!__escape) {
+    __escape = __obj.escape = function(value) {
+      return ('' + value)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    };
+  }
+  (function() {
+    (function() {
+      var country, _i, _len, _ref;
+    
+      __out.push('<div class="form-header">Create a Certificate Signing Request</div>\n<form class="form get-x509-req-info">\n  \n  <label>Full Name</label>\n  <input name="cn" type="text" class="span3" autofocus>\n  \n  <label>Organization</label>\n  <input name="o" type="text" class="span3">\n  \n  <label>Department Name</label>\n  <input name="ou" type="text" class="span3">\n\n  <label>Country</label>\n  <select name="country" class="span3">');
+    
+      _ref = this.countries;
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        country = _ref[_i];
+        __out.push(' <option value="');
+        __out.push(__sanitize(country.code));
+        __out.push('" ');
+        if (country.value === 'MA') {
+          __out.push(__sanitize("selected"));
+        }
+        __out.push('>');
+        __out.push(__sanitize(country.name));
+        __out.push('</option> ');
+      }
+    
+      __out.push('</select>\n\n  <label>City</label>\n  <input name="city" type="text" class="span3">\n  \n  <label>Region or Province</label>\n  <input name="region" type="text" class="span3">\n  \n  <label>Email Address</label>\n  <input name="emailAddress" type="text" class="span3">\n\n  <br>\n\n  <button type="submit" class="btn default"><i class="icon-ok"></i> &nbsp;Create Request</button>&nbsp;&nbsp;\n\n  <button type="button" class="cancel btn" style="margin-top:5px;">Cancel</button>\n\n</form>');
     
     }).call(this);
     
@@ -15022,7 +16463,163 @@ module.exports = jQuery;}, "D:/Users\\amadou\\Documents\\Visual Studio 2010\\Pro
   }).call(__obj);
   __obj.safe = __objSafe, __obj.escape = __escape;
   return __out.join('');
-}}, "views/key-mgr\\toolsbar.key": function(exports, require, module) {module.exports = function(__obj) {
+}}, "views/key-mgr\\prkey": function(exports, require, module) {module.exports = function(__obj) {
+  if (!__obj) __obj = {};
+  var __out = [], __capture = function(callback) {
+    var out = __out, result;
+    __out = [];
+    callback.call(this);
+    result = __out.join('');
+    __out = out;
+    return __safe(result);
+  }, __sanitize = function(value) {
+    if (value && value.ecoSafe) {
+      return value;
+    } else if (typeof value !== 'undefined' && value != null) {
+      return __escape(value);
+    } else {
+      return '';
+    }
+  }, __safe, __objSafe = __obj.safe, __escape = __obj.escape;
+  __safe = __obj.safe = function(value) {
+    if (value && value.ecoSafe) {
+      return value;
+    } else {
+      if (!(typeof value !== 'undefined' && value != null)) value = '';
+      var result = new String(value);
+      result.ecoSafe = true;
+      return result;
+    }
+  };
+  if (!__escape) {
+    __escape = __obj.escape = function(value) {
+      return ('' + value)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    };
+  }
+  (function() {
+    (function() {
+    
+      __out.push('<div class="title">');
+    
+      __out.push(__sanitize(this.friendlyName));
+    
+      __out.push('</div>\n<div class="tags">\n</div>');
+    
+    }).call(this);
+    
+  }).call(__obj);
+  __obj.safe = __objSafe, __obj.escape = __escape;
+  return __out.join('');
+}}, "views/key-mgr\\pubkey": function(exports, require, module) {module.exports = function(__obj) {
+  if (!__obj) __obj = {};
+  var __out = [], __capture = function(callback) {
+    var out = __out, result;
+    __out = [];
+    callback.call(this);
+    result = __out.join('');
+    __out = out;
+    return __safe(result);
+  }, __sanitize = function(value) {
+    if (value && value.ecoSafe) {
+      return value;
+    } else if (typeof value !== 'undefined' && value != null) {
+      return __escape(value);
+    } else {
+      return '';
+    }
+  }, __safe, __objSafe = __obj.safe, __escape = __obj.escape;
+  __safe = __obj.safe = function(value) {
+    if (value && value.ecoSafe) {
+      return value;
+    } else {
+      if (!(typeof value !== 'undefined' && value != null)) value = '';
+      var result = new String(value);
+      result.ecoSafe = true;
+      return result;
+    }
+  };
+  if (!__escape) {
+    __escape = __obj.escape = function(value) {
+      return ('' + value)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    };
+  }
+  (function() {
+    (function() {
+    
+      __out.push('<div class="title">');
+    
+      __out.push(__sanitize(this.friendlyName));
+    
+      __out.push('</div>\n<div class="tags">\n</div>');
+    
+    }).call(this);
+    
+  }).call(__obj);
+  __obj.safe = __objSafe, __obj.escape = __escape;
+  return __out.join('');
+}}, "views/key-mgr\\toolsbar.keys": function(exports, require, module) {module.exports = function(__obj) {
+  if (!__obj) __obj = {};
+  var __out = [], __capture = function(callback) {
+    var out = __out, result;
+    __out = [];
+    callback.call(this);
+    result = __out.join('');
+    __out = out;
+    return __safe(result);
+  }, __sanitize = function(value) {
+    if (value && value.ecoSafe) {
+      return value;
+    } else if (typeof value !== 'undefined' && value != null) {
+      return __escape(value);
+    } else {
+      return '';
+    }
+  }, __safe, __objSafe = __obj.safe, __escape = __obj.escape;
+  __safe = __obj.safe = function(value) {
+    if (value && value.ecoSafe) {
+      return value;
+    } else {
+      if (!(typeof value !== 'undefined' && value != null)) value = '';
+      var result = new String(value);
+      result.ecoSafe = true;
+      return result;
+    }
+  };
+  if (!__escape) {
+    __escape = __obj.escape = function(value) {
+      return ('' + value)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    };
+  }
+  (function() {
+    (function() {
+      var sysmenu;
+    
+      sysmenu = require('lib/sysmenu');
+    
+      __out.push('\n<div class="toolsbar-inner">\n\t\n\t<div class="for-keys">\n\t\t<div class="add btn-group">\n\t\t  <a class="btn btn-large btn-success btn-primary default dropdown-toggle" data-toggle="dropdown"><i class="icon-plus"></i> Add <span class="split"></span><b class="caret"></b>\n\t\t  </a>\n\t\t  <ul class="dropdown-menu">\n        <li><a class="add:gen" href="#/key/gen">Generate Private Key</a></li>\n        <li><a title="Import Private Key (e.g: PKCS12, PEM, DER)" class="add:import-prkey" href="#/ImportPrKey">Import Private Key</a></li>\n        <li><a title="Import X.509 Certificate (eg: PEM, DER)" class="add:import-certificate" href="#/ImportX509Certificate">Import X.509 Certificate</a></li>\n        <!--\n<li><a title="Import Public Key (PEM, DER, ...)" class="add:import-pubkey" href="#/ImportPubKey">Import Public Key</a></li>-->\n\n\t\t  </ul>\t\t\t\n\t\t</div>\n\t\t<div class="btn-group">\n\t\t\t<a title="Reload keys" class="reload btn"><i class="icon-undo"></i></a>\n\t\t</div>\n\t\t<div class="actions btn-group">\t\t\t\n\t\t\t<a title="Delete" href="#/purge" class="purge btn"><i class="icon-trash"></i></a>\n\t\t\t<!-- <a title="Telecharger" href="#/export" class="export btn"><i class="icon-download-alt"></i></a> -->\n\t\t</div>\n\t\t');
+    
+      __out.push(sysmenu.render());
+    
+      __out.push('\n\t</div>\n</div>');
+    
+    }).call(this);
+    
+  }).call(__obj);
+  __obj.safe = __objSafe, __obj.escape = __escape;
+  return __out.join('');
+}}, "views/key-mgr\\toolsbar.X509": function(exports, require, module) {module.exports = function(__obj) {
   if (!__obj) __obj = {};
   var __out = [], __capture = function(callback) {
     var out = __out, result;
@@ -15084,7 +16681,7 @@ module.exports = jQuery;}, "D:/Users\\amadou\\Documents\\Visual Studio 2010\\Pro
   }).call(__obj);
   __obj.safe = __objSafe, __obj.escape = __escape;
   return __out.join('');
-}}, "views/key-mgr\\toolsbar.keys": function(exports, require, module) {module.exports = function(__obj) {
+}}, "views/key-mgr\\x509-certificate": function(exports, require, module) {module.exports = function(__obj) {
   if (!__obj) __obj = {};
   var __out = [], __capture = function(callback) {
     var out = __out, result;
@@ -15123,15 +16720,34 @@ module.exports = jQuery;}, "D:/Users\\amadou\\Documents\\Visual Studio 2010\\Pro
   }
   (function() {
     (function() {
-      var sysmenu;
     
-      sysmenu = require('lib/sysmenu');
+      __out.push('\n<div class="subject x509-name">\n\n\t<div class="header">Issued To:</div>\n\n\t<div class="x509-entries">\n\n\t\t<div class="x509-entry">\n\t\t\t\t<div class="x509-entry-key">Organisation</div>\n\t\t\t\t<div class="x509-entry-value">');
     
-      __out.push('\n<div class="toolsbar-inner">\n\t\n\t<div class="for-keys">\n\t\t<div class="add btn-group">\n\t\t  <a class="btn btn-large btn-success btn-primary default dropdown-toggle" data-toggle="dropdown"><i class="icon-plus"></i> Add <span class="split"></span><b class="caret"></b>\n\t\t  </a>\n\t\t  <ul class="dropdown-menu">\n        <li><a class="add:gen" href="#/key/gen">Generate Key</a></li>\n        <li><a class="add:import-fs" href="#/key/import/fs">Import from filesystem</a></li>\n        <li><a class="add:import-ldap" href="#/key/import/ldap">Import from LDAP</a></li>\n\t\t  </ul>\t\t\t\n\t\t</div>\n\t\t<div class="btn-group">\n\t\t\t<a title="Reload keys" class="reload btn"><i class="icon-undo"></i></a>\n\t\t</div>\n\t\t<div class="actions btn-group">\t\t\t\n\t\t\t<a title="Delete" href="#/purge" class="purge btn"><i class="icon-trash"></i></a>\n\t\t\t<a title="Telecharger" href="#/export" class="export btn"><i class="icon-download-alt"></i></a>\n\t\t</div>\n\t\t');
+      __out.push(__sanitize(this.subject.cn));
     
-      __out.push(sysmenu.render());
+      __out.push('</div>\n\t\t</div>\n\n\t\t<div class="x509-entry">\n\t\t\t\t<div class="x509-entry-key">Organisation Unit</div>\n\t\t\t\t<div class="x509-entry-value">');
     
-      __out.push('\n\t</div>\n</div>');
+      __out.push(__sanitize(this.subject.ou));
+    
+      __out.push('</div>\n\t\t</div>\n\t</div>\n\n\n</div>\n\n');
+    
+      if (this.issuer) {
+        __out.push('\n\n\t<div class="issuer x509-name">\n\n\t\t<div class="header">Issued By:</div>\n\n\t\t<div class="x509-entries">\n\n\t\t\t<div class="x509-entry">\n\t\t\t\t\t<div class="x509-entry-key">Organisation</div>\n\t\t\t\t\t<div class="x509-entry-value">');
+        __out.push(__sanitize(this.issuer.o));
+        __out.push('</div>\n\t\t\t</div>\n\n\t\t\t<div class="x509-entry">\n\t\t\t\t\t<div class="x509-entry-key">Organisation Unit</div>\n\t\t\t\t\t<div class="x509-entry-value">');
+        __out.push(__sanitize(this.issuer.ou));
+        __out.push('</div>\n\t\t\t</div>\n\t\t</div>\n\n\n\t</div>\n\n');
+      }
+    
+      __out.push('\n\n<div class="validity">\n\n\t\t<div class="header">Validity:</div>\n\n\t\t<div class="x509-entries">\n\n\t\t\t<div class="x509-entry">\n\t\t\t\t\t<div class="x509-entry-key">Not Before</div>\n\t\t\t\t\t<div class="x509-entry-value">');
+    
+      __out.push(__sanitize($.formatDate('dd/ mm/ yy', $.parseDate('ymd', this.notBefore.substr(0, 6)))));
+    
+      __out.push('</div>\n\t\t\t</div>\n\t\t\t<div class="x509-entry">\n\t\t\t\t\t<div class="x509-entry-key">Not After</div>\n\t\t\t\t\t<div class="x509-entry-value">');
+    
+      __out.push(__sanitize($.formatDate('dd/ mm/ yy', $.parseDate('ymd', this.notAfter.substr(0, 6)))));
+    
+      __out.push('</div>\n\t\t\t</div>\n\t\t</div>\n\n\t</div>\t\n\n</div>');
     
     }).call(this);
     
@@ -15182,15 +16798,252 @@ module.exports = jQuery;}, "D:/Users\\amadou\\Documents\\Visual Studio 2010\\Pro
     
       __out.push(__sanitize(this.id));
     
-      __out.push('\'> -->\n\n\t<label class="entry-box">\n\t\t\n\t\t<div class="checkbox">\n\t\t\t<i class="icon-check"></i>\n\t\t\t<i class="icon-check-empty"></i>\n\t\t</div>\n\t\t\n\t\t<div class="title">\n\t\t\t<a class="action-view" href="#/key/');
+      __out.push('\'> -->\n\n\t<label class="entry-box">\n\t\t\n\t\t<div class="checkbox">\n\t\t\t<i class="icon-check"></i>\n\t\t\t<i class="icon-check-empty"></i>\n\t\t</div>\n\t\t\n\t\t<div class="title">\n\t\t\t<a data-id="');
+    
+      __out.push(__sanitize(this.id));
+    
+      __out.push('" class="action-view" href="#/keys/');
     
       __out.push(__sanitize(this.id));
     
       __out.push('">');
     
-      __out.push(__sanitize(this.friendlyName));
+      __out.push(__sanitize(this.friendlyName()));
     
       __out.push('</a>\n\t\t</div>\n\t\t\n\t\t<div class="tags">\n\t  </div>\n\n\t\t<div class="actions">\n\t\t\t<a title="Supprimer" class="action-delete"><i class="icon-trash"></i></a>\n\t\t\t<a title="Exporter la cle" class="action-export"><i class="icon-download-alt"></i></a>\n\t\t\t<a title="Afficher plus d\'informations" class="action-view" href="#/key/');
+    
+      __out.push(__sanitize(this.id));
+    
+      __out.push('"><i class="icon-arrow-right"></i></a>\n\t\t</div>\n\n\t</label>\n\n<!-- </li> \n\n<input type="checkbox" id="checkbox-');
+    
+      __out.push(__sanitize(this.id));
+    
+      __out.push('">\n-->\n');
+    
+    }).call(this);
+    
+  }).call(__obj);
+  __obj.safe = __objSafe, __obj.escape = __escape;
+  return __out.join('');
+}}, "views/key-mgr\\_prkey": function(exports, require, module) {module.exports = function(__obj) {
+  if (!__obj) __obj = {};
+  var __out = [], __capture = function(callback) {
+    var out = __out, result;
+    __out = [];
+    callback.call(this);
+    result = __out.join('');
+    __out = out;
+    return __safe(result);
+  }, __sanitize = function(value) {
+    if (value && value.ecoSafe) {
+      return value;
+    } else if (typeof value !== 'undefined' && value != null) {
+      return __escape(value);
+    } else {
+      return '';
+    }
+  }, __safe, __objSafe = __obj.safe, __escape = __obj.escape;
+  __safe = __obj.safe = function(value) {
+    if (value && value.ecoSafe) {
+      return value;
+    } else {
+      if (!(typeof value !== 'undefined' && value != null)) value = '';
+      var result = new String(value);
+      result.ecoSafe = true;
+      return result;
+    }
+  };
+  if (!__escape) {
+    __escape = __obj.escape = function(value) {
+      return ('' + value)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    };
+  }
+  (function() {
+    (function() {
+    
+      __out.push('<!-- <li class="entry" id=\'key-');
+    
+      __out.push(__sanitize(this.id));
+    
+      __out.push('\'> -->\n\n\t<label class="entry-box">\n\t\t\n\t\t<div class="checkbox">\n\t\t\t<i class="icon-check"></i>\n\t\t\t<i class="icon-check-empty"></i>\n\t\t</div>\n\t\t\n\t\t<div class="title">\n\t\t\t<a data-id="');
+    
+      __out.push(__sanitize(this.id));
+    
+      __out.push('" title="');
+    
+      __out.push(__sanitize(this.label));
+    
+      __out.push('" class="action-view" href="#/keys/');
+    
+      __out.push(__sanitize(this.id));
+    
+      __out.push('">');
+    
+      __out.push(__sanitize(truncate(this.label, 25)));
+    
+      __out.push('</a> &nbsp;&nbsp;&nbsp; <span class="label label-important">PrivateKey</span> ');
+    
+      if (this["native"]) {
+        __out.push('&nbsp;&nbsp;&nbsp; <span title="This key was generated on-board" class="label label-info">Native</span>');
+      }
+    
+      __out.push('\n\t\t</div>\n\t\n\t\t<div class="tags">\n\t  </div>\n\t\t\n\t\t<div class="actions">\n\t\t\t<a title="Supprimer" class="action-delete"><i class="icon-trash"></i></a>\n\t\t\t');
+    
+      if (this["native"]) {
+        __out.push('<a title="Generer un CSR" class="action-gen-csr"><i class="icon-download-alt"></i></a>');
+      }
+    
+      __out.push('\n\t\t\t<!-- <a title="Afficher plus d\'informations" class="action-view" href="#/key/');
+    
+      __out.push(__sanitize(this.id));
+    
+      __out.push('"><i class="icon-arrow-right"></i></a> -->\n\t\t</div>\n\n\t</label>\n\n<!-- </li> \n\n<input type="checkbox" id="checkbox-');
+    
+      __out.push(__sanitize(this.id));
+    
+      __out.push('">\n-->\n');
+    
+    }).call(this);
+    
+  }).call(__obj);
+  __obj.safe = __objSafe, __obj.escape = __escape;
+  return __out.join('');
+}}, "views/key-mgr\\_pubkey": function(exports, require, module) {module.exports = function(__obj) {
+  if (!__obj) __obj = {};
+  var __out = [], __capture = function(callback) {
+    var out = __out, result;
+    __out = [];
+    callback.call(this);
+    result = __out.join('');
+    __out = out;
+    return __safe(result);
+  }, __sanitize = function(value) {
+    if (value && value.ecoSafe) {
+      return value;
+    } else if (typeof value !== 'undefined' && value != null) {
+      return __escape(value);
+    } else {
+      return '';
+    }
+  }, __safe, __objSafe = __obj.safe, __escape = __obj.escape;
+  __safe = __obj.safe = function(value) {
+    if (value && value.ecoSafe) {
+      return value;
+    } else {
+      if (!(typeof value !== 'undefined' && value != null)) value = '';
+      var result = new String(value);
+      result.ecoSafe = true;
+      return result;
+    }
+  };
+  if (!__escape) {
+    __escape = __obj.escape = function(value) {
+      return ('' + value)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    };
+  }
+  (function() {
+    (function() {
+    
+      __out.push('<!-- <li class="entry" id=\'key-');
+    
+      __out.push(__sanitize(this.id));
+    
+      __out.push('\'> -->\n\n\t<label class="entry-box">\n\t\t\n\t\t<div class="checkbox">\n\t\t\t<i class="icon-check"></i>\n\t\t\t<i class="icon-check-empty"></i>\n\t\t</div>\n\t\t\n\t\t<div class="title">\n\t\t\t<a data-id="');
+    
+      __out.push(__sanitize(this.id));
+    
+      __out.push('" class="action-view" href="#/keys/');
+    
+      __out.push(__sanitize(this.id));
+    
+      __out.push('">');
+    
+      __out.push(__sanitize(this.label));
+    
+      __out.push('</a>\n\t\t</div>\n\t\t\n\t\t<div class="tags">\n\t  </div>\n\n\t\t<div class="actions">\n\t\t\t<a title="Supprimer" class="action-delete"><i class="icon-trash"></i></a>\n\t\t\t<a title="Exporter la cle" class="action-export"><i class="icon-download-alt"></i></a>\n\t\t\t<a title="Afficher plus d\'informations" class="action-view" href="#/key/');
+    
+      __out.push(__sanitize(this.id));
+    
+      __out.push('"><i class="icon-arrow-right"></i></a>\n\t\t</div>\n\n\t</label>\n\n<!-- </li> \n\n<input type="checkbox" id="checkbox-');
+    
+      __out.push(__sanitize(this.id));
+    
+      __out.push('">\n-->\n');
+    
+    }).call(this);
+    
+  }).call(__obj);
+  __obj.safe = __objSafe, __obj.escape = __escape;
+  return __out.join('');
+}}, "views/key-mgr\\_x509-certificate": function(exports, require, module) {module.exports = function(__obj) {
+  if (!__obj) __obj = {};
+  var __out = [], __capture = function(callback) {
+    var out = __out, result;
+    __out = [];
+    callback.call(this);
+    result = __out.join('');
+    __out = out;
+    return __safe(result);
+  }, __sanitize = function(value) {
+    if (value && value.ecoSafe) {
+      return value;
+    } else if (typeof value !== 'undefined' && value != null) {
+      return __escape(value);
+    } else {
+      return '';
+    }
+  }, __safe, __objSafe = __obj.safe, __escape = __obj.escape;
+  __safe = __obj.safe = function(value) {
+    if (value && value.ecoSafe) {
+      return value;
+    } else {
+      if (!(typeof value !== 'undefined' && value != null)) value = '';
+      var result = new String(value);
+      result.ecoSafe = true;
+      return result;
+    }
+  };
+  if (!__escape) {
+    __escape = __obj.escape = function(value) {
+      return ('' + value)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    };
+  }
+  (function() {
+    (function() {
+    
+      __out.push('<!-- <li class="entry" id=\'key-');
+    
+      __out.push(__sanitize(this.id));
+    
+      __out.push('\'> -->\n\n\t<label class="entry-box">\n\t\t\n\t\t<div class="checkbox">\n\t\t\t<i class="icon-check"></i>\n\t\t\t<i class="icon-check-empty"></i>\n\t\t</div>\n\t\t\n\t\t<div class="title">\n\t\t\t<a data-id="');
+    
+      __out.push(__sanitize(this.id));
+    
+      __out.push('" title="');
+    
+      __out.push(__sanitize(this.label));
+    
+      __out.push('" class="action-view" href="#/keys/');
+    
+      __out.push(__sanitize(this.id));
+    
+      __out.push('">');
+    
+      __out.push(__sanitize(truncate(this.label, 25)));
+    
+      __out.push('</a> &nbsp;&nbsp;&nbsp; <span class="label label-info">X509</span>\n\t\t</div>\t\t\n\n\t\t<div class="tags">\n\t  </div>\n\n\t\t<div class="actions">\n\t\t\t<a title="Supprimer" class="action-delete"><i class="icon-trash"></i></a>\n\t\t\t<a title="Exporter la cle" class="action-export"><i class="icon-download-alt"></i></a>\n\t\t\t<a title="Afficher plus d\'informations" class="action-view" href="#/key/');
     
       __out.push(__sanitize(this.id));
     
@@ -15334,100 +17187,6 @@ module.exports = jQuery;}, "D:/Users\\amadou\\Documents\\Visual Studio 2010\\Pro
   }).call(__obj);
   __obj.safe = __objSafe, __obj.escape = __escape;
   return __out.join('');
-}}, "views/personal-info": function(exports, require, module) {module.exports = function(__obj) {
-  if (!__obj) __obj = {};
-  var __out = [], __capture = function(callback) {
-    var out = __out, result;
-    __out = [];
-    callback.call(this);
-    result = __out.join('');
-    __out = out;
-    return __safe(result);
-  }, __sanitize = function(value) {
-    if (value && value.ecoSafe) {
-      return value;
-    } else if (typeof value !== 'undefined' && value != null) {
-      return __escape(value);
-    } else {
-      return '';
-    }
-  }, __safe, __objSafe = __obj.safe, __escape = __obj.escape;
-  __safe = __obj.safe = function(value) {
-    if (value && value.ecoSafe) {
-      return value;
-    } else {
-      if (!(typeof value !== 'undefined' && value != null)) value = '';
-      var result = new String(value);
-      result.ecoSafe = true;
-      return result;
-    }
-  };
-  if (!__escape) {
-    __escape = __obj.escape = function(value) {
-      return ('' + value)
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;');
-    };
-  }
-  (function() {
-    (function() {
-    
-      __out.push('<div class="form-header">Edit personal information</div>\n<form class="form personal-info" method="post" action="#/personal-info">\n  \n  <label>Full Name</label>\n  <input name="fullName" type="text" class="span3" autofocus>\n  \n  <!-- <label>Email</label>\n  <input name="email" type="text" class="span3">\n  \n  <label>Telephone</label>\n  <input name="telephone" type="text" class="span3">\n  \n  <label>Address</label>\n  <textarea rows="3" name="address" class="span3"></textarea>\n  \n  <label>City</label>\n  <input name="country" type="text" class="span3">\n  \n  <label>Country</label>\n  <input name="country" type="text" class="span3"> -->\n\n  <br>\n\n  <button type="submit" class="btn default"><i class="icon-ok"></i> &nbsp;Ok</button>\n\n</form>');
-    
-    }).call(this);
-    
-  }).call(__obj);
-  __obj.safe = __objSafe, __obj.escape = __escape;
-  return __out.join('');
-}}, "views/sologin": function(exports, require, module) {module.exports = function(__obj) {
-  if (!__obj) __obj = {};
-  var __out = [], __capture = function(callback) {
-    var out = __out, result;
-    __out = [];
-    callback.call(this);
-    result = __out.join('');
-    __out = out;
-    return __safe(result);
-  }, __sanitize = function(value) {
-    if (value && value.ecoSafe) {
-      return value;
-    } else if (typeof value !== 'undefined' && value != null) {
-      return __escape(value);
-    } else {
-      return '';
-    }
-  }, __safe, __objSafe = __obj.safe, __escape = __obj.escape;
-  __safe = __obj.safe = function(value) {
-    if (value && value.ecoSafe) {
-      return value;
-    } else {
-      if (!(typeof value !== 'undefined' && value != null)) value = '';
-      var result = new String(value);
-      result.ecoSafe = true;
-      return result;
-    }
-  };
-  if (!__escape) {
-    __escape = __obj.escape = function(value) {
-      return ('' + value)
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;');
-    };
-  }
-  (function() {
-    (function() {
-    
-    
-    
-    }).call(this);
-    
-  }).call(__obj);
-  __obj.safe = __objSafe, __obj.escape = __escape;
-  return __out.join('');
 }}, "views/start": function(exports, require, module) {module.exports = function(__obj) {
   if (!__obj) __obj = {};
   var __out = [], __capture = function(callback) {
@@ -15515,7 +17274,7 @@ module.exports = jQuery;}, "D:/Users\\amadou\\Documents\\Visual Studio 2010\\Pro
   (function() {
     (function() {
     
-      __out.push('<div class="navbar pull-right">\n  <div class="navbar-inner">\n    <div class="container">\n      \n      <ul class="nav pull-right">\n                      \n          <li class="dropdown" id="options">\n            <a title="Options"  href="#" class="dropdown-toggle options btn btn-small" data-toggle="dropdown"><i class="icon-wrench"></i><b class="caret"></b></a>\n            <ul class="dropdown-menu">\n              <li><a href="#/changepin">Change PIN</a></li>\n              <!-- <li><a href="#/personal-info">Modify personal data</a></li> -->\n              <li><a href="#/erase">Erase token</a></li>\n              <li class="divider"></li>\n              <li><a href="#/init">Re-initialize token</a></li>\n            </ul>\n          </li>\n\n          <li id="sign-out"><a title="Sign out" class="btn btn-small" href="#/logout"><i class="icon-signout"></i></a></li>\n\n        </ul><!-- /.nav-collapse -->\n    </div>\n  </div><!-- /navbar-inner -->\n</div><!-- /navbar -->');
+      __out.push('<div class="navbar pull-right sysmenu">\n  <div class="navbar-inner">\n    <div class="container">\n      \n      <ul class="nav pull-right">\n                      \n          <li class="dropdown" id="options">\n            <a title="Options"  href="#" class="dropdown-toggle options btn btn-small" data-toggle="dropdown"><i class="icon-wrench"></i><b class="caret"></b></a>\n            <ul class="dropdown-menu">\n              <li><a href="#/changepin">Change PIN</a></li>\n              <!-- <li><a href="#/personal-info">Modify personal data</a></li> -->\n              <li><a href="#/erase">Erase token</a></li>\n              <li class="divider"></li>\n              <li><a href="#/init">Re-initialize token</a></li>\n            </ul>\n          </li>\n\n          <li id="sign-out"><a title="Sign out" class="btn btn-small" href="#/logout"><i class="icon-signout"></i></a></li>\n\n        </ul><!-- /.nav-collapse -->\n    </div>\n  </div><!-- /navbar-inner -->\n</div><!-- /navbar -->');
     
     }).call(this);
     

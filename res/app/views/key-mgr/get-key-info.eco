@@ -1,0 +1,37 @@
+<div class="form-header"><%= @header %></div>
+<form class="form get-key-info">
+  
+  <label><%= @title %></label>
+  <input name="label" type="text" class="span3" autofocus>
+
+  <label><%= "File name" %></label>
+  <input name="path" type="file" class="span3">  
+
+  <div class="passphrase">
+    <label>Enter passphrase</label>
+    <input name="passphrase" type="password" class="span3">
+    <cite class="help-block"><i class="icon-info-sign"></i> &nbsp;Leave blank if no passphrase.</cite>  
+  </div>
+
+  <br>
+  
+  <!-- <label>Email</label>
+  <input name="email" type="text" class="span3">
+  
+  <label>Telephone</label>
+  <input name="telephone" type="text" class="span3">
+  
+  <label>Address</label>
+  <textarea rows="3" name="address" class="span3"></textarea>
+  
+  <label>City</label>
+  <input name="country" type="text" class="span3">
+  
+  <label>Country</label>
+  <input name="country" type="text" class="span3"> -->
+
+  <button type="submit" class="btn default"><i class="icon-ok"></i> &nbsp;Ok</button>&nbsp;&nbsp;
+
+  <button type="button" class="cancel btn" style="margin-top:5px;">Cancel</button>
+
+</form>

@@ -2,12 +2,14 @@ Spine = require('spine')
 
 class Dlg extends Spine.Controller
 
-  className: 'dlg'
+  className: 'dlg fade'
   
   constructor: (args) ->
 
-    for btn in args.buttons
-      (@events ||= {})["click ##{btn.id}"] = btn.fn # (evt) -> evt.preventDefault(); evt.stopPropagation(); f(evt); false
+    ((@events ||= {})["click ##{args.buttons[0].id}"] = (evt) -> evt.preventDefault(); evt.stopPropagation(); args.buttons[0].fn(evt); false) if args.buttons[0]
+    ((@events ||= {})["click ##{args.buttons[1].id}"] = (evt) -> evt.preventDefault(); evt.stopPropagation(); args.buttons[1].fn(evt); false) if args.buttons[1]
+    
+    ((@events ||= {})["click ##{args.buttons[2].id}"] = (evt) -> evt.preventDefault(); evt.stopPropagation(); args.buttons[2].fn(evt); false) if args.buttons[2]
 
     super
 

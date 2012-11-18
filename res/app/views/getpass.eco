@@ -8,6 +8,8 @@
   <input name="pw_confirm" type="password" class="span3">
 
   <cite class="help-block"><i class="icon-info-sign"></i> &nbsp;<%= @label %> must be between <%= @minLength %> and <%= @maxLength %> caracters.</cite>
-  <button type="submit" class="btn default"><i class="icon-ok"></i> &nbsp;<%= @actionLabel %></button>  
+  <button type="submit" class="btn default"><i class="icon-ok"></i> &nbsp;<%= @actionLabel %></button>&nbsp;&nbsp;
+
+  <% if @hasCancel : %> <button type="button" class="cancel btn" style="margin-top:5px;">Cancel</button> <% end %>
 
 </form>

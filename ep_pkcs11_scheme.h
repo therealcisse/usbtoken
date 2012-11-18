@@ -12,18 +12,17 @@
 class CefBrowser;
 class CefSchemeRegistrar;
 
-namespace scheme_test {
+namespace epsilon {
 
+	namespace schemes {
 // Register the scheme.
 void RegisterCustomSchemes(CefRefPtr<CefSchemeRegistrar> registrar,
                            std::vector<CefString>& cookiable_schemes);
 
 // Create the scheme handler.
-void InitTest();
+void InitPKCS11Scheme();
+	}
 
-// Run the test.
-void RunTest(CefRefPtr<CefBrowser> browser);
-
-}  // namespace scheme_test
+}  // namespace epsilon
 
 #endif  // CEF_TESTS_CEFCLIENT_SCHEME_TEST_H_

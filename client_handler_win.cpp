@@ -42,6 +42,12 @@ void ClientHandler::SendNotification(NotificationType type) {
   case NOTIFY_CONSOLE_MESSAGE:
     id = ID_WARN_CONSOLEMESSAGE;
     break;
+  case NOTIFY_DOWNLOAD_COMPLETE:
+    id = ID_WARN_DOWNLOADCOMPLETE;
+    break;
+  case NOTIFY_DOWNLOAD_ERROR:
+    id = ID_WARN_DOWNLOADERROR;
+    break;
   default:
     return;
   }
@@ -73,17 +79,52 @@ void ClientHandler::SetWindowTitle(const std::wstring text) {
   ::SetWindowText(m_MainHwnd, text.c_str());
 }
 
+std::string ClientHandler::GetDownloadPath(const std::string& file_name) {
+	std::string path;
+	TCHAR szFolderPath[MAX_PATH] = {0};
 
-//std::string ClientHandler::GetDownloadPath(const std::string& file_name) {
-//  TCHAR szFolderPath[MAX_PATH];
-//  std::string path;
-//
-//  // Save the file in the user's "My Documents" folder.
-//  if (SUCCEEDED(SHGetFolderPath(NULL, CSIDL_PERSONAL | CSIDL_FLAG_CREATE,
-//                                NULL, 0, szFolderPath))) {
-//    path = CefString(szFolderPath);
-//    path += "\\" + file_name;
-//  }
-//
-//  return path;
-//}
+	// This is the recommended way to select a directory
+	// in Win95 and NT4.
+	BROWSEINFO bi = {0};
+
+	bi.hwndOwner = GetMainHwnd();
+	//bi.pidlRoot = NULL;
+	//bi.pszDisplayName = szFolderPath;
+	bi.lpszTitle = TEXT("Select a folder");
+	bi.ulFlags = BIF_RETURNONLYFSDIRS;
+	// Set the callback function
+	//bi.lpfn = NULL;
+
+	LPITEMIDLIST pIIL = ::SHBrowseForFolder(&bi);
+
+	if(pIIL != NULL)
+		if (::SHGetPathFromIDList(pIIL, (TCHAR *)&szFolderPath)) {
+			if (szFolderPath != TEXT("")){
+				path = CefString(szFolderPath);
+				path += "\\" + file_name;
+			}
+
+			LPMALLOC pMalloc = 0;
+			if(SUCCEEDED(SHGetMalloc(&pMalloc))){
+				pMalloc->Free(pIIL);
+				pMalloc->Release();
+			}
+		}	
+
+	return path;
+}
+
+
+std::string ClientHandler::_GetDownloadPath(const std::string& file_name) {
+  TCHAR szFolderPath[MAX_PATH];
+  std::string path;
+
+  // Save the file in the user's "My Documents" folder.
+  if (SUCCEEDED(SHGetFolderPath(NULL, CSIDL_PERSONAL | CSIDL_FLAG_CREATE,
+                                NULL, 0, szFolderPath))) {
+    path = CefString(szFolderPath);
+    path += "\\" + file_name;
+  }
+
+  return path;
+}

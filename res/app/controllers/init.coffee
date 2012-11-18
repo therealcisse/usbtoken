@@ -1,5 +1,5 @@
 Spine        = require('spine')
-PersonalInfo = require('controllers/personalinfo')
+GetLabel     = require('controllers/get-label')
 Wizard       = require('lib/wizard')
 GetPass      = require('controllers/get_pass')
 Login        = require('controllers/login')
@@ -7,8 +7,12 @@ Façade       = require('lib/façade')
 
 class Init extends Wizard
 
-  doSetPersonalInfo: (params) ->
-    @log "doSetPersonalInfo##{params}"
+  @HEADER: 'Initialize Token'
+
+  hasCancel: true
+
+  doSetLabel: (params) ->
+    @log "doSetLabel##{params}"
     @controller.next @, params  
 
   doSetPIN: (params) ->
@@ -18,8 +22,10 @@ class Init extends Wizard
   doSetPUK: (params) ->
     @log "setPUK#{params.puk}"
 
+    @controller.fn.err = @controller.doSetPUK.err
+
     df = app.Loading()
-    @delay (=> @controller.fn(params.pin, params.puk, params.fullName); df())   
+    @delay (=> @controller.fn(params.pin, params.puk, params['label']); df())   
 
   unRenderMsg: (evt) -> 
     'Votre supporte ne sera pas re-initializer'
@@ -35,11 +41,13 @@ class Init extends Wizard
     @steps = [      
 
       {
-        Clss: PersonalInfo
+        Clss: GetLabel
         args:
-          name: 'personal-info'
+          name: 'get-label'
           controller: @
-          fn: @doSetPersonalInfo
+          header: Init.HEADER
+          title: "Token Name"      
+          fn: @doSetLabel
       }
 
       {
@@ -61,6 +69,6 @@ class Init extends Wizard
       }
     ]
 
-    @app.delay -> Façade.SetWindowText('Initialize')
+    @app.delay -> Façade.SetWindowText()
     
 module.exports = Init

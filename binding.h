@@ -12,12 +12,12 @@
 namespace binding { 
 
 // Delegate creation. Called from ClientApp and ClientHandler.
-void CreateProcessMessageDelegates(
-    ClientHandler::ProcessMessageDelegateSet& delegates);
-void CreateRequestDelegates(ClientHandler::RequestDelegateSet& delegates);
+//void CreateProcessMessageDelegates(
+//    ClientHandler::ProcessMessageDelegateSet& delegates);
+//void CreateRequestDelegates(ClientHandler::RequestDelegateSet& delegates);
 
 // Run the test.
-void RunTest(CefRefPtr<CefBrowser> browser);
+//void RunTest(CefRefPtr<CefBrowser> browser);
 
 }  // namespace binding_test
 

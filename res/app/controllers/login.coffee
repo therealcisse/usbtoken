@@ -14,6 +14,11 @@ class Login extends Spine.Controller
     @bind 'release', => 
       delete @controller
 
+    @doLogin.err = =>
+      @pin.val('')
+      @submitBtn.enable()
+      @delay => @pin[0].focus()      
+
     @delay -> Façade.SetWindowText('Login')
 
   events:
@@ -53,11 +58,11 @@ class Login extends Spine.Controller
 
     if msg = Login.valid(params)
       @controller.alert(msg: msg, closable: true) 
-      @submitBtn.enable()
+      @doLogin.err()
       return false
 
     df = app.Loading()       
-    @delay (=> @doLogin(params); df(); @submitBtn.enable())
+    @delay (=> @doLogin(params); df())
 
     false
 
@@ -74,6 +79,6 @@ class Login extends Spine.Controller
 
   @valid: (params) ->  
     Façade.GetPINOpts (opts) => 
-      return "PIN must be between #{opts['minlen']} and #{opts['maxlen']} caracters." unless params.pin.length > opts['minlen'] and params.pin.length < opts['maxlen'] 
+      return "PIN must be between #{opts['minlen']} and #{opts['maxlen']} caracters." unless params.pin.length >= opts['minlen'] and params.pin.length <= opts['maxlen'] 
 
 module.exports = Login

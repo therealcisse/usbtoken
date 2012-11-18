@@ -13,9 +13,7 @@ class Start extends Spine.Controller
   constructor: ->
     super
     
-    #@app.bind 'statusChanged', @statusChanged
     @bind 'release', => 
-      #@app.unbind 'statusChanged', @statusChanged
       delete @app
 
   className: 'start'
@@ -33,7 +31,8 @@ class Start extends Spine.Controller
     @app.el.attr('class', "#{@app.className} detecting") #
     @el.attr('class', "#{@className} detecting") #
     @app.info('Detection en cour . . .')
-    @delay @app.detectToken, 3000 
+    
+    @delay @app.detectToken, 1500 
 
   #statusChanged: (status) =>
     #@log "Start#statusChanged:#{status}"

@@ -3,7 +3,7 @@
     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
   </div>
   <div class="modal-body">
-    <p><%= @msg %></p>
+    <p><%- @msg %></p>
   </div>
   <div class="modal-footer">
     <% for btn in @buttons : %>

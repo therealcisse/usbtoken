@@ -28,7 +28,8 @@
 
 #define MAX_LOADSTRING 100
 
-// Global Variables:
+// Global Variables
+DWORD g_appStartupTime;
 HINSTANCE hInst;								// current instance
 TCHAR szTitle[MAX_LOADSTRING];					// The title bar text
 TCHAR szWindowClass[MAX_LOADSTRING];			// the main window class name
@@ -37,11 +38,65 @@ char szWorkingDir[MAX_PATH];  // The current working directory
 // The global ClientHandler reference.
 extern CefRefPtr<ClientHandler> g_handler;
 
+//// Registry access functions
+//void EnsureTrailingSeparator(LPWSTR pRet);
+//void GetKey(LPCWSTR pBase, LPCWSTR pGroup, LPCWSTR pApp, LPCWSTR pFolder, LPWSTR pRet);
+//bool GetRegistryInt(LPCWSTR pFolder, LPCWSTR pEntry, int* pDefault, int& ret);
+//bool WriteRegistryInt (LPCWSTR pFolder, LPCWSTR pEntry, int val);
+//
+//// Registry key strings
+//#define PREF_APPSHELL_BASE		L"Software"
+//#define PREF_WINPOS_FOLDER		L"Window Position"
+//#define PREF_LEFT				L"Left"
+//#define PREF_TOP				L"Top"
+//#define PREF_WIDTH				L"Width"
+//#define PREF_HEIGHT				L"Height"
+//#define PREF_RESTORE_LEFT		L"Restore Left"
+//#define PREF_RESTORE_TOP		L"Restore Top"
+//#define PREF_RESTORE_RIGHT		L"Restore Right"
+//#define PREF_RESTORE_BOTTOM		L"Restore Bottom"
+//#define PREF_SHOWSTATE			L"Show State"
+//
+//// Window state functions
+//void SaveWindowRect(HWND hWnd);
+//void RestoreWindowRect(int& left, int& top, int& width, int& height, int& showCmd);
+//void RestoreWindowPlacement(HWND hWnd, int showCmd);// Registry access functions
+//void EnsureTrailingSeparator(LPWSTR pRet);
+//void GetKey(LPCWSTR pBase, LPCWSTR pGroup, LPCWSTR pApp, LPCWSTR pFolder, LPWSTR pRet);
+//bool GetRegistryInt(LPCWSTR pFolder, LPCWSTR pEntry, int* pDefault, int& ret);
+//bool WriteRegistryInt (LPCWSTR pFolder, LPCWSTR pEntry, int val);
+//
+//// Registry key strings
+//#define PREF_APPSHELL_BASE		L"Software"
+//#define PREF_WINPOS_FOLDER		L"Window Position"
+//#define PREF_LEFT				L"Left"
+//#define PREF_TOP				L"Top"
+//#define PREF_WIDTH				L"Width"
+//#define PREF_HEIGHT				L"Height"
+//#define PREF_RESTORE_LEFT		L"Restore Left"
+//#define PREF_RESTORE_TOP		L"Restore Top"
+//#define PREF_RESTORE_RIGHT		L"Restore Right"
+//#define PREF_RESTORE_BOTTOM		L"Restore Bottom"
+//#define PREF_SHOWSTATE			L"Show State"
+//
+//// Window state functions
+//void SaveWindowRect(HWND hWnd);
+//void RestoreWindowRect(int& left, int& top, int& width, int& height, int& showCmd);
+//void RestoreWindowPlacement(HWND hWnd, int showCmd);
+
+CefString AppGetCachePath();
+
 // Forward declarations of functions included in this code module:
 ATOM				MyRegisterClass(HINSTANCE hInstance);
 BOOL				InitInstance(HINSTANCE, int);
 LRESULT CALLBACK	WndProc(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK	About(HWND, UINT, WPARAM, LPARAM);
+
+#if defined(OS_WIN)
+// Add Common Controls to the application manifest because it's required to
+// support the default tooltip implementation.
+#pragma comment(linker, "/manifestdependency:\"type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")  // NOLINT(whitespace/line_length)
+#endif
 
 int APIENTRY wWinMain(HINSTANCE hInstance,
                      HINSTANCE hPrevInstance,
@@ -71,6 +126,11 @@ int APIENTRY wWinMain(HINSTANCE hInstance,
 
   // Populate the settings based on command line arguments.
   AppGetSettings(settings, app);
+
+  // Check command
+  if (CefString(&settings.cache_path).length() == 0) {
+	  CefString(&settings.cache_path) = AppGetCachePath();
+  }
 
   // Initialize CEF.
   CefInitialize(main_args, settings, app.get());
@@ -169,7 +229,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 
    hInst = hInstance; // Store instance handle in our global variable
 
-   RECT lpRect = {600, 100, 425, 379};
+   RECT lpRect = {600, 100, 425, 415};
    AdjustWindowRect(&lpRect, (WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN) & ~WS_MAXIMIZEBOX, FALSE);
 
    hWnd = CreateWindow(szWindowClass, szTitle,
@@ -221,6 +281,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
       // Populate the settings based on command line arguments.
       AppGetBrowserSettings(settings);
 
+	  settings.file_access_from_file_urls_allowed = true;
+      settings.universal_access_from_file_urls_allowed = true;
+
       // Initialize window info to the defaults for a child window
       info.SetAsChild(hWnd, rect);
 
@@ -242,12 +305,18 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
       wmEvent = HIWORD(wParam);
       // Parse the menu selections:
       switch (wmId) {
-      case IDM_ABOUT:
-        DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
+      //case IDM_ABOUT:
+      //  DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
+      //  return 0;
+      case IDM_EXIT:{
+		//if (g_handler.get()) {
+          //g_handler->QuittingApp(true);
+    	  //g_handler->DispatchCloseToNextBrowser();
+    	//} else {
+          DestroyWindow(hWnd);
+		//}
         return 0;
-      case IDM_EXIT:
-        DestroyWindow(hWnd);
-        return 0;
+		  }
       case ID_WARN_CONSOLEMESSAGE:
         if (g_handler.get()) {
           std::wstringstream ss;
@@ -358,4 +427,11 @@ INT_PTR CALLBACK About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 
 std::string AppGetWorkingDirectory() {
   return szWorkingDir;
+}
+
+CefString AppGetCachePath() {
+  std::wstring cachePath = ClientApp::AppGetSupportDirectory();
+  cachePath +=  L"/cef_data";
+
+  return CefString(cachePath);
 }

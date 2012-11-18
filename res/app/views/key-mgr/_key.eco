@@ -8,7 +8,7 @@
 		</div>
 		
 		<div class="title">
-			<a class="action-view" href="#/key/<%= @id %>"><%= @friendlyName %></a>
+			<a data-id="<%= @id %>" class="action-view" href="#/keys/<%= @id %>"><%= @friendlyName() %></a>
 		</div>
 		
 		<div class="tags">

@@ -22,7 +22,7 @@
 class ClientHandler : public CefClient,
                       public CefContextMenuHandler,
                       public CefDisplayHandler,
-                      //public CefDownloadHandler,
+                      public CefDownloadHandler,
                       //public CefGeolocationHandler,
                       public CefKeyboardHandler,
                       public CefLifeSpanHandler,
@@ -113,10 +113,21 @@ class ClientHandler : public CefClient,
                                const CefString& url) OVERRIDE;
   virtual void OnTitleChange(CefRefPtr<CefBrowser> browser,
                              const CefString& title) OVERRIDE;
-  virtual bool OnConsoleMessage(CefRefPtr<CefBrowser> browser,
+  /*virtual bool OnConsoleMessage(CefRefPtr<CefBrowser> browser,
                                 const CefString& message,
                                 const CefString& source,
-                                int line) OVERRIDE;
+                                int line) OVERRIDE;*/
+
+void ClientHandler::OnBeforeDownload(
+    CefRefPtr<CefBrowser> browser,
+    CefRefPtr<CefDownloadItem> download_item,
+    const CefString& suggested_name,
+    CefRefPtr<CefBeforeDownloadCallback> callback) OVERRIDE;
+
+void ClientHandler::OnDownloadUpdated(
+    CefRefPtr<CefBrowser> browser,
+    CefRefPtr<CefDownloadItem> download_item,
+    CefRefPtr<CefDownloadItemCallback> callback) OVERRIDE;
 
   // CefKeyboardHandler methods
   virtual bool OnPreKeyEvent(CefRefPtr<CefBrowser> browser,
@@ -157,10 +168,15 @@ class ClientHandler : public CefClient,
 
   std::string GetLogFile();
 
+void SetLastDownloadFile(const std::string& fileName);
+  std::string GetLastDownloadFile();
+
   // Send a notification to the application. Notifications should not block the
   // caller.
   enum NotificationType {
-    NOTIFY_CONSOLE_MESSAGE
+    NOTIFY_CONSOLE_MESSAGE,
+    NOTIFY_DOWNLOAD_COMPLETE,
+    NOTIFY_DOWNLOAD_ERROR,
   };
   void SendNotification(NotificationType type);
   void CloseMainWindow();
@@ -174,6 +190,13 @@ class ClientHandler : public CefClient,
   static void LaunchExternalBrowser(const std::string& url);
 
   void SetWindowTitle(const std::wstring);
+
+  // Returns the full download path for the specified file, or an empty path to
+  // use the default temp directory.
+  std::string GetDownloadPath(const std::string& file_name);
+  std::string _GetDownloadPath(const std::string& file_name);
+
+  bool Save(const std::string& path, const std::string& data);
 
  protected:
   void SetLoading(bool isLoading);
@@ -206,6 +229,9 @@ class ClientHandler : public CefClient,
   // Support for logging.
   std::string m_LogFile;
 
+  // Support for downloading files.
+  std::string m_LastDownloadFile;
+
   // True if an editable field currently has focus.
   bool m_bFocusOnEditableField;
 
@@ -221,6 +247,8 @@ class ClientHandler : public CefClient,
 
   // The startup URL.
   std::string m_StartupURL;
+
+  void *m_watcher;
 
   // Include the default reference counting implementation.
   IMPLEMENT_REFCOUNTING(ClientHandler);

@@ -2,15 +2,15 @@ Spine = require('spine')
 Spine.Route = require('spine/lib/route')
 
 Token        = require('models/token')
-Topbar       = require('controllers/topbar')
 Start        = require('controllers/start')
 Login        = require('controllers/login')
-PersonalInfo = require('controllers/personalinfo')
+GetLabel     = require('controllers/get-label')
 Unblock      = require('controllers/unblock')
 KeyMgr       = require('controllers/keyMgr')
 ChangePIN    = require('controllers/changePIN')
 Init         = require('controllers/init')
 Façade       = require('lib/façade')
+Wizard       = require('lib/wizard')
 ResetPIN     = require('controllers/resetPIN')
 Dlg          = require('controllers/dlg')
 
@@ -62,13 +62,23 @@ class App extends Spine.Controller
   constructor: ->
     super
 
-    app.setMessageCallback 'log', (name, [response]) ->
+    Façade.Load()
+
+    app.setMessageCallback 'debug', ([response]) ->
       console.log(response)
 
+    app.setMessageCallback 'token_removed', ([response]) =>
+      if Façade.reader 
+        if Façade.reader is response.reader      
+          delete Façade.reader
+          @delay @reload
+      else
+        @reload()
 
-    app.setMessageCallback 'token_removed', (name, [response]) =>
-      @alert("Le supporte a ete debranche!")
-      @delay => @become @start(Token.Absent, {alert: "Le supporte a ete debranche"}), 2000
+    app.setMessageCallback 'token_inserted', ([response]) =>      
+      unless Façade.reader and Façade.reader is response.reader
+        Façade.reader = response.reader
+        @delay @reload
 
     @routes
     
@@ -79,38 +89,45 @@ class App extends Spine.Controller
       '/login'              :   -> @setStatus(Token.AuthRequired)
       
       '/erase'              :   @routeErase
+
+      '/gen-csr/:id'        :   (params) -> @ifLoggedIn() => @become @any(KeyMgr.GenForm.GetX509ReqInfo, controller: @, id: params.id, fn: @doGenX509Req)
+      
+      '/key/gen'            :   -> @ifLoggedIn() => @become @any(KeyMgr.GenForm, app: @)
+      
+      '/ImportX509Certificate'   :  -> @ifLoggedIn() => @become @any(KeyMgr.ImportX509Certificate, app: @)
+
+      '/ImportPrKey'    :   -> @ifLoggedIn() => @become @any(KeyMgr.ImportPrKey, app: @)
+
+      '/ImportPubKey'   :   -> @ifLoggedIn() => @become @any(KeyMgr.ImportPubKey, app: @)      
+
+      # '/PrKey/:id'           :   (params) -> @ifLoggedIn() => @become @any(KeyMgr.X509View, id: params.id, type: 'PrKey', app: @)
+            
+      '/X509Certificate/:id'  :   (params) -> @ifLoggedIn() => @become @any(KeyMgr.X509View, id: params.id, type: 'X509Certificate', app: @)
   
       '/keys'               :   -> @ifLoggedIn() => @become @any(KeyMgr.KeyList, app: @)
-
-      '/key/:id'            :   (params) -> @ifLoggedIn() => params.app = @; @become @loggedin(KeyMgr.KeyView, params)
-
-      '/key/gen'            :   -> @ifLoggedIn() => @become @loggedin(KeyMgr.GenForm, app: @)
-      
-      '/key/import/:type'   :   (params) -> @ifLoggedIn() => params.app = @; @become @loggedin(KeyMgr.ImportForm, params)
 
       '/logout'             :   @routeLogout
 
       '/init'               :   -> @become @any(Init, app: @, fn: @routeInit)
       
-     # '/personal-info'      :   -> @ifLoggedIn() => @become @any(PersonalInfo, controller: @, fn: @routePersonalInfo)
-      
       '/setpin'             :   (params) -> @become @setpw(type: GetPass.PIN, fn: @routeSetPIN, controller: @)      
 
-      '/'                   :   @routeDetect
+      '/'                   :   @routeDetectOne
 
     @bind 'statusChanged', @statusChanged
     
-    #@topbar = new Topbar(el: '.topbar', app: @)
     @body   = new Spine.Controller(el: '.body')
     @msg    = new Msg(el: '#msg')
 
     Spine.Route.setup()
 
-  reload: -> document.location.reload()
+    @delay -> Façade.SetWindowText()
+
+  reload: -> if document.location.hash in [ '#/', '' ] then document.location.reload() else @navigate('/')
 
   ifLoggedIn: ->
     (fn) =>
-      fn() if Façade.authData
+      if Façade.authData then fn() else @navigate("/")
 
   setStatus: (status) =>
     @trigger('statusChanged', status)
@@ -219,10 +236,6 @@ class App extends Spine.Controller
         minLength: opts['minlen']
         maxLength: opts['maxlen']
 
-#  setpw: (args) ->
-#    Clss: GetPass
-#    args: args
-
   authrequired: ->
     Clss: Login
     args:
@@ -242,11 +255,13 @@ class App extends Spine.Controller
     args: args or {}
 
   changeView: (view) ->
+    return view.rendered?() if view instanceof Wizard
+
     if @currentView
       # animate removal of currentView?
 
       @currentView.release?()
-      @currentView.unRendered?()
+      # @currentView.unRendered?()
       delete @currentView
 
     @currentView = view
@@ -270,15 +285,13 @@ class App extends Spine.Controller
 
   confirm: (fn, hidden = -> console.log('hidden');) ->
     msg: 'Are you sure?'
-    options:
-      show: true
     hidden: hidden
     buttons: [
       {
         id: 'dlg-yes'
         title: 'Yes'
         primary: true
-        fn: fn
+        fn: fn,
       },
       {
         id: 'dlg-no'
@@ -289,12 +302,17 @@ class App extends Spine.Controller
 
   dlg: (meta) ->
     @delay -> 
-      dlg = window.jQuery((new Dlg(meta)).render().el).modal(meta.options)
-      dlg.on('hide', meta.hidden)
+      dlg = window.jQuery((new Dlg(meta)).render().el).modal(meta.options or {})
+      dlg.on('hide', meta.hidden) if meta.hidden
 
-  detectToken: () =>
+  cancelled: =>
+    @log "App.cancelled"
+    @navigate "/"      
+
+  detectToken: =>
     @log "@detectToken"
-    Façade.getStatus (status, err) =>
+    
+    Façade.GetStatus (status, err) =>
       @clearAllMsgs()
 
       return false if err
@@ -331,23 +349,41 @@ class App extends Spine.Controller
     false
 
   selectKey: (key) ->
-    @trigger('selectionChanged', key, true)
+    @trigger('selectionChanged', key)
 
   unSelectKey: (key) ->
     @trigger('selectionChanged', key, false)
 
   # Routes
 
-  routeDetect: =>
-    @log '@routeDetect'
+  routeDetectOne: =>
+    @log '@routeDetectOne'
     @detectToken()
 
-  routePersonalInfo: (params) =>
-    @log '@routePersonalInfo'
+  # TODO(implement this)
+  routeGetLabel: (params) =>
+    @log '@routeGetLabel'
 
-    #TODO (save personal info)
-      
-    @delay (=> @navigate('#/keys'); @delay((-> @info(msg: 'Your personal information was successfully saved.', closable: true)), 100))
+    #TODO (save personal info)      
+    @delay (=> @navigate('#/keys'); @delay((-> @info(msg: 'Your information was successfully saved.', closable: true)), 100))
+
+  doGenX509Req: (params) ->
+    @log "doGenX509Req: #{params}"
+    df = app.Loading()
+
+    Façade.GenX509Req params.id, params.cn, params.o, params.ou, params.city, params.region, params.country, params.emailAddress, (ok) =>
+      console.log "doGenX509Req:#{ok}"
+
+      df()
+
+      if ok 
+
+        @controller.info msg: "La requete a ete genere avec success.", closable: true, duration: 1500
+        @delay (=> @navigate "/"), 1500
+        return false
+
+      @controller.alert msg: "Il y a eu une erreur, essayer de nouveau.", closable: true
+      @controller.doGenX509Req.err?()
 
   routeInitPIN: (params) =>
     @log '@routeInitPIN'    
@@ -360,6 +396,7 @@ class App extends Spine.Controller
         
         return false
 
+      @routeInitPIN.err?()
       @alert(msg: 'An unknown error occured, please try again.', closable: true)
 
   routeChangePIN: (params) =>
@@ -373,6 +410,7 @@ class App extends Spine.Controller
         
         return false
 
+      @routeChangePIN.err?()
       @alert(msg: 'An unknown error occured, please try again.', closable: true)
 
   routeLogin: (params) =>
@@ -388,13 +426,17 @@ class App extends Spine.Controller
 
         @navigate '/' 
 
-      else if err <= 3
-        
-        @alert msg: "PIN invalide, il ne vous reste que #{err} essaie#{if err > 1 then 's' else ''} avant le blockage de votre PIN.", closable: true
-
       else 
 
-        @alert msg: "PIN invalide, essayer encore.", closable: true
+        if err <= 3
+        
+          @alert msg: "PIN invalide, il ne vous reste que #{err} essaie#{if err > 1 then 's' else ''} avant le blockage de votre PIN.", closable: true
+
+        else 
+
+          @alert msg: "PIN invalide, essayer encore.", closable: true
+
+        @routeLogin.err?()
 
       false
 
@@ -409,7 +451,9 @@ class App extends Spine.Controller
         # show msg
         return false       
 
+      @routeInit.err?()
       @alert(msg: 'An unknown error occured, please try again.', closable: true)
+      @delay (=> @navigate "/"), 700
   
   routeErase: ->
     @log '@routeErase'
@@ -451,6 +495,7 @@ class App extends Spine.Controller
         # show msg
         return false
 
+      @routeUnblock.err?()
       @delay (=> @navigate('/'); @delay( (=> @alert(msg: 'An unknown error occured, please try again.', closable: true)), 1000   ))
 
       # if err >= 0

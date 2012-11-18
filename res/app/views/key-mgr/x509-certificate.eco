@@ -1,0 +1,64 @@
+
+<div class="subject x509-name">
+
+	<div class="header">Issued To:</div>
+
+	<div class="x509-entries">
+
+		<div class="x509-entry">
+				<div class="x509-entry-key">Organisation</div>
+				<div class="x509-entry-value"><%= @subject.cn %></div>
+		</div>
+
+		<div class="x509-entry">
+				<div class="x509-entry-key">Organisation Unit</div>
+				<div class="x509-entry-value"><%= @subject.ou %></div>
+		</div>
+	</div>
+
+
+</div>
+
+<% if @issuer : %>
+
+	<div class="issuer x509-name">
+
+		<div class="header">Issued By:</div>
+
+		<div class="x509-entries">
+
+			<div class="x509-entry">
+					<div class="x509-entry-key">Organisation</div>
+					<div class="x509-entry-value"><%= @issuer.o %></div>
+			</div>
+
+			<div class="x509-entry">
+					<div class="x509-entry-key">Organisation Unit</div>
+					<div class="x509-entry-value"><%= @issuer.ou %></div>
+			</div>
+		</div>
+
+
+	</div>
+
+<% end %>
+
+<div class="validity">
+
+		<div class="header">Validity:</div>
+
+		<div class="x509-entries">
+
+			<div class="x509-entry">
+					<div class="x509-entry-key">Not Before</div>
+					<div class="x509-entry-value"><%= $.formatDate('dd/ mm/ yy', $.parseDate('ymd', @notBefore.substr(0, 6))) %></div>
+			</div>
+			<div class="x509-entry">
+					<div class="x509-entry-key">Not After</div>
+					<div class="x509-entry-value"><%= $.formatDate('dd/ mm/ yy', $.parseDate('ymd', @notAfter.substr(0, 6))) %></div>
+			</div>
+		</div>
+
+	</div>	
+
+</div>

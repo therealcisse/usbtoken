@@ -25,9 +25,9 @@ class Wizard extends Spine.Module
     @bind 'stepChanged', (step) ->
       @app.become step 
       
-      @app.delay (=> @alert(step.alertMsg)) if step.alertMsg
+      @app.delay (=> @app.alert(step.alertMsg)) if step.alertMsg
       
-      @app.delay (=> @info(step.infoMsg)) if step.infoMsg
+      @app.delay (=> @app.info(step.infoMsg)) if step.infoMsg
 
   info: -> @app.info arguments...
   alert: -> @app.alert arguments...
@@ -46,9 +46,10 @@ class Wizard extends Spine.Module
       
       return @app.delay (=> @setStep(next)), 200
 
-    @app.delay (=> @app.navigate '#/keys'), 750
+    @app.delay (=> @app.navigate '/'), 550
 
   cancelled: (step) =>
     @log "cancelled:#{step.name}"
+    @app.navigate "/"
 
 module.exports = Wizard

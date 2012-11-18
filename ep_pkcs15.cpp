@@ -11,7 +11,9 @@
 
 namespace epsilon {
 
-	sc_pkcs15_card *CreateP15Card(const TokenContext *const ctx) {
+	CefRefPtr<TokenContext> TokenContext::instance_ = NULL;
+
+	sc_pkcs15_card *CreateP15Card(CefRefPtr<TokenContext> ctx) {
 	  sc_pkcs15_card *p15card = sc_pkcs15_card_new();
 	  p15card->card = ctx->GetCard(); 
 	  return p15card;
@@ -21,30 +23,52 @@ namespace epsilon {
 		sc_pkcs15_card_free(p15card);
 	}
 
-	sc_pkcs15_card *BindP15Card(const TokenContext *const ctx) {
+	sc_pkcs15_card *BindP15Card(CefRefPtr<TokenContext> ctx) {
 		sc_pkcs15_card *p15card;
-		return ::util::ep_pkcs15_bind_card(ctx->GetCard(), &p15card, ctx->GetProfile()) == SC_SUCCESS ? p15card : NULL;
+		
+		if(::util::ep_pkcs15_bind_card(ctx->GetCard(), &p15card, ctx->GetProfile()) == SC_SUCCESS) {
+			sc_pkcs15init_set_p15card(ctx->GetProfile(), p15card);
+			return p15card;
+		}
+		
+		return  NULL;
 	}
 
 	void ReleaseP15Card(sc_pkcs15_card *p15card) {
 		sc_pkcs15_unbind(p15card);
 	}	
 
-	void TokenContext::GetInfo(ep_token_info *info) const {
+	void GetTokenInfo(CefRefPtr<TokenContext> ctx, ep_token_info *info) {
 	  sc_pkcs15_card *p15card;
 	  sc_pkcs15_object *pin_obj;
 	  sc_pkcs15_auth_info *pinfo = NULL;
 
+	  /*for(unsigned int i = 0, len = sc_ctx_get_reader_count(ctx->GetSCContext()); i < len; i++) {
+		  sc_reader *reader = sc_ctx_get_reader_by_id(ctx->GetSCContext(), 0);
+	  }*/
+
 	  memset(info, 0, sizeof(*info));
-	  info->onepin = ::util::ep_has_onepin(profile);
+	  memset(info->manufacturerID, 0, sizeof(info->manufacturerID));
+	  memset(info->label, 0, sizeof(info->label));
+	  memset(info->reader, 0, sizeof(info->reader));
 
-	  info->minlen = GetProfile()->pin_minlen;
-	  info->maxlen = GetProfile()->pin_maxlen;
+	  strncpy(info->reader, ctx->GetCard()->reader->name, sizeof(info->reader));
 
-	  if ((p15card = BindP15Card(this)) == NULL) {
+	  info->onepin = ::util::ep_has_onepin(ctx->GetProfile());
+
+	  info->minlen = ctx->GetProfile()->pin_minlen;
+	  info->maxlen = ctx->GetProfile()->pin_maxlen;
+
+	  if ((p15card = BindP15Card(ctx)) == NULL) {
 		info->token_initialized = 0;
 		return;
 	  }  
+
+	  strncpy(info->label, p15card->tokeninfo->label, sizeof(info->label));
+	  info->readonly = (p15card->tokeninfo->flags >> 0) & 1; /* see pkcs15-tool `dump` for details */
+
+	  info->login_required = (p15card->tokeninfo->flags >> 1) & 1 ;
+	  strncpy(info->manufacturerID, p15card->tokeninfo->manufacturer_id, sizeof(info->manufacturerID));
 
 	  if ((pin_obj = ::util::get_pin_info(p15card)) == NULL)
 			goto out;
@@ -53,7 +77,7 @@ namespace epsilon {
 	  ::util::ep_refresh_pin_info(p15card->card, pinfo);
 
 	  info->token_initialized = 1;
-	  info->inuse = profile->card->reader->flags & SC_READER_CARD_INUSE ? 1 : 0; 
+	  info->inuse = ctx->GetProfile()->card->reader->flags & SC_READER_CARD_INUSE ? 1 : 0; 
 	  info->pin_initialized = pinfo->attrs.pin.flags & SC_PKCS15_PIN_FLAG_INITIALIZED ? 1 : 0;  
 	  info->minlen = pinfo->attrs.pin.min_length;
 	  info->maxlen = pinfo->attrs.pin.max_length;
@@ -63,10 +87,11 @@ namespace epsilon {
 	  out: ReleaseP15Card(p15card);
 	}
 
-	bool TokenContext::Bind() {
+	bool TokenContext::Bind(const char *reader) {
+		// AutoLock lock_(this);
 
 	  /* Connect to the card */
-	  if (!ep_open_reader_and_card(&ctx, &card))
+	  if (!::util::ep_open_reader_and_card(&ctx, reader, &card))
 	    return false;  	
 	    
 	  /* Bind the card-specific operations and load the profile */
@@ -89,10 +114,20 @@ namespace epsilon {
 	}
 
 	void TokenContext::Destroy() {
-		if(!in_context) return;
+		// AutoLock lock_(this);
 
-	  if (profile)
-	    sc_pkcs15init_unbind(profile);
+		if(!InContext()) return;
+
+	  if (profile) {
+		if (profile->dirty != 0 /*&& profile->p15_data != NULL */&& profile->pkcs15.do_last_update) {
+			if((/*profile->p15_data = */BindP15Card(this)) != NULL) {
+				sc_pkcs15init_unbind(profile);
+				//if(profile->p15_data) ReleaseP15Card(profile->p15_data);
+			}
+		} else {
+			sc_pkcs15init_unbind(profile);
+		}
+	  }
 
 	  if (card) {
 	    sc_unlock(card);
@@ -102,10 +137,17 @@ namespace epsilon {
 	  if(ctx)
 	  	sc_release_context(ctx);
 
+	  /* NULLify variables */
+
+	  profile = NULL;
+	  card = NULL;
+	  ctx =  NULL;
+
 	  in_context = false;
 	}
 
 	sc_profile *TokenContext::GetProfile() const {
+		// AutoLock lock_(this);
 		return profile;
 	}
 
@@ -113,11 +155,18 @@ namespace epsilon {
 		return kProfileName;
 	}
 
+	sc_context *TokenContext::GetSCContext() const {
+		// AutoLock lock_(this);
+		return ctx;		
+	}
+
 	sc_card *TokenContext::GetCard() const {
+		// AutoLock lock_(this);
 		return card;
 	}
 
 	bool TokenContext::InContext() const {
+		// AutoLock lock_(this);
 		return in_context;
 	}
 

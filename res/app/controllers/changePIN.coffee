@@ -4,7 +4,7 @@ Token = require('models/token')
 
 class ChangePIN extends Spine.Controller
 
-  className: 'changepin'
+  className: 'v-scroll changepin'
 
   # args(doAction, app, minLength, maxLength)
   constructor: (args) ->
@@ -12,6 +12,13 @@ class ChangePIN extends Spine.Controller
 
     @bind 'release', => 
       delete @app
+
+    @doAction.err = =>
+      @oldpin.val('')
+      @pin.val('')
+      @pin_confirm.val('')
+      @submitBtn.enable() 
+      @oldpin[0].focus()      
 
     @bind 'setpin-error', (msg) => @app.alert(msg: msg, closable: true)    
 
@@ -51,12 +58,12 @@ class ChangePIN extends Spine.Controller
 
     if msg = @valid(params.oldpin, params.pin, params.pin_confirm)
       @app.alert(msg: msg, closable: true)
-      @submitBtn.enable() 
+      @doAction.err()
       return false
 
     # doAction process
     df = app.Loading()
-    @delay (-> @doAction(params); df(); @submitBtn.enable())
+    @delay (-> @doAction(params); df())
 
     false
   
@@ -64,9 +71,9 @@ class ChangePIN extends Spine.Controller
 
   valid: (oldpin, pin, pin_confirm) -> 
 
-    return "Old PIN must be between #{@minLength} and #{@maxLength} caracters." unless oldpin.length > @minLength and oldpin.length < @maxLength
+    return "Old PIN must be between #{@minLength} and #{@maxLength} caracters." unless oldpin.length >= @minLength and oldpin.length <= @maxLength
     
-    return "New PIN must be between #{@minLength} and #{@maxLength} caracters." unless pin.length > @minLength and pin.length < @maxLength 
+    return "New PIN must be between #{@minLength} and #{@maxLength} caracters." unless pin.length >= @minLength and pin.length <= @maxLength 
    
     return "The PIN confirmation does not match." unless pin is pin_confirm 
     

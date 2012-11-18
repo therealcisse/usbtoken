@@ -4,6 +4,226 @@
 		"selected_items":
 		[
 			[
+				"del",
+				"delay"
+			],
+			[
+				"se",
+				"setMessageCallback"
+			],
+			[
+				"con",
+				"controller"
+			],
+			[
+				"clo",
+				"close"
+			],
+			[
+				"cl",
+				"close"
+			],
+			[
+				"moda",
+				"modal-header"
+			],
+			[
+				"text",
+				"text-align"
+			],
+			[
+				"mod",
+				"modal-footer"
+			],
+			[
+				"can",
+				"cancelled"
+			],
+			[
+				"Expo",
+				"ExportForm"
+			],
+			[
+				"un",
+				"unless"
+			],
+			[
+				"fi",
+				"fileName"
+			],
+			[
+				"form",
+				"format"
+			],
+			[
+				"relo",
+				"reloadKeys"
+			],
+			[
+				"sele",
+				"selectionChanged"
+			],
+			[
+				"sel",
+				"selectedKeys"
+			],
+			[
+				"key",
+				"keyList"
+			],
+			[
+				"ke",
+				"keyid"
+			],
+			[
+				"2",
+				"287px"
+			],
+			[
+				"get",
+				"get-x509-req-info"
+			],
+			[
+				"ren",
+				"rendered"
+			],
+			[
+				"remo",
+				"removeKeys"
+			],
+			[
+				"h",
+				"hideDlg"
+			],
+			[
+				"hide",
+				"hideDlg"
+			],
+			[
+				"st",
+				"stopPropagation"
+			],
+			[
+				"r",
+				"region"
+			],
+			[
+				"c",
+				"cancelled"
+			],
+			[
+				"co",
+				"controller"
+			],
+			[
+				"pa",
+				"parseDate"
+			],
+			[
+				"T",
+				"Toolsbar"
+			],
+			[
+				"De",
+				"DelPrKey"
+			],
+			[
+				"X",
+				"X509Certificate"
+			],
+			[
+				"rel",
+				"reload"
+			],
+			[
+				"cer",
+				"certificat"
+			],
+			[
+				"x509",
+				"x509-certificate"
+			],
+			[
+				"la",
+				"label"
+			],
+			[
+				"Key",
+				"KeyList"
+			],
+			[
+				"add",
+				"addPrKeys"
+			],
+			[
+				"gen",
+				"genCSR"
+			],
+			[
+				"da",
+				"data_len"
+			],
+			[
+				"data",
+				"data_len"
+			],
+			[
+				"for",
+				"format"
+			],
+			[
+				"GetKey",
+				"GetKeyInfo"
+			],
+			[
+				"ha",
+				"hasPassphrase"
+			],
+			[
+				"has",
+				"hasPassphrase"
+			],
+			[
+				"do",
+				"doImportPrKey"
+			],
+			[
+				"get-",
+				"get-key-info"
+			],
+			[
+				"l",
+				"label"
+			],
+			[
+				"sub",
+				"submitBtn"
+			],
+			[
+				"Ge",
+				"GetLabel"
+			],
+			[
+				"L",
+				"LABEL"
+			],
+			[
+				"le",
+				"length"
+			],
+			[
+				"na",
+				"navigate"
+			],
+			[
+				"re",
+				"readers"
+			],
+			[
+				"reader",
+				"reader_id"
+			],
+			[
 				"s",
 				"submitBtn"
 			],
@@ -12,24 +232,12 @@
 				"submitBtn"
 			],
 			[
-				"remo",
-				"remove"
-			],
-			[
 				"bord",
 				"border-bottom"
 			],
 			[
-				"l",
-				"loading"
-			],
-			[
 				"rou",
 				"routeUnblock"
-			],
-			[
-				"con",
-				"controller"
 			],
 			[
 				"G",
@@ -38,10 +246,6 @@
 			[
 				"Lo",
 				"LoggedIn"
-			],
-			[
-				"re",
-				"replyto"
 			],
 			[
 				"tr",
@@ -54,10 +258,6 @@
 			[
 				"log",
 				"logged-in"
-			],
-			[
-				"cl",
-				"clearAllMsgs"
 			],
 			[
 				"A",
@@ -112,16 +312,8 @@
 				"UUID"
 			],
 			[
-				"se",
-				"sendMessage"
-			],
-			[
 				"set",
 				"setMessageCallback"
-			],
-			[
-				"h",
-				"hide"
 			],
 			[
 				"o",
@@ -156,14 +348,6 @@
 				"border-radius"
 			],
 			[
-				"ren",
-				"render"
-			],
-			[
-				"c",
-				"className"
-			],
-			[
 				"setp",
 				"setpw"
 			],
@@ -178,10 +362,6 @@
 			[
 				"te",
 				"textarea"
-			],
-			[
-				"co",
-				"country"
 			],
 			[
 				"e",
@@ -212,20 +392,8 @@
 				"vars"
 			],
 			[
-				"get",
-				"GetPass"
-			],
-			[
-				"un",
-				"unblock"
-			],
-			[
 				"in",
 				"include"
-			],
-			[
-				"st",
-				"stage"
 			],
 			[
 				"ino",
@@ -252,10 +420,6 @@
 				"pw_confirm"
 			],
 			[
-				"Ge",
-				"GetPUK"
-			],
-			[
 				"P",
 				"PersonalInfo"
 			],
@@ -270,10 +434,6 @@
 			[
 				"fin",
 				"finalText"
-			],
-			[
-				"r",
-				"rendered"
 			],
 			[
 				"render",
@@ -292,16 +452,8 @@
 				"Wizard"
 			],
 			[
-				"pa",
-				"padding"
-			],
-			[
 				"wi",
 				"wizard-bottom"
-			],
-			[
-				"L",
-				"LoggedIn"
 			],
 			[
 				"rese",
@@ -318,18 +470,6 @@
 			[
 				"B",
 				"Bottom"
-			],
-			[
-				"sel",
-				"selectKey"
-			],
-			[
-				"key",
-				"key-list"
-			],
-			[
-				"ke",
-				"key"
 			],
 			[
 				"ta",
@@ -372,168 +512,152 @@
 				"key-mgr"
 			],
 			[
-				"del",
-				"delete"
-			],
-			[
-				"la",
-				"loader"
-			],
-			[
 				"im",
 				"importForm"
-			],
-			[
-				"gen",
-				"genForm"
-			],
-			[
-				"Key",
-				"KeyView"
-			],
-			[
-				"T",
-				"Token"
-			],
-			[
-				"cont",
-				"controllers"
-			],
-			[
-				"red",
-				"rendered"
-			],
-			[
-				"dr",
-				"dropdown-menu"
-			],
-			[
-				"we",
-				"webkit-border-radius"
-			],
-			[
-				"ver",
-				"vertical-align"
-			],
-			[
-				"K",
-				"keyUsage"
-			],
-			[
-				"ro",
-				"routeDetect"
-			],
-			[
-				"rel",
-				"release"
-			],
-			[
-				"rende",
-				"render"
-			],
-			[
-				"To",
-				"Toolsbar"
-			],
-			[
-				"en",
-				"en_US"
-			],
-			[
-				"show",
-				"showByInnerHTML"
-			],
-			[
-				"sho",
-				"showByAlert"
-			],
-			[
-				"an",
-				"animation"
-			],
-			[
-				"sli",
-				"slideDown"
-			],
-			[
-				"anima",
-				"animation"
-			],
-			[
-				"req",
-				"require"
-			],
-			[
-				"ani",
-				"Animated"
-			],
-			[
-				"ab",
-				"absolute"
-			],
-			[
-				"top",
-				"topbar"
-			],
-			[
-				"cha",
-				"change-pin"
-			],
-			[
-				"pin",
-				"pin_confirm"
-			],
-			[
-				"stt",
-				"status"
-			],
-			[
-				"ve",
-				"verify"
-			],
-			[
-				"clea",
-				"clearAllMsgs"
-			],
-			[
-				"Ch",
-				"changePIN"
-			],
-			[
-				"Au",
-				"AuthRequired"
-			],
-			[
-				"Bl",
-				"Blocked"
-			],
-			[
-				"ret",
-				"return"
-			],
-			[
-				"swi",
-				"switch"
 			]
 		]
 	},
 	"buffers":
 	[
 		{
-			"file": ".npmignore",
+			"file": "app/views/key-mgr/get-x509-req-info.eco",
 			"settings":
 			{
-				"buffer_size": 17,
+				"buffer_size": 1040,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "app/controllers/keyMgr.coffee",
+			"settings":
+			{
+				"buffer_size": 23309,
 				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "app/views/key-mgr/export_x509.eco",
+			"settings":
+			{
+				"buffer_size": 890,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "app/index.coffee",
+			"settings":
+			{
+				"buffer_size": 13336,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "app/lib/façade.coffee",
+			"settings":
+			{
+				"buffer_size": 10471,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "/C/Users/amadou/Desktop/cef3/cef3/tests/cefclient/cefclient.rc",
+			"settings":
+			{
+				"buffer_size": 4857,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "/C/Users/amadou/Desktop/cef3/cef3/tests/cefclient/resource.h",
+			"settings":
+			{
+				"buffer_size": 2749,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "css/index.styl",
+			"settings":
+			{
+				"buffer_size": 16888,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "app/controllers/dlg.coffee",
+			"settings":
+			{
+				"buffer_size": 713,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "app/views/dlg.eco",
+			"settings":
+			{
+				"buffer_size": 521,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "app/views/login.eco",
+			"settings":
+			{
+				"buffer_size": 515,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "public/index.html",
+			"settings":
+			{
+				"buffer_size": 21384,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/C/Build-OpenSSL/openssl-1.0.1c-dev/apps/apps.c",
+			"settings":
+			{
+				"buffer_size": 70213,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/C/Build-OpenSSL/openssl-1.0.1c-dev/apps/req.c",
+			"settings":
+			{
+				"buffer_size": 44645,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "app/views/key-mgr/x509-certificate.eco",
+			"settings":
+			{
+				"buffer_size": 1408,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "app/lib/wizard.coffee",
+			"settings":
+			{
+				"buffer_size": 1126,
+				"line_ending": "Windows"
 			}
 		}
 	],
 	"build_system": "",
 	"command_palette":
 	{
-		"height": 35.0,
+		"height": 392.0,
 		"selected_items":
 		[
+			[
+				"in",
+				"Package Control: Install Package"
+			],
 			[
 				"ins",
 				"Package Control: Install Package"
@@ -576,32 +700,87 @@
 	},
 	"file_history":
 	[
-		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/app/controllers/topbar.coffee",
-		"/C/Users/amadou/Desktop/Todo.Token.txt",
+		"/C/winSvc/winSvc/C++/CppWindowsService/ThreadPool.h",
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/winSvc.vcxproj",
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/winSvc.vcxproj.user",
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/winSvc.vcxproj.filters",
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/usbtoken.rc",
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/app/views/key-mgr/toolsbar.X509.eco",
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/Libp11/include/libp11.h",
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/inc/ep_thread_ctx.h",
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/ep_thread_ctx.c",
 		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/public/index.html",
-		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/public/bootstrap.min.css",
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/app/views/key-mgr/_prkey.eco",
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/app/controllers/get_pass.coffee",
 		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/app/lib/wizard.coffee",
-		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/topbar.keep",
-		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/app/controllers/start.coffee",
+		"/C/Build-OpenSSL/openssl-1.0.1c-dev/apps/apps.h",
+		"/C/Build-OpenSSL/openssl-1.0.1c-dev/apps/x509.c",
+		"/C/Build-OpenSSL/openssl-1.0.1c-dev/apps/openssl.c",
+		"/C/Build-OpenSSL/openssl-1.0.1c-dev/apps/progs.h",
+		"/C/Build-OpenSSL/openssl-1.0.1c-dev/apps/req.c",
+		"/C/Build-OpenSSL/openssl-1.0.1c-dev/apps/apps.c",
+		"/C/Build-engine-pkcs11/engine_pkcs11-0.1.8-dev/configure",
+		"/C/Build-engine-pkcs11/engine_pkcs11-0.1.8/src/Makefile.mak",
+		"/C/Build-engine-pkcs11/engine_pkcs11-0.1.8/configure",
+		"/C/Build-OpenSSL/libp11-0.2.8-dev/src/Makefile.mak",
+		"/C/OpenSC-building/OpenSC/win32/Make.rules.mak",
+		"/C/Build-OpenSSL/engine_pkcs11-0.1.8-dev/src/Makefile.mak",
+		"/C/Build-OpenSSL/engine_pkcs11-0.1.8-dev/configure",
+		"/C/Build-OpenSSL/libp11-0.2.8/src/Makefile.mak",
+		"/C/Build-OpenSSL/libp11-0.2.8/Makefile.mak",
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/log.txt",
+		"/C/Build-OpenSSL/openssl-1.0.1c-dev/apps/genrsa.c",
+		"/C/Build-OpenSSL/openssl-1.0.1c-dev/apps/genpkey.c",
+		"/C/Build-OpenSSL/openssl-1.0.1c-dev/apps/ocsp.c",
+		"/C/Build-OpenSSL/openssl-1.0.1c-dev/apps/rsa.c",
+		"/C/Build-OpenSSL/openssl-1.0.1c-dev/apps/pkeyutl.c",
+		"/C/Build-OpenSSL/openssl-1.0.1c-dev/apps/pkey.c",
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/app/views/key-mgr/prkey.eco",
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/app/views/getpass.eco",
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/app/controllers/dlg.coffee",
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/app/views/key-mgr/_x509-certificate.eco",
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/app/views/key-mgr/toolsbar.keys.eco",
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/app/views/key-mgr/x509-certificate.eco",
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/public/bootstrap.js",
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/app/views/dlg.eco",
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/app/views/msg.eco",
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/app/views/start.eco",
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/css/index.styl",
+		"/C/Users/amadou/AppData/Local/Temp/Rar$DIa0.639/jquery.ui.datepicker.js",
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/app/controllers/get-label.coffee",
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/app/views/key-mgr/get-key-info.eco",
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/app/controllers/keyMgr.coffee",
 		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/app/index.coffee",
 		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/app/lib/façade.coffee",
-		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/app/controllers/resetPIN.coffee",
-		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/app/views/start.eco",
-		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/app/controllers/login.coffee",
-		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/css/index.styl",
-		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/app/controllers/unblock.coffee",
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/app/views/get-label.eco",
 		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/app/controllers/init.coffee",
-		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/app/lib/sysmenu.coffee",
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/app/views/changepin.eco",
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/app/controllers/login.coffee",
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/app/views/login.eco",
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/app/controllers/changePIN.coffee",
 		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/app/views/sysmenu.eco",
 		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/app/views/key-mgr/toolsbar.key.eco",
-		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/app/views/key-mgr/toolsbar.keys.eco",
-		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/public/bootstrap.css",
-		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/app/controllers/keyMgr.coffee",
-		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/app/controllers/get_pass.coffee",
-		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/app/views/personal-info.eco",
-		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/app/controllers/changePIN.coffee",
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/app/views/key-mgr/_key.eco",
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/app/views/key-mgr/pubkey.eco",
+		"/D/Users/amadou/Downloads/openssl-1.0.1c/openssl-1.0.1c/apps/openssl.c",
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/public/base64.js",
+		"/D/Users/amadou/Documents/ECC/Ecc/main.cpp",
+		"/D/Users/amadou/Documents/ECC/Ecc/FiniteFieldElement.h",
+		"/D/Users/amadou/Documents/ECC/Ecc/EllipticCurve.h",
+		"/D/Users/amadou/Downloads/openssl-1.0.1c/openssl-1.0.1c/apps/pkcs12.c",
 		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/app/controllers/personalinfo.coffee",
-		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/app/controllers/dlg.coffee",
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/app/controllers/start.coffee",
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/app/controllers/unblock.coffee",
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/app/controllers/resetPIN.coffee",
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/app/controllers/listTokens.coffee",
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/.npmignore",
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/app/controllers/topbar.coffee",
+		"/C/Users/amadou/Desktop/Todo.Token.txt",
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/public/bootstrap.min.css",
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/topbar.keep",
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/app/lib/sysmenu.coffee",
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/public/bootstrap.css",
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/app/views/personal-info.eco",
 		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/app/views/unblock.eco",
 		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/app/controllers/sysmenu.coffee",
 		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/node_modules/spine/src/spine.coffee",
@@ -610,12 +789,10 @@
 		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/console.log",
 		"/D/Users/amadou/Documents/About it/Be A Bad Boy Without Being Bad.txt",
 		"/C/Program Files (x86)/OpenSC Project/OpenSC/opensc.conf",
-		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/app/views/dlg.eco",
 		"/C/Users/amadou/Desktop/Mingw-reqs/config.h",
 		"/C/Program Files (x86)/OpenSC Project/OpenSC/profiles/epass2003.profile",
 		"/C/Users/amadou/Desktop/Mingw-reqs/Make.rules.mak",
 		"/C/OpenSC-building/OpenSC/win32/OpenSC.wxs",
-		"/C/OpenSC-building/OpenSC/win32/Make.rules.mak",
 		"/C/OpenSC-building/OpenSC/src/libopensc/card.c",
 		"/C/OpenSC-building/OpenSC/src/libopensc/apdu.c",
 		"/C/Program Files (x86)/Microsoft CNG Development Kit/Include/cardmod.h",
@@ -650,60 +827,7 @@
 		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/usbtoken.h",
 		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken.vcxproj",
 		"/D/Users/amadou/Downloads/cef_binary_3.1180.823_windows/cef3/cefclient/cefclient.cpp",
-		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/cefclient2010.sln",
-		"/C/Users/amadou/Desktop/dimenstionnement.txt",
-		"/C/Users/amadou/Desktop/InventoryInfo.txt",
-		"/C/Users/amadou/Desktop/ProblemList.txt",
-		"/D/Users/amadou/Documents/About it/woman.txt",
-		"/D/Users/amadou/Documents/About it/i am your man.txt",
-		"/D/Users/amadou/Documents/About it/Journal.txt",
-		"/C/Users/amadou/Desktop/guess.scala",
-		"/D/Users/amadou/Documents/About it/How To Be A Gentlement.txt",
-		"/C/Users/amadou/Desktop/openerp_modules.txt",
-		"/C/Users/amadou/Desktop/sales_mangement.txt",
-		"/C/Users/amadou/Desktop/purchase_management.txt",
-		"/C/Users/amadou/Desktop/inventory_MMC.txt",
-		"/C/Users/amadou/Desktop/it/usbtoken.cpp",
-		"/C/Users/amadou/Desktop/it/usbtoken.rc",
-		"/C/Users/amadou/Desktop/it/client_app.cpp",
-		"/C/Users/amadou/Desktop/it/cefclient.cpp",
-		"/C/Users/amadou/Desktop/msd",
-		"/C/Users/amadou/Desktop/offre.txt",
-		"/C/Users/amadou/Desktop/bluemind/ui/Calendar/src/net/bluemind/ui/calendar/client/rpc/Ajax.java",
-		"/D/Users/amadou/Documents/GitHub/node/src/node_main.cc",
-		"/D/Users/amadou/Documents/GitHub/node/src/node.js",
-		"/D/Users/amadou/Documents/GitHub/node/src/node.cc",
-		"/D/Users/amadou/Documents/GitHub/node/src/node.h",
-		"/D/Users/amadou/Documents/GitHub/node/src/node_file.cc",
-		"/D/Users/amadou/Documents/GitHub/node/src/node_file.h",
-		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/public/application.css",
-		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/node_modules/spine/src/route.coffee",
-		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/test/specs/controllers/get_pass.coffee",
-		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/test/specs/controllers/keyMgr.coffee",
-		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/test/specs/controllers/topbar.coffee",
-		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/test/specs/controllers/changePIN.coffee",
-		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/test/specs/controllers/resetPIN.coffee",
-		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/test/specs/controllers/unblock.coffee",
-		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/.npmignore",
-		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/node_modules/hem/node_modules/stylus/node_modules/mkdirp/.gitignore.orig",
-		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/test/specs/controllers/setPIN.coffee",
-		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/test/specs/controllers/getpass.coffee",
-		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/node_modules/spine/lib/route.js",
-		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/usbtoken.vcxproj",
-		"/C/Users/amadou/Desktop/usbtoken-web/app/controllers/login.coffee",
-		"/C/Users/amadou/Desktop/usbtoken-web/app/views/key-mgr/toolsbar.keys.eco",
-		"/C/Users/amadou/Desktop/usbtoken-web/app/index.coffee",
-		"/C/Users/amadou/Desktop/usbtoken-web/app/controllers/init.coffee",
-		"/C/Users/amadou/Desktop/usbtoken-web/app/controllers/resetPIN.coffee",
-		"/C/Users/amadou/Desktop/usbtoken-web/app/lib/setup.coffee",
-		"/C/Users/amadou/Desktop/usbtoken-web/app/views/login.eco",
-		"/C/Users/amadou/Desktop/usbtoken-web/app/views/personal-info.eco",
-		"/C/Users/amadou/Desktop/usbtoken-web/app/controllers/personalinfo.coffee",
-		"/C/Users/amadou/Desktop/usbtoken-web/app/controllers/get_pass.coffee",
-		"/C/Users/amadou/Desktop/usbtoken-web/app/views/getpass.eco",
-		"/C/Users/amadou/Desktop/usbtoken-web/app/lib/wizard2.coffee",
-		"/C/Users/amadou/Desktop/usbtoken-web/app/controllers/unblock.coffee",
-		"/C/Users/amadou/Desktop/usbtoken-web/app/views/unblock.eco"
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/cefclient2010.sln"
 	],
 	"find":
 	{
@@ -721,6 +845,80 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"GenX",
+			":368",
+			"replyto: replyto, ",
+			", replyto: replyto",
+			"callback = (kMessageName, [response]) =>",
+			" from #{kMessageName}",
+			"notAfter",
+			"ENIGINE",
+			"time",
+			"gmt",
+			"notAfter",
+			"notBefore",
+			"reader",
+			"base64",
+			"BASE64",
+			" && defined(PKCS11_THREAD_LOCKING)",
+			"@keys.html ",
+			"rendered",
+			"KeyView",
+			"modal-footer",
+			"modal",
+			"RSA_version",
+			"dlg",
+			"selectionChanged",
+			"selectChanged",
+			"sigopts",
+			"digest",
+			"sigopts",
+			"pkey_ctrl_string",
+			"do_sign_init",
+			"do_X509_REQ_sign",
+			"make_REQ",
+			"], ",
+			"pkey",
+			"load_pkey",
+			"load_pubkey",
+			"MBSTRING_ASC",
+			"MBSTRING_ASC ",
+			"parse_name",
+			"make_REQ",
+			"load_pubkey",
+			"load_key",
+			"prog_init",
+			"req",
+			"emailRegex",
+			"get-key-info",
+			"modal",
+			"get-label",
+			"reload",
+			"header",
+			".key",
+			"_ticks",
+			"_daylightSavingAdjust",
+			"_getDaysInMonth",
+			"monthNamesShort",
+			"monthNames",
+			"_defa",
+			"parseDate",
+			"(=> @app.reload)",
+			"@delay (=> @app.reload)",
+			"purge",
+			"selectionChanged",
+			"DER",
+			"CER",
+			"Order",
+			"getSt",
+			"v-sc",
+			"get-ke",
+			"max",
+			"get-labe",
+			"Loa",
+			"personal",
+			"person",
+			"('')",
 			"uuid.v1()",
 			"loadin",
 			"end",
@@ -774,74 +972,7 @@
 			"<%  ",
 			"  ",
 			"body.metro-style .login .btn:not(.icon), body.metro-style .setpin .btn:not(.icon), body.metro-style .unblock .btn:not(.icon), body.metro-style .changepin .btn:not(.icon)",
-			"next: ->",
-			"changepin",
-			"setpin",
-			".keys, .key-view",
-			".key",
-			"#app",
-			"color: #000;",
-			"color: #000",
-			"color: #000;",
-			"options",
-			"content",
-			"@routeDetect",
-			"Key",
-			"btn",
-			"include",
-			"content",
-			"-",
-			"stat",
-			"app.logge",
-			"}\n",
-			"changepin",
-			"info",
-			" @",
-			"SetPIN",
-			"blocked",
-			"warning",
-			"warning-sign",
-			"warnin",
-			".btn",
-			"Found",
-			"Not Found",
-			"refreshE",
-			"events",
-			" if not @currentView or not (@currentView instanceof Start)",
-			"unbind",
-			"currentView",
-			"#app",
-			" class=\"initialize\"",
-			" class=\"refresh\"",
-			".start:not(.detecting) > .detecting, .start:not(.bad) > .bad",
-			"console",
-			"not",
-			"create",
-			"Unlock",
-			"lock",
-			"locked",
-			"blocked",
-			"locked",
-			"locke",
-			"delay",
-			"rep",
-			"active",
-			"token.status is ",
-			"btn",
-			"767px",
-			"border-radius: none",
-			"<script src=\"/bootstrap.js\" type=\"text/javascript\" charset=\"utf-8\"></script>",
-			"js",
-			"\"",
-			"../font/",
-			"AppGetWorkingDirectory",
-			"cefclient/",
-			"CreateRenderDelegates",
-			"ICF",
-			"&apos;",
-			"..\\",
-			"CefProcessMessage",
-			"g_handler"
+			"next: ->"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -849,6 +980,10 @@
 		"regex": false,
 		"replace_history":
 		[
+			"",
+			"callback = (response) =>",
+			"",
+			"X509View",
 			"++Façade.cnt",
 			"++cnt",
 			"",
@@ -883,31 +1018,446 @@
 	"groups":
 	[
 		{
-			"selected": 0,
+			"selected": 2,
 			"sheets":
 			[
 				{
 					"buffer": 0,
-					"file": ".npmignore",
+					"file": "app/views/key-mgr/get-x509-req-info.eco",
 					"settings":
 					{
-						"buffer_size": 17,
+						"buffer_size": 1040,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								17,
-								17
+								741,
+								741
 							]
 						],
 						"settings":
 						{
-							"syntax": "Packages/Text/Plain text.tmLanguage"
+							"syntax": "Packages/HTML/HTML.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
 						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "app/controllers/keyMgr.coffee",
+					"settings":
+					{
+						"buffer_size": 23309,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								13821,
+								13821
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/CoffeeScript/Syntaxes/CoffeeScript.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 5152.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "app/views/key-mgr/export_x509.eco",
+					"settings":
+					{
+						"buffer_size": 890,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								219,
+								219
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/HTML/HTML.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "app/index.coffee",
+					"settings":
+					{
+						"buffer_size": 13336,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1701,
+								1701
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/CoffeeScript/Syntaxes/CoffeeScript.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 715.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "app/lib/façade.coffee",
+					"settings":
+					{
+						"buffer_size": 10471,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								4737,
+								4737
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/CoffeeScript/Syntaxes/CoffeeScript.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 1991.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"file": "/C/Users/amadou/Desktop/cef3/cef3/tests/cefclient/cefclient.rc",
+					"settings":
+					{
+						"buffer_size": 4857,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1043,
+								1043
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Text/Plain text.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 360.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 6,
+					"file": "/C/Users/amadou/Desktop/cef3/cef3/tests/cefclient/resource.h",
+					"settings":
+					{
+						"buffer_size": 2749,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								883,
+								883
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C++.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 7,
+					"file": "css/index.styl",
+					"settings":
+					{
+						"buffer_size": 16888,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								15015,
+								15015
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Stylus/Syntaxes/Stylus.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 10553.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 8,
+					"file": "app/controllers/dlg.coffee",
+					"settings":
+					{
+						"buffer_size": 713,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								645,
+								645
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/CoffeeScript/Syntaxes/CoffeeScript.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 9,
+					"file": "app/views/dlg.eco",
+					"settings":
+					{
+						"buffer_size": 521,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								19,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/HTML/HTML.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 10,
+					"file": "app/views/login.eco",
+					"settings":
+					{
+						"buffer_size": 515,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/HTML/HTML.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 11,
+					"file": "public/index.html",
+					"settings":
+					{
+						"buffer_size": 21384,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								11487,
+								11487
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/HTML/HTML.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 1853.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 12,
+					"file": "/C/Build-OpenSSL/openssl-1.0.1c-dev/apps/apps.c",
+					"settings":
+					{
+						"buffer_size": 70213,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								64519,
+								64522
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 36345.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 13,
+					"file": "/C/Build-OpenSSL/openssl-1.0.1c-dev/apps/req.c",
+					"settings":
+					{
+						"buffer_size": 44645,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								23592,
+								23592
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 10766.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 14,
+					"file": "app/views/key-mgr/x509-certificate.eco",
+					"settings":
+					{
+						"buffer_size": 1408,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								437,
+								437
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/HTML/HTML.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 15,
+					"file": "app/lib/wizard.coffee",
+					"settings":
+					{
+						"buffer_size": 1126,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1045,
+								1045
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/CoffeeScript/Syntaxes/CoffeeScript.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 261.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
@@ -965,23 +1515,107 @@
 		"selected_items":
 		[
 			[
+				"wiz",
+				"app/lib/wizard.coffee"
+			],
+			[
+				"x5",
+				"app/views/key-mgr/x509-certificate.eco"
+			],
+			[
+				"too",
+				"app/views/key-mgr/toolsbar.X509.eco"
+			],
+			[
+				"ind",
+				"public/index.html"
+			],
+			[
 				"log",
-				"app/controllers/login.coffee"
+				"app/views/login.eco"
+			],
+			[
+				"dlg",
+				"app/controllers/dlg.coffee"
 			],
 			[
 				"in",
 				"css/index.styl"
 			],
 			[
+				"get",
+				"app/views/key-mgr/get-x509-req-info.eco"
+			],
+			[
+				"_pr",
+				"app/views/key-mgr/_prkey.eco"
+			],
+			[
+				"prk",
+				"app/views/key-mgr/prkey.eco"
+			],
+			[
+				"getp",
+				"app/views/getpass.eco"
+			],
+			[
+				"ms",
+				"app/views/msg.eco"
+			],
+			[
+				"msg",
+				"app/views/msg.eco"
+			],
+			[
+				"start",
+				"app/views/start.eco"
+			],
+			[
 				"inde",
 				"css/index.styl"
 			],
 			[
-				"l",
-				"app/controllers/login.coffee"
+				"fa",
+				"app/lib/façade.coffee"
+			],
+			[
+				"keym",
+				"app/controllers/keyMgr.coffee"
+			],
+			[
+				"sys",
+				"app/views/sysmenu.eco"
+			],
+			[
+				"cha",
+				"app/controllers/changePIN.coffee"
 			],
 			[
 				"login",
+				"app/views/login.eco"
+			],
+			[
+				"ini",
+				"app/controllers/init.coffee"
+			],
+			[
+				"get-l",
+				"app/controllers/get-label.coffee"
+			],
+			[
+				"key",
+				"app/controllers/keyMgr.coffee"
+			],
+			[
+				"pers",
+				"app/controllers/personalinfo.coffee"
+			],
+			[
+				"façade",
+				"app/lib/façade.coffee"
+			],
+			[
+				"l",
 				"app/controllers/login.coffee"
 			],
 			[
@@ -1007,10 +1641,6 @@
 			[
 				"wi",
 				"app/lib/wizard.coffee"
-			],
-			[
-				"ini",
-				"app/controllers/init.coffee"
 			],
 			[
 				"route",

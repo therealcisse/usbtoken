@@ -1,0 +1,27 @@
+<div class="modal">
+  
+  <div class="modal-header">
+    Export X509 Certificate <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+  </div>
+
+  <form class="form export-x509">   
+  
+    <div class="modal-body">
+      <p>            
+        <label>File Name</label>
+        <input value="<%= @fileName %>" name="fileName" type="text" class="span3" autofocus>
+        
+        <label>Format</label>
+        <select name="format" classs="span3">
+          <option value="PEM">PEM-Encoded X509 Certificate</option>
+          <option value="DER">DER-Encoded X509 Certificate</option>
+        </select>        
+      </p>
+    </div> 
+    
+    <div class="modal-footer">
+      <button type="submit" class="btn default"><i class="icon-ok"></i> &nbsp;Export</button>
+      <button type="button" class="cancel btn">Cancel</button>
+    </div>
+  </form>
+</div>

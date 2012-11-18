@@ -4,8 +4,7 @@
 
 #include "client_app.h"
 #include "client_renderer.h"
-#include "dom_test.h"
-#include "scheme_test.h"
+#include "ep_pkcs11_scheme.h"
 
 // static
 void ClientApp::CreateBrowserDelegates(BrowserDelegateSet& delegates) {
@@ -13,13 +12,12 @@ void ClientApp::CreateBrowserDelegates(BrowserDelegateSet& delegates) {
 
 // static
 void ClientApp::CreateRenderDelegates(RenderDelegateSet& delegates) {
-  client_renderer::CreateRenderDelegates(delegates);
-  dom_test::CreateRenderDelegates(delegates);  
+  //client_renderer::CreateRenderDelegates(delegates);
 }
 
 // static
 void ClientApp::RegisterCustomSchemes(
     CefRefPtr<CefSchemeRegistrar> registrar,
     std::vector<CefString>& cookiable_schemes) {
-  scheme_test::RegisterCustomSchemes(registrar, cookiable_schemes);
+		epsilon::schemes::RegisterCustomSchemes(registrar, cookiable_schemes);
 }

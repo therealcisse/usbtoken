@@ -1,0 +1,31 @@
+<div class="form-header">Create a Certificate Signing Request</div>
+<form class="form get-x509-req-info">
+  
+  <label>Full Name</label>
+  <input name="cn" type="text" class="span3" autofocus>
+  
+  <label>Organization</label>
+  <input name="o" type="text" class="span3">
+  
+  <label>Department Name</label>
+  <input name="ou" type="text" class="span3">
+
+  <label>Country</label>
+  <select name="country" class="span3"><% for country in @countries : %> <option value="<%= country.code %>" <%= "selected" if country.value is 'MA'; %>><%= country.name %></option> <% end %></select>
+
+  <label>City</label>
+  <input name="city" type="text" class="span3">
+  
+  <label>Region or Province</label>
+  <input name="region" type="text" class="span3">
+  
+  <label>Email Address</label>
+  <input name="emailAddress" type="text" class="span3">
+
+  <br>
+
+  <button type="submit" class="btn default"><i class="icon-ok"></i> &nbsp;Create Request</button>&nbsp;&nbsp;
+
+  <button type="button" class="cancel btn" style="margin-top:5px;">Cancel</button>
+
+</form>

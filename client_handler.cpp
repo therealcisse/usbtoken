@@ -21,11 +21,13 @@
 #include "string_util.h"
 
 #include "inc/token.h"
+#include "inc/watcher.h"
 
+#include "ep_pkcs11_scheme.h"
 
 // Custom menu command Ids.
 enum client_menu_ids {
-  CLIENT_ID_SHOW_DEVTOOLS   = MENU_ID_USER_FIRST,
+ // CLIENT_ID_SHOW_DEVTOOLS   = MENU_ID_USER_FIRST,
 //  CLIENT_ID_TESTMENU_SUBMENU,
 //  CLIENT_ID_TESTMENU_CHECKITEM,
 //  CLIENT_ID_TESTMENU_RADIOITEM1,
@@ -41,23 +43,38 @@ ClientHandler::ClientHandler()
     //m_ForwardHwnd(NULL),
     //m_StopHwnd(NULL),
     //m_ReloadHwnd(NULL),
-    m_bFocusOnEditableField(false) {
+    m_bFocusOnEditableField(false), m_bExternalDevTools(false) {
   CreateProcessMessageDelegates(process_message_delegates_);
   CreateRequestDelegates(request_delegates_);
 
   // Read command line settings.
-  CefRefPtr<CefCommandLine> command_line =
-      CefCommandLine::GetGlobalCommandLine();
+  //CefRefPtr<CefCommandLine> command_line =
+      //CefCommandLine::GetGlobalCommandLine();
 
-  if (command_line->HasSwitch(usbtoken::kUrl))
-    m_StartupURL = command_line->GetSwitchValue(usbtoken::kUrl);
-  if (m_StartupURL.empty())
-    m_StartupURL = "http://127.0.0.1:9294/"; //"http://www.google.com/";
+  //if (command_line->HasSwitch(usbtoken::kUrl))
+    //m_StartupURL = command_line->GetSwitchValue(usbtoken::kUrl);
+  
+  //if (m_StartupURL.empty())
+  //m_StartupURL = "http://127.0.0.1:9294/";
+  m_StartupURL = "pkcs11://epsilon.ma";
 
-  m_bExternalDevTools = command_line->HasSwitch(usbtoken::kExternalDevTools);
+  //m_bExternalDevTools = command_line->HasSwitch(usbtoken::kExternalDevTools);
+
+  ASSERT(CefClearSchemeHandlerFactories());
+  epsilon::schemes::InitPKCS11Scheme();
+
+  m_watcher = epsilon::TokenWatcher::Init(this);
 }
 
 ClientHandler::~ClientHandler() {
+
+#if defined(WIN32)
+
+	if (m_watcher) 
+		TerminateThread(m_watcher, 0);
+
+#endif
+
 }
 
 bool ClientHandler::OnProcessMessageReceived(
@@ -65,15 +82,15 @@ bool ClientHandler::OnProcessMessageReceived(
     CefProcessId source_process,
     CefRefPtr<CefProcessMessage> message) {
   // Check for messages from the client renderer.
-  std::string message_name = message->GetName();
-  if (message_name == client_renderer::kFocusedNodeChangedMessage) {
-    // A message is sent from ClientRenderDelegate to tell us whether the
-    // currently focused DOM node is editable. Use of |m_bFocusOnEditableField|
-    // is redundant with CefKeyEvent.focus_on_editable_field in OnPreKeyEvent
-    // but is useful for demonstration purposes.
-    m_bFocusOnEditableField = message->GetArgumentList()->GetBool(0);
-    return true;
-  }
+  //std::string message_name = message->GetName();
+  //if (message_name == client_renderer::kFocusedNodeChangedMessage) {
+  //  // A message is sent from ClientRenderDelegate to tell us whether the
+  //  // currently focused DOM node is editable. Use of |m_bFocusOnEditableField|
+  //  // is redundant with CefKeyEvent.focus_on_editable_field in OnPreKeyEvent
+  //  // but is useful for demonstration purposes.
+  //  m_bFocusOnEditableField = message->GetArgumentList()->GetBool(0);
+  //  return true;
+  //}
 
   bool handled = false;
 
@@ -92,25 +109,26 @@ void ClientHandler::OnBeforeContextMenu(
     CefRefPtr<CefFrame> frame,
     CefRefPtr<CefContextMenuParams> params,
     CefRefPtr<CefMenuModel> model) {
-  if ((params->GetTypeFlags() & (CM_TYPEFLAG_PAGE | CM_TYPEFLAG_FRAME)) != 0) {
+		model->Clear();
+  //if ((params->GetTypeFlags() & (CM_TYPEFLAG_PAGE | CM_TYPEFLAG_FRAME)) != 0) {
     // Add a separator if the menu already has items.
-    if (model->GetCount() > 0)
-      model->AddSeparator();
+    //if (model->GetCount() > 0)
+      //model->AddSeparator();
 
     // Add a "Show DevTools" item to all context menus.
-    model->AddItem(CLIENT_ID_SHOW_DEVTOOLS, "&Show DevTools");
+    //model->AddItem(CLIENT_ID_SHOW_DEVTOOLS, "&Show DevTools");
 
-    CefString devtools_url = browser->GetHost()->GetDevToolsURL(true);
-    if (devtools_url.empty() ||
-        m_OpenDevToolsURLs.find(devtools_url) != m_OpenDevToolsURLs.end()) {
+    //CefString devtools_url = browser->GetHost()->GetDevToolsURL(true);
+    //if (devtools_url.empty() ||
+     //   m_OpenDevToolsURLs.find(devtools_url) != m_OpenDevToolsURLs.end()) {
       // Disable the menu option if DevTools isn't enabled or if a window is
       // already open for the current URL.
-      model->SetEnabled(CLIENT_ID_SHOW_DEVTOOLS, true);
-    }
+      //model->SetEnabled(CLIENT_ID_SHOW_DEVTOOLS, true);
+    //}
 
     // Test context menu features.
     //BuildTestMenu(model);
-  }
+  //}
 }
 
 bool ClientHandler::OnContextMenuCommand(
@@ -120,9 +138,9 @@ bool ClientHandler::OnContextMenuCommand(
     int command_id,
     EventFlags event_flags) {
   switch (command_id) {
-    case CLIENT_ID_SHOW_DEVTOOLS:
-      ShowDevTools(browser);
-      return true;
+    //case CLIENT_ID_SHOW_DEVTOOLS:
+      //ShowDevTools(browser);
+      //return true;
     default:  // Allow default handling, if any.
       return false; //ExecuteTestMenu(command_id);
   }
@@ -135,69 +153,79 @@ void ClientHandler::OnLoadingStateChange(CefRefPtr<CefBrowser> browser,
   SetLoading(isLoading);
 }
 
-bool ClientHandler::OnConsoleMessage(CefRefPtr<CefBrowser> browser,
-                                     const CefString& message,
-                                     const CefString& source,
-                                     int line) {
+//bool ClientHandler::OnConsoleMessage(CefRefPtr<CefBrowser> browser,
+//                                     const CefString& message,
+//                                     const CefString& source,
+//                                     int line) {
+//  REQUIRE_UI_THREAD();
+//
+//  bool first_message;
+//  std::string logFile;
+//
+//  {
+//    AutoLock lock_scope(this);
+//
+//    first_message = m_LogFile.empty();
+//    if (first_message) {
+//      std::stringstream ss;
+//      ss << AppGetWorkingDirectory();
+//#if defined(OS_WIN)
+//      ss << "\\";
+//#else
+//      ss << "/";
+//#endif
+//      ss << "console.log";
+//      m_LogFile = ss.str();
+//    }
+//    logFile = m_LogFile;
+//  }
+//
+//  FILE* file = fopen(logFile.c_str(), "a");
+//  if (file) {
+//    std::stringstream ss;
+//    ss << "Message: " << std::string(message) << "\r\nSource: " <<
+//        std::string(source) << "\r\nLine: " << line <<
+//        "\r\n-----------------------\r\n";
+//    fputs(ss.str().c_str(), file);
+//    fclose(file);
+//
+//    //if (first_message)
+//      //SendNotification(NOTIFY_CONSOLE_MESSAGE);
+//  }
+//
+//  return false;
+//}
+
+void ClientHandler::OnBeforeDownload(
+    CefRefPtr<CefBrowser> browser,
+    CefRefPtr<CefDownloadItem> download_item,
+    const CefString& suggested_name,
+    CefRefPtr<CefBeforeDownloadCallback> callback) {
   REQUIRE_UI_THREAD();
-
-  bool first_message;
-  std::string logFile;
-
-  {
-    AutoLock lock_scope(this);
-
-    first_message = m_LogFile.empty();
-    if (first_message) {
-      std::stringstream ss;
-      ss << AppGetWorkingDirectory();
-#if defined(OS_WIN)
-      ss << "\\";
-#else
-      ss << "/";
-#endif
-      ss << "console.log";
-      m_LogFile = ss.str();
-    }
-    logFile = m_LogFile;
-  }
-
-  FILE* file = fopen(logFile.c_str(), "a");
-  if (file) {
-    std::stringstream ss;
-    ss << "Message: " << std::string(message) << "\r\nSource: " <<
-        std::string(source) << "\r\nLine: " << line <<
-        "\r\n-----------------------\r\n";
-    fputs(ss.str().c_str(), file);
-    fclose(file);
-
-    //if (first_message)
-      //SendNotification(NOTIFY_CONSOLE_MESSAGE);
-  }
-
-  return false;
+  // Continue the download and show the "Save As" dialog.
+  callback->Continue(GetDownloadPath(suggested_name), true);
 }
 
-//void ClientHandler::OnBeforeDownload(
-//    CefRefPtr<CefBrowser> browser,
-//    CefRefPtr<CefDownloadItem> download_item,
-//    const CefString& suggested_name,
-//    CefRefPtr<CefBeforeDownloadCallback> callback) {
-//  REQUIRE_UI_THREAD();
-//  // Continue the download and show the "Save As" dialog.
-//  callback->Continue(GetDownloadPath(suggested_name), true);
-//}
+void ClientHandler::OnDownloadUpdated(
+    CefRefPtr<CefBrowser> browser,
+    CefRefPtr<CefDownloadItem> download_item,
+    CefRefPtr<CefDownloadItemCallback> callback) {
+  REQUIRE_UI_THREAD();
+  if (download_item->IsComplete()) {
+    SetLastDownloadFile(download_item->GetFullPath());
+    SendNotification(NOTIFY_DOWNLOAD_COMPLETE);
+  }
+}
 
-//void ClientHandler::OnDownloadUpdated(
-//    CefRefPtr<CefBrowser> browser,
-//    CefRefPtr<CefDownloadItem> download_item,
-//    CefRefPtr<CefDownloadItemCallback> callback) {
-//  REQUIRE_UI_THREAD();
-//  if (download_item->IsComplete()) {
-//    SetLastDownloadFile(download_item->GetFullPath());
-//    SendNotification(NOTIFY_DOWNLOAD_COMPLETE);
-//  }
-//}
+void ClientHandler::SetLastDownloadFile(const std::string& fileName) {
+  AutoLock lock_scope(this);
+  m_LastDownloadFile = fileName;
+}
+
+std::string ClientHandler::GetLastDownloadFile() {
+  AutoLock lock_scope(this);
+  return m_LastDownloadFile;
+}
 
 //void ClientHandler::OnRequestGeolocationPermission(
 //      CefRefPtr<CefBrowser> browser,
@@ -212,19 +240,19 @@ bool ClientHandler::OnPreKeyEvent(CefRefPtr<CefBrowser> browser,
                                   const CefKeyEvent& event,
                                   CefEventHandle os_event,
                                   bool* is_keyboard_shortcut) {
-  ASSERT(m_bFocusOnEditableField == event.focus_on_editable_field);
-  if (!event.focus_on_editable_field && event.windows_key_code == 0x20) {
+  //ASSERT(m_bFocusOnEditableField == event.focus_on_editable_field);
+  //if (!event.focus_on_editable_field && event.windows_key_code == 0x20) {
     // Special handling for the space character when an input element does not
     // have focus. Handling the event in OnPreKeyEvent() keeps the event from
     // being processed in the renderer. If we instead handled the event in the
     // OnKeyEvent() method the space key would cause the window to scroll in
     // addition to showing the alert box.
-    if (event.type == KEYEVENT_RAWKEYDOWN) {
-      browser->GetMainFrame()->ExecuteJavaScript(
-          "alert('You pressed the space bar!');", "", 0);
-    }
-    return true;
-  }
+    //if (event.type == KEYEVENT_RAWKEYDOWN) {
+    //  browser->GetMainFrame()->ExecuteJavaScript(
+      //    "alert('You pressed the space bar!');", "", 0);
+    //}
+    //return true;
+  //}
 
   return false;
 }
@@ -429,6 +457,15 @@ std::string ClientHandler::GetLogFile() {
 //  return m_LastDownloadFile;
 //}
 
+bool ClientHandler::Save(const std::string& path, const std::string& data) {
+  FILE* f = fopen(path.c_str(), "w");
+  if (!f)
+    return false;
+  fwrite(data.c_str(), data.size(), 1, f);
+  fclose(f);
+  return true;
+}
+
 void ClientHandler::ShowDevTools(CefRefPtr<CefBrowser> browser) {
   std::string devtools_url = browser->GetHost()->GetDevToolsURL(false);
   if (!devtools_url.empty()) {
@@ -473,14 +510,14 @@ void ClientHandler::LaunchExternalBrowser(const std::string& url) {
 void ClientHandler::CreateProcessMessageDelegates(
       ProcessMessageDelegateSet& delegates) {
   // Create the binding test delegates.
-  binding::CreateProcessMessageDelegates(delegates);
+  //binding::CreateProcessMessageDelegates(delegates);
   epsilon::CreateProcessMessageDelegates(delegates);
 }
 
 // static
 void ClientHandler::CreateRequestDelegates(RequestDelegateSet& delegates) {
   // Create the binding test delegates.
-  binding::CreateRequestDelegates(delegates);  
+  //binding::CreateRequestDelegates(delegates);  
 }
 
 //void ClientHandler::BuildTestMenu(CefRefPtr<CefMenuModel> model) {

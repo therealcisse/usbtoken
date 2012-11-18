@@ -430,7 +430,7 @@ bool ClientApp::OnProcessMessageReceived(
       CefV8ValueList arguments;
 
       // First argument is the message name.
-      arguments.push_back(CefV8Value::CreateString(message_name));
+      //arguments.push_back(CefV8Value::CreateString(message_name));
 
       // Second argument is the list of message arguments.
       CefRefPtr<CefListValue> list = message->GetArgumentList();
