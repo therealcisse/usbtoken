@@ -8,11 +8,11 @@
 
 #include "usbtoken/client_handler.h"
 
-namespace epsilon {
+namespace epsilon {	
 
 #if defined(WIN32)
 
-	VOID WINAPI WatchToken(LPVOID lpParam);
+	unsigned __stdcall WatchToken(void *lpParam);
 
 #elif defined(OS_LINUX)
 
@@ -22,7 +22,7 @@ namespace epsilon {
 
 class TokenWatcher {
 public:
-	static void *Init(const ClientHandler *);
+	static void Init(ClientHandler*);
 };
 
 }

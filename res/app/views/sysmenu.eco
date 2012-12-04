@@ -9,9 +9,10 @@
             <ul class="dropdown-menu">
               <li><a href="#/changepin">Change PIN</a></li>
               <!-- <li><a href="#/personal-info">Modify personal data</a></li> -->
-              <li><a href="#/erase">Erase token</a></li>
+              <!-- <li><a href="#/erase">Erase token</a></li> -->
+              <li><a href="#/init">Re-format token</a></li>
               <li class="divider"></li>
-              <li><a href="#/init">Re-initialize token</a></li>
+              <li><a href="#/configure-firefox">Configure Firefox</a></li>
             </ul>
           </li>
 

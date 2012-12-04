@@ -1,7 +1,7 @@
 /****************************** Module Header ******************************\
-* Module Name:  SampleService.h
-* Project:      CppWindowsService
-* Copyright (c) Microsoft Corporation.
+* Module Name:  TokenService.h
+* Project:      USBToken
+* Copyright (c) Epsilon SARL.
 * 
 * Provides a sample service class that derives from the service base class - 
 * CServiceBase. The sample service logs the service start and stop 
@@ -19,6 +19,8 @@
 
 #pragma once
 
+#define WIN32_LEAN_AND_MEAN
+
 #include "ServiceBase.h"
 
 
@@ -29,17 +31,19 @@ public:
         BOOL fCanStop = TRUE, 
         BOOL fCanShutdown = TRUE, 
         BOOL fCanPauseContinue = FALSE);
+
     virtual ~TokenService(void);
 
 protected:
 
     virtual void OnStart(DWORD dwArgc, PWSTR *pszArgv);
     virtual void OnStop();
+	virtual void OnShutdown();
 
     void ServiceWorkerThread(void);
 
 private:
 
-    BOOL m_fStopping;
+    BOOL m_fStopping; 
     HANDLE m_hStoppedEvent;
 };

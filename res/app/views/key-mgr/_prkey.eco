@@ -8,7 +8,7 @@
 		</div>
 		
 		<div class="title">
-			<a data-id="<%= @id %>" title="<%= @label %>" class="action-view" href="#/keys/<%= @id %>"><%= truncate @label, 25 %></a> &nbsp;&nbsp;&nbsp; <span class="label label-important">PrivateKey</span> <% if @native : %>&nbsp;&nbsp;&nbsp; <span title="This key was generated on-board" class="label label-info">Native</span><% end %>
+			<a data-id="<%= @id %>" title="<%= @label %>" class="action-view" href="#/keys/<%= @id %>"><%= truncate @label, 25 %></a> &nbsp;&nbsp;&nbsp; <span class="label label-important">PrivateKey</span> <% if @native : %>&nbsp;&nbsp;&nbsp; <span title="This private key was generated on-board" class="label label-info">Native</span><% else : %>&nbsp;&nbsp;&nbsp; <span title="This private key was imported" class="label label-info">Imported</span><% end %>
 		</div>
 	
 		<div class="tags">

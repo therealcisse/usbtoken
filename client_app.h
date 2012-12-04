@@ -99,13 +99,11 @@ class ClientApp : public CefApp,
   // Platform-specific methods implemented in client_app_mac/client_app_win
   
   double GetElapsedMilliseconds();
-  
+  std::string GetExtensionJSSource();
   CefString GetCurrentLanguage();
   
   //std::string GetExtensionJSSource();
   
-  static CefString AppGetSupportDirectory();
-
   // Set a JavaScript callback for the specified |message_name| and |browser_id|
   // combination. Will automatically be removed when the associated context is
   // released. Callbacks can also be set in JavaScript using the

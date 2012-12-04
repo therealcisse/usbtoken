@@ -91,7 +91,7 @@ namespace epsilon {
 		// AutoLock lock_(this);
 
 	  /* Connect to the card */
-	  if (!::util::ep_open_reader_and_card(&ctx, reader, &card))
+		if (!::util::ep_open_reader_and_card(&ctx, reader, &card))
 	    return false;  	
 	    
 	  /* Bind the card-specific operations and load the profile */

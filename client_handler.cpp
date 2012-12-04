@@ -16,62 +16,31 @@
 #include "usbtoken.h"
 #include "client_renderer.h"
 #include "client_switches.h"
-#include "binding.h"
 #include "resource_util.h"
 #include "string_util.h"
 
 #include "inc/token.h"
-#include "inc/watcher.h"
 
 #include "ep_pkcs11_scheme.h"
 
-// Custom menu command Ids.
-enum client_menu_ids {
- // CLIENT_ID_SHOW_DEVTOOLS   = MENU_ID_USER_FIRST,
-//  CLIENT_ID_TESTMENU_SUBMENU,
-//  CLIENT_ID_TESTMENU_CHECKITEM,
-//  CLIENT_ID_TESTMENU_RADIOITEM1,
-//  CLIENT_ID_TESTMENU_RADIOITEM2,
-//  CLIENT_ID_TESTMENU_RADIOITEM3,
-};
-
 ClientHandler::ClientHandler()
   : m_MainHwnd(NULL),
+    app_running_(false),
     m_BrowserId(0),
-    //m_EditHwnd(NULL),
-    //m_BackHwnd(NULL),
-    //m_ForwardHwnd(NULL),
-    //m_StopHwnd(NULL),
-    //m_ReloadHwnd(NULL),
+    m_StartupURL("pkcs11://epsilon.ma"),
     m_bFocusOnEditableField(false), m_bExternalDevTools(false) {
   CreateProcessMessageDelegates(process_message_delegates_);
-  CreateRequestDelegates(request_delegates_);
-
-  // Read command line settings.
-  //CefRefPtr<CefCommandLine> command_line =
-      //CefCommandLine::GetGlobalCommandLine();
-
-  //if (command_line->HasSwitch(usbtoken::kUrl))
-    //m_StartupURL = command_line->GetSwitchValue(usbtoken::kUrl);
-  
-  //if (m_StartupURL.empty())
-  //m_StartupURL = "http://127.0.0.1:9294/";
-  m_StartupURL = "pkcs11://epsilon.ma";
-
-  //m_bExternalDevTools = command_line->HasSwitch(usbtoken::kExternalDevTools);
-
-  ASSERT(CefClearSchemeHandlerFactories());
-  epsilon::schemes::InitPKCS11Scheme();
-
-  m_watcher = epsilon::TokenWatcher::Init(this);
+  CreateRequestDelegates(request_delegates_);  
 }
 
 ClientHandler::~ClientHandler() {
 
 #if defined(WIN32)
 
-	if (m_watcher) 
-		TerminateThread(m_watcher, 0);
+	if (m_watcherHnd) {
+		ASSERT(TerminateThread(m_watcherHnd, 0));
+		ASSERT(CloseHandle(m_watcherHnd));
+	}
 
 #endif
 
@@ -81,16 +50,6 @@ bool ClientHandler::OnProcessMessageReceived(
     CefRefPtr<CefBrowser> browser,
     CefProcessId source_process,
     CefRefPtr<CefProcessMessage> message) {
-  // Check for messages from the client renderer.
-  //std::string message_name = message->GetName();
-  //if (message_name == client_renderer::kFocusedNodeChangedMessage) {
-  //  // A message is sent from ClientRenderDelegate to tell us whether the
-  //  // currently focused DOM node is editable. Use of |m_bFocusOnEditableField|
-  //  // is redundant with CefKeyEvent.focus_on_editable_field in OnPreKeyEvent
-  //  // but is useful for demonstration purposes.
-  //  m_bFocusOnEditableField = message->GetArgumentList()->GetBool(0);
-  //  return true;
-  //}
 
   bool handled = false;
 
@@ -509,15 +468,11 @@ void ClientHandler::LaunchExternalBrowser(const std::string& url) {
 // static
 void ClientHandler::CreateProcessMessageDelegates(
       ProcessMessageDelegateSet& delegates) {
-  // Create the binding test delegates.
-  //binding::CreateProcessMessageDelegates(delegates);
   epsilon::CreateProcessMessageDelegates(delegates);
 }
 
 // static
 void ClientHandler::CreateRequestDelegates(RequestDelegateSet& delegates) {
-  // Create the binding test delegates.
-  //binding::CreateRequestDelegates(delegates);  
 }
 
 //void ClientHandler::BuildTestMenu(CefRefPtr<CefMenuModel> model) {

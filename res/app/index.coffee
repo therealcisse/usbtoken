@@ -68,17 +68,25 @@ class App extends Spine.Controller
       console.log(response)
 
     app.setMessageCallback 'token_removed', ([response]) =>
+      Façade.ShowIfHidden()
+      
+      doLoad = => if @currentView.token_removed then @currentView.token_removed() else @delay @reload
+      
       if Façade.reader 
-        if Façade.reader is response.reader      
-          delete Façade.reader
-          @delay @reload
+        # if Façade.reader is response.reader      
+        delete Façade.reader
+        doLoad()
+      
       else
-        @reload()
 
-    app.setMessageCallback 'token_inserted', ([response]) =>      
+        doLoad()
+
+    app.setMessageCallback 'token_inserted', ([response]) =>
+      doLoad = => if @currentView.token_removed then @currentView.token_inserted() else @delay @reload
+
       unless Façade.reader and Façade.reader is response.reader
         Façade.reader = response.reader
-        @delay @reload
+        doLoad()
 
     @routes
     
@@ -94,11 +102,11 @@ class App extends Spine.Controller
       
       '/key/gen'            :   -> @ifLoggedIn() => @become @any(KeyMgr.GenForm, app: @)
       
-      '/ImportX509Certificate'   :  -> @ifLoggedIn() => @become @any(KeyMgr.ImportX509Certificate, app: @)
+      '/ImportX509'         :  -> @ifLoggedIn() => @become @any(KeyMgr.ImportX509, app: @)
 
-      '/ImportPrKey'    :   -> @ifLoggedIn() => @become @any(KeyMgr.ImportPrKey, app: @)
+      '/ImportPrKey'        :   -> @ifLoggedIn() => @become @any(KeyMgr.ImportPrKey, app: @)
 
-      '/ImportPubKey'   :   -> @ifLoggedIn() => @become @any(KeyMgr.ImportPubKey, app: @)      
+      # '/ImportPubKey'       :   -> @ifLoggedIn() => @become @any(KeyMgr.ImportPubKey, app: @)      
 
       # '/PrKey/:id'           :   (params) -> @ifLoggedIn() => @become @any(KeyMgr.X509View, id: params.id, type: 'PrKey', app: @)
             
@@ -120,8 +128,6 @@ class App extends Spine.Controller
     @msg    = new Msg(el: '#msg')
 
     Spine.Route.setup()
-
-    @delay -> Façade.SetWindowText()
 
   reload: -> if document.location.hash in [ '#/', '' ] then document.location.reload() else @navigate('/')
 
@@ -309,13 +315,21 @@ class App extends Spine.Controller
     @log "App.cancelled"
     @navigate "/"      
 
-  detectToken: =>
+  selectKey: (key) ->
+    @trigger('selectionChanged', key)
+
+  unSelectKey: (key) ->
+    @trigger('selectionChanged', key, false)
+
+  doDetectToken: =>
     @log "@detectToken"
     
     Façade.GetStatus (status, err) =>
       @clearAllMsgs()
 
-      return false if err
+      onError = -> status = Token.Absent
+
+      onError() if err or not status
 
       # Start page
       if status in [ Token.Absent, Token.Locked, Token.Blank, Token.InUse, Token.ReadOnly ]
@@ -340,25 +354,14 @@ class App extends Spine.Controller
         
           @navigate("#/keys")
 
-        #else
-
-          ### Unknow status, try to detect again ###
-
-          # @setStatus(null)
-
-    false
-
-  selectKey: (key) ->
-    @trigger('selectionChanged', key)
-
-  unSelectKey: (key) ->
-    @trigger('selectionChanged', key, false)
+    false      
 
   # Routes
 
   routeDetectOne: =>
     @log '@routeDetectOne'
-    @detectToken()
+    # @become @start()
+    @doDetectToken()
 
   # TODO(implement this)
   routeGetLabel: (params) =>

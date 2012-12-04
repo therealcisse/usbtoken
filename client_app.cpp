@@ -210,7 +210,7 @@ class ClientAppExtensionHandler : public CefV8Handler {
                        CefString& exception) {
     bool handled = false;
 
-    if (name == "sendMessage") {
+    if (name == "SendMessage") {
       // Send a message to the browser process.
       if ((arguments.size() == 1 || arguments.size() == 2) &&
           arguments[0]->IsString()) {
@@ -231,7 +231,7 @@ class ClientAppExtensionHandler : public CefV8Handler {
           handled = true;
         }
       }
-    } else if (name == "setMessageCallback") {
+    } else if (name == "SetMessageCallback") {
       // Set a message callback.
       if (arguments.size() == 2 && arguments[0]->IsString() &&
           arguments[1]->IsFunction()) {
@@ -242,7 +242,7 @@ class ClientAppExtensionHandler : public CefV8Handler {
                                         arguments[1]);
         handled = true;
       }
-    }  else if (name == "removeMessageCallback") {
+    }  else if (name == "RemoveMessageCallback") {
       // Remove a message callback.
       if (arguments.size() == 1 && arguments[0]->IsString()) {
         std::string name = arguments[0]->GetStringValue();
@@ -275,8 +275,9 @@ ClientApp::ClientApp()
   CreateRenderDelegates(render_delegates_);
 
   // Default schemes that support cookies.
-  cookieable_schemes_.push_back("http");
-  cookieable_schemes_.push_back("https");
+  //cookieable_schemes_.push_back("http");
+  //cookieable_schemes_.push_back("https");
+  cookieable_schemes_.push_back("pkcs11");
 }
 
 void ClientApp::SetMessageCallback(const std::string& message_name,
@@ -333,25 +334,8 @@ void ClientApp::GetProxyForUrl(const CefString& url,
 
 void ClientApp::OnWebKitInitialized() {
   // Register the client_app extension.
-  std::string app_code =
-    "var app;"
-    "if (!app)"
-    "  app = {};"
-    "(function() {"
-    "  app.sendMessage = function(name, arguments) {"
-    "    native function sendMessage();"
-    "    return sendMessage(name, arguments);"
-    "  };"
-    "  app.setMessageCallback = function(name, callback) {"
-    "    native function setMessageCallback();"
-    "    return setMessageCallback(name, callback);"
-    "  };"
-    "  app.removeMessageCallback = function(name) {"
-    "    native function removeMessageCallback();"
-    "    return removeMessageCallback(name);"
-    "  };"
-    "})();";
-  CefRegisterExtension("v8/app", app_code,
+  std::string extension_code = GetExtensionJSSource();
+  CefRegisterExtension("v8/app", extension_code,
       new ClientAppExtensionHandler(this));
 
   // Execute delegate callbacks.

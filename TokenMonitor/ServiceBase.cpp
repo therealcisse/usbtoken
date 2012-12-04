@@ -17,9 +17,12 @@
 \***************************************************************************/
 
 #pragma region Includes
-#include "ServiceBase.h"
+
+#include "inc\ServiceBase.h"
+
 #include <assert.h>
 #include <strsafe.h>
+
 #pragma endregion
 
 
@@ -28,6 +31,9 @@
 // Initialize the singleton service instance.
 CServiceBase *CServiceBase::s_service = NULL;
 
+// Formats a message string using the specified message and variable
+// list of arguments.
+LPWSTR GetLastErrorMessage();
 
 //
 //   FUNCTION: CServiceBase::Run(CServiceBase &)
@@ -111,6 +117,9 @@ void WINAPI CServiceBase::ServiceMain(DWORD dwArgc, PWSTR *pszArgv) {
 //
 void WINAPI CServiceBase::ServiceCtrlHandler(DWORD dwCtrl) {
     switch (dwCtrl) {
+#if NTDDI_VERSION >= NTDDI_VISTA        
+    case SERVICE_CONTROL_PRESHUTDOWN:
+#endif    
     case SERVICE_CONTROL_STOP: s_service->Stop(); break;
     case SERVICE_CONTROL_PAUSE: s_service->Pause(); break;
     case SERVICE_CONTROL_CONTINUE: s_service->Continue(); break;
@@ -157,10 +166,17 @@ CServiceBase::CServiceBase(PWSTR pszServiceName,
 
     // The accepted commands of the service.
     DWORD dwControlsAccepted = 0;
-    if (fCanStop) 
+    if (fCanStop)
         dwControlsAccepted |= SERVICE_ACCEPT_STOP;
-    if (fCanShutdown) 
+    if (fCanShutdown)
         dwControlsAccepted |= SERVICE_ACCEPT_SHUTDOWN;
+
+    if(fCanShutdown || fCanStop) {
+#if NTDDI_VERSION >= NTDDI_VISTA
+        dwControlsAccepted |= SERVICE_ACCEPT_PRESHUTDOWN;
+#endif                
+    }
+
     if (fCanPauseContinue) 
         dwControlsAccepted |= SERVICE_ACCEPT_PAUSE_CONTINUE;
     m_status.dwControlsAccepted = dwControlsAccepted;
@@ -245,6 +261,35 @@ void CServiceBase::OnStart(DWORD dwArgc, PWSTR *pszArgv)
 {
 }
 
+DWORD WINAPI CServiceBase::StopThread(LPVOID lParam)
+{
+  CServiceBase *s = static_cast<CServiceBase*>(lParam);
+  
+  try {
+
+    // Perform service-specific stop operations.
+    s->OnStop();
+
+    s->SetServiceStatus(SERVICE_STOPPED);
+
+  }
+  catch (DWORD dwError) {
+      // Log the error.
+      s->WriteErrorLogEntry(L"Service Stop", dwError);
+
+      // Set the orginal service status.
+      // SetServiceStatus(dwOriginalState);
+  }
+  catch (...) {
+      // Log the error.
+      s->WriteEventLogEntry(L"Service failed to stop.", EVENTLOG_ERROR_TYPE);
+
+      // Set the orginal service status.
+      // SetServiceStatus(dwOriginalState);
+  }  
+
+  return 0;
+}
 
 //
 //   FUNCTION: CServiceBase::Stop()
@@ -255,31 +300,15 @@ void CServiceBase::OnStart(DWORD dwArgc, PWSTR *pszArgv)
 //   event log, and the service will be restored to the original state.
 //
 void CServiceBase::Stop() {
-    DWORD dwOriginalState = m_status.dwCurrentState;
-    try {
-        // Tell SCM that the service is stopping.
-        SetServiceStatus(SERVICE_STOP_PENDING);
+  // Tell SCM that the service is stopping.
+  SetServiceStatus(SERVICE_STOP_PENDING);
 
-        // Perform service-specific stop operations.
-        OnStop();
-
-        // Tell SCM that the service is stopped.
-        SetServiceStatus(SERVICE_STOPPED);
-    }
-    catch (DWORD dwError) {
-        // Log the error.
-        WriteErrorLogEntry(L"Service Stop", dwError);
-
-        // Set the orginal service status.
-        SetServiceStatus(dwOriginalState);
-    }
-    catch (...) {
-        // Log the error.
-        WriteEventLogEntry(L"Service failed to stop.", EVENTLOG_ERROR_TYPE);
-
-        // Set the orginal service status.
-        SetServiceStatus(dwOriginalState);
-    }
+  CloseHandle(::CreateThread(0, // default security
+                            0, // default stack size
+                            &StopThread,
+                            this, // context
+                            0, // no flags
+                            0));
 }
 
 
@@ -524,7 +553,7 @@ void CServiceBase::WriteEventLogEntry(PWSTR pszMessage, WORD wType) {
 void CServiceBase::WriteErrorLogEntry(PWSTR pszFunction, DWORD dwError) {
     wchar_t szMessage[260];
     StringCchPrintf(szMessage, ARRAYSIZE(szMessage), 
-        L"%s failed w/err 0x%08lx", pszFunction, dwError);
+        L"%s failed w/err 0x%08lx(%s)", pszFunction, dwError, GetLastErrorMessage());
     WriteEventLogEntry(szMessage, EVENTLOG_ERROR_TYPE);
 }
 

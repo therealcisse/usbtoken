@@ -58,44 +58,29 @@ CefString ClientApp::GetCurrentLanguage() {
 	return CefString(locale);
 }
 
-// std::string ClientApp::GetExtensionJSSource() {
-//     extern HINSTANCE hInst;
+std::string ClientApp::GetExtensionJSSource() {
+  extern HINSTANCE g_hInst;
 
-//     HRSRC hRes = FindResource(hInst, MAKEINTRESOURCE(IDS_APPSHELL_EXTENSIONS), MAKEINTRESOURCE(256));
-//     DWORD dwSize;
-//     LPBYTE pBytes = NULL;
+  HRSRC hRes = FindResource(g_hInst, MAKEINTRESOURCE(IDS_USBTOKEN_EXTENSIONS), MAKEINTRESOURCE(BINARY));
+  DWORD dwSize;
+  LPBYTE pBytes = NULL;
 
-//     if(hRes)
-//     {
-//         HGLOBAL hGlob = LoadResource(hInst, hRes);
-//         if(hGlob)
-//         {
-//             dwSize = SizeofResource(hInst, hRes);
-//             pBytes = (LPBYTE)LockResource(hGlob);
-//         }
-//     }
+  if(hRes) {
+    HGLOBAL hGlob = LoadResource(g_hInst, hRes);
+    if(hGlob) {
+        dwSize = SizeofResource(g_hInst, hRes);
+        pBytes = (LPBYTE)LockResource(hGlob);
+    }
+  }
 
-//     if (pBytes) {
-//         std::string result((const char *)pBytes, dwSize);
-//         return result;
-//     }
+  if (pBytes) {
+    std::string res((const char *)pBytes, dwSize);
+    return res;
+  }
 
-//     return "";
-// }
+  return "";
+}
 
 double ClientApp::GetElapsedMilliseconds() {
     return (timeGetTime() - g_appStartupTime);
-}
-
-CefString ClientApp::AppGetSupportDirectory() {
-    wchar_t dataPath[MAX_PATH];
-    SHGetFolderPath(NULL, CSIDL_APPDATA, NULL, SHGFP_TYPE_CURRENT, dataPath);
-  
-    std::wstring appSupportPath = dataPath;
-    appSupportPath +=  L"\\" GROUP_NAME APP_NAME;
-
-    // Convert '\\' to '/'
-    replace(appSupportPath.begin(), appSupportPath.end(), '\\', '/');
-
-    return CefString(appSupportPath);
 }

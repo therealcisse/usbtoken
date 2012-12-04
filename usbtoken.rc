@@ -40,21 +40,11 @@ IDS_FONTAWESOME_WOFF       BINARY         "res\\public\\fonts\\fontawesome-webfo
 IDS_FONTAWESOME_TTF        BINARY         "res\\public\\fonts\\fontawesome-webfont.ttf"
 IDS_FONTAWESOME_SVG        BINARY         "res\\public\\fonts\\fontawesome-webfont.svg"
 
+IDS_USBTOKEN_EXTENSIONS        BINARY         "usbtoken_extensions.js"
+
 //
 // Menu resources
 //
-
-IDC_USBTOKEN MENU
-{
-    POPUP "&File"
-    {
-        MENUITEM "E&xit", IDM_EXIT
-    }
-    POPUP "&Help"
-    {
-        MENUITEM "&About ...", IDM_ABOUT
-    }
-}
 
 #ifdef APSTUDIO_INVOKED
 /////////////////////////////////////////////////////////////////////////////
@@ -87,11 +77,38 @@ END
 // String Table resources
 //
 
+IDC_CONTEXTMENU_SHOW MENU
+BEGIN
+    POPUP ""
+    BEGIN
+    MENUITEM "Show Token Manager", IDM_BROWSER_SHOW
+    MENUITEM "E&xit", IDM_EXIT
+    END
+END
+
+IDC_CONTEXTMENU_HIDE MENU
+BEGIN
+    POPUP ""
+    BEGIN
+    MENUITEM "Hide Token Manager", IDM_BROWSER_HIDE
+    MENUITEM "E&xit", IDM_EXIT
+    END
+END
+
 STRINGTABLE
-{
+BEGIN
     IDC_USBTOKEN                  "USBTOKEN"
     IDS_APP_TITLE                 "Epsilon Token Manager"
-}
+
+   IDS_TOKEN_INSERTED_TITLE    "Token Inserted"
+   IDS_TOKEN_INSERTED_TEXT     "A Token was just inserted."
+
+   IDS_TOKEN_REMOVED_TITLE     "Token Removed"
+   IDS_TOKEN_REMOVED_TEXT      "The Token was just removed."
+
+   IDS_PIN_BLOCKED_TITLE  "PIN Blocked"
+   IDS_PIN_BLOCKED_TEXT   "Your has been blocked."    
+END
 
 //
 // Icon resources

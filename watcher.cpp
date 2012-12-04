@@ -8,109 +8,105 @@
 #include "usbtoken/client_handler.h"
 
 #include "include/cef_v8.h"
+#include "include/cef_runnable.h"
+
+#include "inc/ep_thread_ctx.h"
 
 #if defined(WIN32)
-	#include <windows.h>
+  #include <windows.h>
+  #include <process.h>
 #endif
 
 namespace epsilon {
 
-CefRefPtr<CefProcessMessage> Msg(const std::string &kMessageName, const char *reader) {
-	CefRefPtr<CefProcessMessage> response = CefProcessMessage::Create(kMessageName);
+CefRefPtr<CefProcessMessage> Msg(const std::string &kMessageName, const char *reader = NULL) {
+  CefRefPtr<CefProcessMessage> response = CefProcessMessage::Create(kMessageName);
 
-	CefRefPtr<CefDictionaryValue> args = CefDictionaryValue::Create();
-	args->SetString("reader", reader);
+  if(reader) {
+    CefRefPtr<CefDictionaryValue> args = CefDictionaryValue::Create();
+    args->SetString("reader", reader);
 
-	response->GetArgumentList()->SetDictionary(0, args);
-	return response;
+    response->GetArgumentList()->SetDictionary(0, args);
+  }
+
+  return response;
 }
 
 // Bring in platform-specific definitions.
 #if defined(WIN32)
 
-VOID WINAPI WatchToken(LPVOID lpParam) {
-	sc_context_param_t ctx_param;
-	
-	ClientHandler *handler = (ClientHandler *) lpParam;
-	ASSERT(handler != NULL);
+unsigned __stdcall WatchToken(void *lpParam) {
+  volatile bool out_ = true;
+  volatile DWORD sleep_ = 1000;
+  
+  ClientHandler * handler = (ClientHandler *) lpParam;
+  ASSERT(handler != NULL);
 
-	memset(&ctx_param, 0, sizeof(ctx_param));
-  ctx_param.ver      = 0;
-  ctx_param.app_name = E_TOKEN_APPLICATION_NAME;
+  while(handler->app_running_) {
 
-	while(1) {
-		
-		if(!TokenContext::GetGlobalContext()->InContext()) {
+    CefRefPtr<TokenContext> ctx = TokenContext::GetGlobalContext();
+	 
+    if(ctx->InContext()) goto sleep;
 
-			unsigned int event;
-			sc_reader *found = NULL;
-			sc_context *ctx = NULL;
+    if(ctx->Bind()) {
 
-			sc_context_create(&ctx, &ctx_param);
+      if(out_) {
 
-			if (sc_ctx_get_reader_count(ctx) == 0) {
+        unsigned int evt;
+        sc_reader *found = NULL;    
 
-				if(sc_wait_for_event(ctx, SC_EVENT_READER_ATTACHED, &found, &event, -1, NULL) == 0) {
+        if(sc_wait_for_event(ctx->GetSCContext(), SC_EVENT_READER_ATTACHED, &found, &evt, 0, NULL) == 0) {
 
-					sc_ctx_detect_readers(ctx);
+          sc_ctx_detect_readers(ctx->GetSCContext());
 
-					/* Waiting for a card to be inserted */
-					if(sc_wait_for_event(ctx, SC_EVENT_CARD_INSERTED, &found, &event, -1, NULL) == 0) {
-						
-						/* Card was inserted */						
-	      		if(event & SC_EVENT_CARD_INSERTED) {
-					CefRefPtr<CefBrowser> browser = handler->GetBrowser();        		
-		      		ASSERT(browser.get());
+          /* Waiting for a card to be inserted */
+          if(sc_wait_for_event(ctx->GetSCContext(), SC_EVENT_CARD_INSERTED, &found, &evt, 0, NULL) == 0) {
+            
+            /* Card was inserted */           
+            if(evt & SC_EVENT_CARD_INSERTED) {
+              CefRefPtr<CefBrowser> browser = handler->GetBrowser();            
+                  ASSERT(browser.get());
 
-	        		browser->SendProcessMessage(PID_RENDERER, 
-								Msg(E_TOKEN_INSERTED, found->name));
-	      		}
-	        }
-				}
+              browser->SendProcessMessage(PID_RENDERER, Msg(E_TOKEN_INSERTED, found->name));
 
-				goto release;
-			
-			} 
-			
-			//if(sc_wait_for_event(ctx, SC_EVENT_READER_DETACHED, &found, &event, -1, NULL) == 0) {
-			
-				/* Waiting for a card to be removed */
-				if(sc_wait_for_event(ctx, SC_EVENT_CARD_REMOVED, &found, &event, -1, NULL) == 0) {
-					
-					/* Card was removed */
-					if(event & SC_EVENT_CARD_REMOVED) {
-					CefRefPtr<CefBrowser> browser = handler->GetBrowser();        		
-      		ASSERT(browser.get());
+              sleep_ = 10000;
+              out_ = false;
+            }
+          }
+        }
+      
+      }     
 
-        		browser->SendProcessMessage(PID_RENDERER, 
-							Msg(E_TOKEN_REMOVED, found->name));
-				}
-		}
-			
-			//}
+      ctx->Destroy();
+    
+    } else {
 
-			release : sc_release_context(ctx);
-		}
+      if(out_ == false) {
 
-		//Sleep(2000);	
-	}
+        /* Card was removed */
+        CefRefPtr<CefBrowser> browser = handler->GetBrowser();            
+            ASSERT(browser.get());
+
+        browser->SendProcessMessage(PID_RENDERER, Msg(E_TOKEN_REMOVED));
+
+        sleep_ = 1000;
+        out_ = true;
+      }
+    }
+      
+    sleep : Sleep(sleep_); 
+  }
+
+  _endthreadex(0);
+  ASSERT(CloseHandle(handler->m_watcherHnd));
+  handler->m_watcherHnd = NULL;
+
+  return 0; 
 }
-	
-void *TokenWatcher::Init(const ClientHandler *handler) {
-	DWORD ThreadID;
-	HANDLE hHnd = CreateThread(NULL, 0,
-										(LPTHREAD_START_ROUTINE)WatchToken,
-										(LPVOID) handler, 0, &ThreadID);
-
-	if(!SetThreadPriority(hHnd, THREAD_PRIORITY_LOWEST))
-		return NULL;
-
-	//WaitForSingleObject(hHnd, INFINITE);
-	//CloseHandle(hHnd);
-	//TerminateThread(hHnd, 0);
-	return hHnd;
+  
+void TokenWatcher::Init(ClientHandler *handler) {
+  handler->m_watcherHnd = (void *)_beginthreadex(NULL, 0, &WatchToken, (void *)handler, 0, NULL);
 }
-
 
 #endif
 

@@ -8,7 +8,7 @@
 		  <ul class="dropdown-menu">
         <li><a class="add:gen" href="#/key/gen">Generate Private Key</a></li>
         <li><a title="Import Private Key (e.g: PKCS12, PEM, DER)" class="add:import-prkey" href="#/ImportPrKey">Import Private Key</a></li>
-        <li><a title="Import X.509 Certificate (eg: PEM, DER)" class="add:import-certificate" href="#/ImportX509Certificate">Import X.509 Certificate</a></li>
+        <li><a title="Import X.509 Certificate (eg: PEM, DER)" class="add:import-certificate" href="#/ImportX509">Import X.509 Certificate</a></li>
         <!--
 <li><a title="Import Public Key (PEM, DER, ...)" class="add:import-pubkey" href="#/ImportPubKey">Import Public Key</a></li>-->
 

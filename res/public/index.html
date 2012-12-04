@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset=utf-8>
-  <title>Token Manager</title>
+  <title>Epsilon Token Manager</title>
   
   <link rel="stylesheet" href="/bootstrap.min.css" type="text/css" charset="utf-8">
   <link rel="stylesheet" href="/font-awesome.css" type="text/css" charset="utf-8">
@@ -49,8 +49,6 @@ window.countries=[{name:'Afghanistan',code:'AF'},{name:'Åland Islands',code:'AX
   </script>
   <script src="/jquery-ui-1.8.23.custom.min.js" type="text/javascript" charset="utf-8"></script>
   <script src="/bootstrap.min.js" type="text/javascript" charset="utf-8"></script>
-  <!-- <script src="/base64.js" type="text/javascript" charset="utf-8"></script> -->
-
 
   <script type="text/javascript" charset="utf-8">
 
@@ -327,15 +325,16 @@ window.countries=[{name:'Afghanistan',code:'AF'},{name:'Åland Islands',code:'AX
       };     
 
       var App = require("index");
-      var cnt = 0;
 
       if(!exports.app)
         exports.app = {};
 
+      $loading = jQuery("#loading");
+
       app.Loading = function() {
-        jQuery('#loading').show();
+        $loading.show()
         return function() {
-          jQuery('#loading').hide();;
+          $loading.hide()
         };
       };
 
@@ -374,6 +373,6 @@ window.countries=[{name:'Afghanistan',code:'AF'},{name:'Åland Islands',code:'AX
   </div><!-- /app -->
 
 <img id="blank" src="data:image/gif;base64,R0lGODlhAQABAID/AMDAwAAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw=="/>
-<div id='loading'>Loading...</div>
+<div id="loading">Chargement...</div>
 </body>
 </html>

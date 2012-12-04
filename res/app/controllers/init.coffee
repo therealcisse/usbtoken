@@ -31,12 +31,12 @@ class Init extends Wizard
     'Votre supporte ne sera pas re-initializer'
 
   unRendered: -> 
-    window.jQuery(window).unbind('beforeunload', @unRenderMsg)
+    # window.jQuery(window).unbind('beforeunload.init')
   
   constructor: ->
     super
 
-    window.jQuery(window).bind('beforeunload', @unRenderMsg)
+    # window.jQuery(window).bind('beforeunload.init', @unRenderMsg)
 
     @steps = [      
 

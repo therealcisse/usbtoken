@@ -116,8 +116,6 @@ namespace epsilon {
 	CefRefPtr<CefProcessMessage> CreateMsg(const std::string &, const std::string &, const char *);	
 	CefRefPtr<CefProcessMessage> CreateMsg(const std::string &, const std::string &, const char *, ep_token_info *);
 	
-	std::wstring CreateWindowText(const CefString);
-
 } //namespace epsilon
 
 #endif  //TOKEN

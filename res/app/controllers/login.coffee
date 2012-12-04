@@ -1,5 +1,5 @@
 Spine  = require('spine')
-App    = require('index')
+
 Façade = require('lib/façade')
 
 class Login extends Spine.Controller  

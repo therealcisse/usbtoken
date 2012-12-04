@@ -12,7 +12,7 @@
 #if defined(OS_WIN)
 
 bool LoadBinaryResource(int binaryId, DWORD &dwSize, LPBYTE &pBytes) {
-	extern HINSTANCE hInst;
+	extern HINSTANCE g_hInst;
 
  //   WCHAR shortpath[MAX_PATH] = {0}, 
 	//	  longpath[MAX_PATH] = {0};
@@ -35,15 +35,15 @@ bool LoadBinaryResource(int binaryId, DWORD &dwSize, LPBYTE &pBytes) {
 	//	return false;
 	//}
 
-  HRSRC hRes = FindResource(hInst, MAKEINTRESOURCE(binaryId),
+  HRSRC hRes = FindResource(g_hInst, MAKEINTRESOURCE(binaryId),
                             MAKEINTRESOURCE(256));
 
   DWORD err = GetLastError();
 
   if (hRes) {
-	  HGLOBAL hGlob = LoadResource(hInst, hRes);
+	  HGLOBAL hGlob = LoadResource(g_hInst, hRes);
     if (hGlob) {
-      dwSize = SizeofResource(hInst, hRes);
+      dwSize = SizeofResource(g_hInst, hRes);
       pBytes = (LPBYTE)LockResource(hGlob);
       if (dwSize > 0 && pBytes)
         return true;

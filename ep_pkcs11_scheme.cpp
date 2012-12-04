@@ -38,41 +38,43 @@ class PKCS11SchemeHandlerFactory : public CefSchemeHandlerFactory {
                                                OVERRIDE {
     REQUIRE_IO_THREAD();
 
-	std::string url = request->GetURL();
-	if (url == "pkcs11://epsilon.ma/" || url == "pkcs11://epsilon.ma/#" || url == "pkcs11://epsilon.ma/#/" || strstr(url.c_str(), "index.html") != NULL) {
-      // Show the binding contents
-      CefRefPtr<CefStreamReader> stream =
-          GetBinaryResourceReader(IDS_INDEX);
-      ASSERT(stream.get());
-      return new CefStreamResourceHandler("text/html", stream);
+  	std::string url = request->GetURL();
+    const char *c_str = url.c_str();
 
-	} 
-	
-    if (strstr(url.c_str(), "application.js") != NULL) {
-      // Show the binding contents
-      CefRefPtr<CefStreamReader> stream =
-		  GetBinaryResourceReader(IDS_APPLICATION_JS);
-      ASSERT(stream.get());
-      return new CefStreamResourceHandler("text/javascript", stream);
-    }
+  	if (url == "pkcs11://epsilon.ma/" || url == "pkcs11://epsilon.ma/#" || url == "pkcs11://epsilon.ma/#/" || strstr(c_str, "index.html") != NULL) {
+        // Show the binding contents
+        CefRefPtr<CefStreamReader> stream =
+            GetBinaryResourceReader(IDS_INDEX);
+        ASSERT(stream.get());
+        return new CefStreamResourceHandler("text/html", stream);
 
-    if (strstr(url.c_str(), "bootstrap.min.js") != NULL) {
+  	} 
+  	
+    if (strstr(c_str, "application.js") != NULL) {
       // Show the binding contents
       CefRefPtr<CefStreamReader> stream =
-		  GetBinaryResourceReader(IDS_BOOTSTRAP_JS);
+  	  GetBinaryResourceReader(IDS_APPLICATION_JS);
       ASSERT(stream.get());
       return new CefStreamResourceHandler("text/javascript", stream);
     }
 
-    if (strstr(url.c_str(), "jquery-ui-1.8.23.custom.min.js") != NULL) {
+    if (strstr(c_str, "bootstrap.min.js") != NULL) {
       // Show the binding contents
       CefRefPtr<CefStreamReader> stream =
-		  GetBinaryResourceReader(IDS_JQUERY_UI_JS);
+  	  GetBinaryResourceReader(IDS_BOOTSTRAP_JS);
       ASSERT(stream.get());
       return new CefStreamResourceHandler("text/javascript", stream);
     }
 
-    if (strstr(url.c_str(), "application.css") != NULL) {
+    if (strstr(c_str, "jquery-ui-1.8.23.custom.min.js") != NULL) {
+      // Show the binding contents
+      CefRefPtr<CefStreamReader> stream =
+  	  GetBinaryResourceReader(IDS_JQUERY_UI_JS);
+      ASSERT(stream.get());
+      return new CefStreamResourceHandler("text/javascript", stream);
+    }
+
+    if (strstr(c_str, "application.css") != NULL) {
       // Show the binding contents
       CefRefPtr<CefStreamReader> stream =
           GetBinaryResourceReader(IDS_APPLICATION_CSS);
@@ -80,15 +82,15 @@ class PKCS11SchemeHandlerFactory : public CefSchemeHandlerFactory {
       return new CefStreamResourceHandler("text/css", stream);
     }
 
-    if (strstr(url.c_str(), "bootstrap.min.css") != NULL) {
+    if (strstr(c_str, "bootstrap.min.css") != NULL) {
       // Show the binding contents
       CefRefPtr<CefStreamReader> stream =
-		  GetBinaryResourceReader(IDS_BOOTSTRAP_CSS);
+  	  GetBinaryResourceReader(IDS_BOOTSTRAP_CSS);
       ASSERT(stream.get());
       return new CefStreamResourceHandler("text/css", stream);
     }
 
-    if (strstr(url.c_str(), "font-awesome.css") != NULL) {
+    if (strstr(c_str, "font-awesome.css") != NULL) {
       // Show the binding contents
       CefRefPtr<CefStreamReader> stream =
           GetBinaryResourceReader(IDS_FONTAWESOME_CSS);
@@ -96,7 +98,7 @@ class PKCS11SchemeHandlerFactory : public CefSchemeHandlerFactory {
       return new CefStreamResourceHandler("text/css", stream);
     }
 
-    if (strstr(url.c_str(), "fontawesome-webfont.woff") != NULL) {
+    if (strstr(c_str, "fontawesome-webfont.woff") != NULL) {
       // Show the binding contents
       CefRefPtr<CefStreamReader> stream =
           GetBinaryResourceReader(IDS_FONTAWESOME_WOFF);
@@ -104,7 +106,7 @@ class PKCS11SchemeHandlerFactory : public CefSchemeHandlerFactory {
       return new CefStreamResourceHandler("application/x-font-woff", stream);
     }
 
-    if (strstr(url.c_str(), "fontawesome-webfont.ttf") != NULL) {
+    if (strstr(c_str, "fontawesome-webfont.ttf") != NULL) {
       // Show the binding contents
       CefRefPtr<CefStreamReader> stream =
           GetBinaryResourceReader(IDS_FONTAWESOME_TTF);
@@ -112,7 +114,7 @@ class PKCS11SchemeHandlerFactory : public CefSchemeHandlerFactory {
       return new CefStreamResourceHandler("application/x-font-truetype", stream);
     }
 
-	if (strstr(url.c_str(), "fontawesome-webfont.svg#FontAwesome") != NULL) {
+  if (strstr(c_str, "fontawesome-webfont.svg#FontAwesome") != NULL) {
       // Show the binding contents
       CefRefPtr<CefStreamReader> stream =
           GetBinaryResourceReader(IDS_FONTAWESOME_SVG);
@@ -120,31 +122,33 @@ class PKCS11SchemeHandlerFactory : public CefSchemeHandlerFactory {
       return new CefStreamResourceHandler("image/svg+xml", stream);
     }
 
-    if (strstr(url.c_str(), "loader.gif") != NULL) {
+    if (strstr(c_str, "loader.gif") != NULL) {
       // Show the binding contents
       CefRefPtr<CefStreamReader> stream =
-		  GetBinaryResourceReader(IDS_LOADER);
+  	  GetBinaryResourceReader(IDS_LOADER);
       ASSERT(stream.get());
       return new CefStreamResourceHandler("image/gif", stream);
     }
 
-    if (strstr(url.c_str(), "loading.gif") != NULL) {
+    if (strstr(c_str, "loading.gif") != NULL) {
       // Show the binding contents
       CefRefPtr<CefStreamReader> stream =
-		  GetBinaryResourceReader(IDS_LOADING);
+  	  GetBinaryResourceReader(IDS_LOADING);
       ASSERT(stream.get());
       return new CefStreamResourceHandler("image/gif", stream);
     }
 
-	else if (strstr(url.c_str(), "logo.png") != NULL) {
+  	else if (strstr(c_str, "logo.png") != NULL) {
       // Load the response image
-#if defined(OS_WIN)
+
+  #if defined(OS_WIN)
+
       // Show the binding contents
       CefRefPtr<CefStreamReader> stream =
-		  GetBinaryResourceReader(IDC_USBTOKEN);
+  	  GetBinaryResourceReader(IDC_USBTOKEN);
       ASSERT(stream.get());      
 
-	  return new CefStreamResourceHandler("image/jpg", stream);
+    return new CefStreamResourceHandler("image/jpg", stream);
       //DWORD dwSize;
       //LPBYTE pBytes;
       //if (LoadBinaryResource(IDC_USBTOKEN, dwSize, pBytes)) {
@@ -153,24 +157,24 @@ class PKCS11SchemeHandlerFactory : public CefSchemeHandlerFactory {
       //  // Set the resulting mime type
       //  mime_type_ = "image/jpg";
       //}
-#elif defined(OS_MACOSX) || defined(OS_LINUX)
+  #elif defined(OS_MACOSX) || defined(OS_LINUX)
       // Show the binding contents
       CefRefPtr<CefStreamReader> stream =
-		  GetBinaryResourceReader(IDS_LOGO);
+  	  GetBinaryResourceReader(IDS_LOGO);
       ASSERT(stream.get());      
 
-	  return new CefStreamResourceHandler("image/png", stream);
-      //if (LoadBinaryResource("logo.png", data_)) {
-      //  handled = true;
-      //  // Set the resulting mime type
-      //  mime_type_ = "image/png";
-      //}
-#else
-#error "Unsupported platform"
-#endif
-    }
+  	  return new CefStreamResourceHandler("image/png", stream);
+        //if (LoadBinaryResource("logo.png", data_)) {
+        //  handled = true;
+        //  // Set the resulting mime type
+        //  mime_type_ = "image/png";
+        //}
+  #else
+  #error "Unsupported platform"
+  #endif
+      }
 
-    return NULL;
+      return NULL;
   }
 
   IMPLEMENT_REFCOUNTING(PKCS11SchemeHandlerFactory);

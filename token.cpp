@@ -6,6 +6,11 @@
 #include "inc/ep_pkcs15.h"
 
 #include "inc/util_pkcs15.h"
+#include "resource.h"
+
+#if defined(WIN32)
+#include "windows.h"
+#endif
 
 namespace epsilon {
 
@@ -219,8 +224,9 @@ bool Token::VerifyPIN(const char *pin) {
 
 const char* kMsgName  = "kMsg";
 
+const char* kMessageShow       = "show";
 const char* kMessageGetStatus  = "getstatus";
-const char* kMessageErase			 = "erase";
+const char* kMessageErase      = "erase";
 const char* kMessageInit       = "init";
 const char* kMessageInitPIN    = "setpin";
 const char* kMessageChangePIN  = "changepin";
@@ -229,28 +235,28 @@ const char* kMessageVerifyPIN  = "verifypin";
 const char* kMessageSetPIN     = "setpin";
 const char* kMessageLogout     = "logout";
 
-const char* kMessageSetTitle   = "titleset";
+//const char* kMessageSetTitle   = "titleset";
 const char* kMessageGetReaders   = "getreaders";
 
 const char* kMessageGetCert   = "get.x509-certificate";
-const char* kMessageGetPubkey   = "get.pubkey";
-const char* kMessageGetPrkey   = "get.prkey";
+const char* kMessageGetPubkey = "get.pubkey";
+const char* kMessageGetPrkey  = "get.prkey";
 
-const char* kMessageGetPrKeys   = "get.prkeys";
-const char* kMessageGetPubKeys   = "get.pubkeys";
+const char* kMessageGetPrKeys  = "get.prkeys";
+const char* kMessageGetPubKeys = "get.pubkeys";
 const char* kMessageGetCerts   = "get.x509-certificates";
 
 const char* kMessageGenKey   = "keygen";
 const char* kMessageGenReq   = "csr.gen";
 
-const char* kMessageImportPubKey   = "import.pubkey";
-const char* kMessageImportPrKey   = "import.prkey";
+const char* kMessageImportPubKey = "import.pubkey";
+const char* kMessageImportPrKey  = "import.prkey";
 const char* kMessageImportCert   = "import.x509";
 
 const char* kMessageExportX509   = "export.x509";
 
-const char* kMessageDelX509   = "del.x509";
-const char* kMessageDelPrKey   = "del.prkey";
+const char* kMessageDelX509  = "del.x509";
+const char* kMessageDelPrKey = "del.prkey";
 
 bool Token::OnProcessMessageReceived(
 	CefRefPtr<ClientHandler> handler,
@@ -334,14 +340,14 @@ bool Token::OnProcessMessageReceived(
 		}			
 	}
 
-	if(message_name == kMessageSetTitle) {
-		CefRefPtr<CefListValue> argList = message->GetArgumentList();			
-		if(argList->GetSize() > 0 && argList->GetType(0) == VTYPE_STRING) {		
-			CefString action = argList->GetString(0);
-			handler->SetWindowTitle(CreateWindowText(action));
-			return true;
-		}
-	}
+	//if(message_name == kMessageSetTitle) {
+	//	CefRefPtr<CefListValue> argList = message->GetArgumentList();			
+	//	if(argList->GetSize() > 0 && argList->GetType(0) == VTYPE_STRING) {		
+	//		CefString action = argList->GetString(0);
+	//		handler->SetWindowTitle(CreateWindowText(action));
+	//		return true;
+	//	}
+	//}
 
 	/* Login */
 
@@ -883,6 +889,16 @@ bool Token::OnProcessMessageReceived(
 		}
 	}
 
+	if(message_name == kMessageShow) {
+
+#if defined(WIN32)
+
+		::SetTimer(handler->GetMainHwnd(), IDM_BROWSER_SHOW, 1500, NULL);
+
+#endif		
+		
+	}
+
 	return false;
 }
 
@@ -950,12 +966,6 @@ bool Token::DelPrKey(CefRefPtr<TokenContext> ctx, const char *id, const char *au
 
 bool Token::DelX509(CefRefPtr<TokenContext> ctx, const char *id, const char *authData) {
 	return ::util::ep_delete_x509_certificate(ctx, id, authData) < 0 ? false : true ;
-}
-
-std::wstring CreateWindowText(const CefString action) {
-	std::wstringstream ss;
-	ss << action.ToString().c_str() << " | Epsilon Token Manager";
-	return ss.str();
 }
 
 CefRefPtr<CefProcessMessage> CreateKeysMsg(const std::string &key, const std::string &id, bool ok, struct ep_key_info **key_info, size_t len) {

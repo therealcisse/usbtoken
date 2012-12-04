@@ -4,6 +4,7 @@ Token    = require('models/token')
 Façade   = require('lib/façade')
 Wizard   = require('lib/wizard')
 GetLabel = require('controllers/get-label')
+Async    = require('lib/async')
 
 emailRegex = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,6}$/i
 
@@ -179,30 +180,23 @@ class KeyMgr.KeyList extends Spine.Controller
     @selectedKeys = []
     @selectionChanged()
 
-    @delay (->
+    Façade.GetCerts (x509s) =>
+      @$('.spinner').remove() if x509s.length
       
-      Façade.GetCerts (keys) =>
-        @$('.spinner').remove() if keys.length
-        
-        @addKeys keys
-        @delay (->
-        
-          Façade.GetPrKeys (keys) => 
-            @$('.spinner').remove() if keys.length
-          
-            @addKeys keys            
+      @addKeys x509s
+      Façade.GetPrKeys (prkeys) => 
+        @$('.spinner').remove() if prkeys.length
+      
+        @addKeys prkeys            
 
-            # @delay (->
-            #   Façade.GetPubKeys (keys) =>
-            #     @addKeys keys
-            #     df()
-            # ), 100
+        # @delay (->
+        #   Façade.GetPubKeys (keys) =>
+        #     @addKeys keys
+        #     df()
+        # ), 100
 
-            if keys.length is 0 and @$('.spinner').length
-              @keys.html '<div style="margin: 3.5em 2em;">No keys founds :-(</div>'
-
-        ), 10
-    ), 10
+        if prkeys.length is 0 and @$('.spinner').length
+          @keys.html '<div style="margin: 3.5em 2em;">No keys founds :-(</div>'
 
   class @Key extends Spine.Controller
 
@@ -296,19 +290,7 @@ class KeyMgr.KeyList extends Spine.Controller
       @navigate "#/gen-csr/#{@key.id}"  
 
       false    
-  
-  class @PubKey extends @Key
-
-    className: 'key pubkey entry'    
-
-    constructor: ->
-      super   
-
-    @templ: require('views/key-mgr/_pubkey')
-
-    render: =>
-      @html @constructor.templ(@key)
-  
+    
   class @X509Certificate extends @Key
 
     events:
@@ -856,59 +838,15 @@ class KeyMgr.ImportPrKey extends Wizard
 
     ]
 
-    # @app.delay -> Façade.SetWindowText 'Keys'
-
-class KeyMgr.ImportPubKey extends Wizard
-
-  @HEADER: 'Import Public Key'
-
-  doImportPubKey: (params) ->
-    @controller.log "doImportPubKey:#{params}"
-    df = app.Loading()
-
-    Façade.ImportPubKey params.data, params.data_len, params.label, params.format, (ok) =>
-      console.log "#{ok}"
-
-      ### Hide loading indicator ###
-      df()
-
-      if ok
-        @controller.info msg: "La cle publique a ete ajoute avec success.", closable: true
-        @delay (=> @navigate "/"), 700
-        return false
-      
-      @controller.alert msg: "Il y a eu une erreur, essayer de nouveau.", closable: true
-      @controller.doImportPubKey.err?()    
-
-  constructor: ->
-    super
-
-    @steps = [      
-
-      {
-        Clss: KeyMgr.GetKeyInfo
-        args:
-          name: 'get-key-info'
-          controller: @
-          header: KeyMgr.ImportPubKey.HEADER
-          title: "Key Name"
-          className: 'import-key pubkey'
-          fn: @doImportPubKey
-      }
-
-    ]
-
-    # @app.delay -> Façade.SetWindowText 'Keys'
-
-class KeyMgr.ImportX509Certificate extends Wizard
+class KeyMgr.ImportX509 extends Wizard
 
   @HEADER: 'Import X.509 Certificate'  
 
-  doImportX509Certificate: (params) ->
-    @controller.log "doImportX509Certificate:#{params}"
+  doImportX509: (params) ->
+    @controller.log "doImportX509:#{params}"
     df = app.Loading()
 
-    Façade.ImportX509Certificate params.data, params.data_len, params.label, params.format, (ok) =>
+    Façade.ImportX509 params.data, params.data_len, params.label, params.format, (ok) =>
       console.log "#{ok}"
 
       ### Hide loading indicator ###
@@ -920,7 +858,7 @@ class KeyMgr.ImportX509Certificate extends Wizard
         return false
       
       @controller.alert msg: "Il y a eu une erreur, essayer de nouveau.", closable: true
-      @controller.doImportX509Certificate.err?()    
+      @controller.doImportX509.err?()    
 
   constructor: ->
     super
@@ -932,15 +870,13 @@ class KeyMgr.ImportX509Certificate extends Wizard
         args:
           name: 'get-key-info'
           controller: @
-          header: KeyMgr.ImportX509Certificate.HEADER
+          header: KeyMgr.ImportX509.HEADER
           title: "Certificate Name"
           className: 'import-key x509_certificate'
-          fn: @doImportX509Certificate
+          fn: @doImportX509
       }
 
     ]
-
-    # @app.delay -> Façade.SetWindowText 'Keys'    
 
 # ImportForm >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 

@@ -12,6 +12,10 @@ html {
   max-width: 380px;  
 }
 
+body.loading {
+  cursor: wait;
+}
+
 .stack > *:not(.active) {
   display: none
 }
@@ -125,11 +129,11 @@ margin-left: 20px;
 
 .start > .detecting {
   margin: 0 auto;
-  margin-top: 4em;
+  margin-top: 2.5em;
 }
 
-.start .absent, .start .blocked, .start .locked, , .start .in-use, , .start .readonly, .start .blank {
-  margin-top: 4em;
+.start .absent, .start .blocked, .start .locked, .start .in-use, .start .readonly, .start .blank {
+  margin-top: 2.5em;
 }
 
 .alert a {

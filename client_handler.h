@@ -29,6 +29,10 @@ class ClientHandler : public CefClient,
                       public CefLoadHandler,
                       public CefRequestHandler {
  public:
+
+  bool volatile app_running_;
+  void *m_watcherHnd;
+
   // Interface for process message delegates. Do not perform work in the
   // RenderDelegate constructor.
   class ProcessMessageDelegate : public virtual CefBase {
@@ -189,7 +193,7 @@ void SetLastDownloadFile(const std::string& fileName);
   // Create an external browser window that loads the specified URL.
   static void LaunchExternalBrowser(const std::string& url);
 
-  void SetWindowTitle(const std::wstring);
+  //void SetWindowTitle(const std::wstring);
 
   // Returns the full download path for the specified file, or an empty path to
   // use the default temp directory.
@@ -247,8 +251,6 @@ void SetLastDownloadFile(const std::string& fileName);
 
   // The startup URL.
   std::string m_StartupURL;
-
-  void *m_watcher;
 
   // Include the default reference counting implementation.
   IMPLEMENT_REFCOUNTING(ClientHandler);

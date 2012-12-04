@@ -40,6 +40,7 @@
 //
 void InstallService(PWSTR pszServiceName, 
                     PWSTR pszDisplayName, 
+                    PWSTR pszDescription, 
                     DWORD dwStartType,
                     PWSTR pszDependencies, 
                     PWSTR pszAccount, 
@@ -59,3 +60,27 @@ void InstallService(PWSTR pszServiceName,
 //   error in the standard output stream for users to diagnose the problem.
 //
 void UninstallService(PWSTR pszServiceName);
+
+//
+// Purpose: 
+//   Starts the service if possible.
+//
+// Parameters:
+//   None
+// 
+// Return value:
+//   None
+//
+VOID DoStartSvc(PWSTR szSvcName);
+
+//
+// Purpose: 
+//   Stops the service.
+//
+// Parameters:
+//   None
+// 
+// Return value:
+//   None
+//
+VOID DoStopSvc(PWSTR szSvcName);

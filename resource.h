@@ -20,13 +20,36 @@
 #define IDC_USBTOKEN                            40000
 #define IDS_APP_TITLE                           40001
 
+#define IDS_TOOLTIP             304
+
+#define IDS_TOKEN_INSERTED_TITLE        305
+#define IDS_TOKEN_INSERTED_TEXT         306
+
+#define IDS_PIN_BLOCKED_TITLE        315
+#define IDS_PIN_BLOCKED_TEXT         316
+
+#define IDS_TOKEN_REMOVED_TITLE         307
+#define IDS_TOKEN_REMOVED_TEXT          308
+
+#define IDM_TOKEN_INSERTED              321
+#define IDM_TOKEN_REMOVED               323
+
+#define IDM_PIN_BLOCKED              331
+
+#define IDM_SHOW_TOKEN_MGR             325
+
+#define IDC_CONTEXTMENU_SHOW             209
+#define IDC_CONTEXTMENU_HIDE             210
+
 #define IDS_FONTAWESOME_WOFF					1011
 #define IDS_FONTAWESOME_TTF						1012
 #define IDS_FONTAWESOME_SVG						1013
 
-#define ID_WARN_CONSOLEMESSAGE          32000
-#define ID_WARN_DOWNLOADCOMPLETE        32001
-#define ID_WARN_DOWNLOADERROR           32002
+#define IDM_BROWSER_SHOW             1126
+#define IDM_BROWSER_HIDE             1129
+
+
+#define IDS_USBTOKEN_EXTENSIONS             40002
 
 // Next default values for new objects
 //

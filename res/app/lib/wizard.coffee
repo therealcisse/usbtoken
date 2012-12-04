@@ -50,6 +50,6 @@ class Wizard extends Spine.Module
 
   cancelled: (step) =>
     @log "cancelled:#{step.name}"
-    @app.navigate "/"
+    @app.navigate "/" # unless @unRendered()
 
 module.exports = Wizard

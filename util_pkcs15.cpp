@@ -29,6 +29,8 @@
 #include <openssl/engine.h>
 #endif
 
+#include "usbtoken/usbtoken.h"
+
 #include "inc/token.h"
 #include "inc/ep_pkcs15.h"
 #include "inc/util_pkcs15.h"
@@ -124,7 +126,7 @@ ENGINE *setup_engine(const char *id, const char *sopath, const char *modulepath,
 #endif
 
 int ep_open_reader_and_card(struct sc_context **ctx, const char *reader, struct sc_card **card) {
-	int verbose = 3;
+	int verbose = 1;
   sc_context_param_t ctx_param;
   
   memset(&ctx_param, 0, sizeof(ctx_param));
@@ -601,16 +603,6 @@ std::string Format(char *fmt, ...) {
     }
 }
 
-int ep_sign(sc_pkcs15_card *p15card, struct sc_pkcs15_object *obj, u8 *data, size_t len, int flags, u8 *out) {
-	struct sc_pkcs15_prkey_info *key = (struct sc_pkcs15_prkey_info *) obj->data;
-
-	if (!key->native) {
-		return SC_ERROR_NOT_SUPPORTED;
-	}
-
-	return sc_pkcs15_compute_signature(p15card, obj, flags, data, len, out, len) < 0 ? 1 : 0;
-}
-
 int ep_gen_x509_req(CefRefPtr<epsilon::TokenContext> ctx, CefRefPtr<ClientHandler> handler, const char *id, const unsigned char *cn, const unsigned char *o, 
 	const unsigned char *ou, const unsigned char *city, const unsigned char *region, const unsigned char *country, const unsigned char *emailAddress, const char *authData) {
 	
@@ -725,15 +717,10 @@ int ep_gen_x509_req(CefRefPtr<epsilon::TokenContext> ctx, CefRefPtr<ClientHandle
 
 #endif
 
-	//ASSERT(putenv("OPENSSL_ENGINES", "engines") == 0);
-
-	/* Load all bundled ENGINEs into memory and make them visible */
-	//ENGINE_load_dynamic();	 
-	//ENGINE_load_builtin_engines();
 	ENGINE *e = setup_engine(
 					"pkcs11", 
-					"D:\\Users\\amadou\\Documents\\Visual Studio 2010\\Projects\\cef3\\Debug\\engine_pkcs11.dll", 
-					"C:\\Windows\\SysWOW64\\opensc-pkcs11.dll", authData, NULL
+					Format("%s\\engines\\engine_pkcs11.dll", AppGetWorkingDirectory()).c_str(),
+					Format("%s\\opensc_pkcs11.dll", AppGetWorkingDirectory()).c_str(), authData, NULL
 				);
 
 	if(sc_pkcs15_find_prkey_by_id(p15card, &kid, &obj) == 0) {
@@ -748,7 +735,7 @@ int ep_gen_x509_req(CefRefPtr<epsilon::TokenContext> ctx, CefRefPtr<ClientHandle
 
 		/* This has to be done on the key */
 		out = (u8 *)malloc(size);
-		if(ep_sign(p15card, obj, x509_req, size, SC_ALGORITHM_RSA_HASH_SHA1|SC_ALGORITHM_RSA_PAD_PKCS1, out) == 0) {
+		// if(ep_sign(p15card, obj, x509_req, size, SC_ALGORITHM_RSA_HASH_SHA1|SC_ALGORITHM_RSA_PAD_PKCS1, out) == 0) {
 			defaultFileName = Format("%s.csr", obj->label);
 			path = handler->GetDownloadPath(defaultFileName);
 
@@ -764,7 +751,7 @@ int ep_gen_x509_req(CefRefPtr<epsilon::TokenContext> ctx, CefRefPtr<ClientHandle
 				goto end;
 
 			r = 0;		
-		}	
+		// }	
 	}
 	
 end: 

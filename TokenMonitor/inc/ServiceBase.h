@@ -24,6 +24,8 @@
 class CServiceBase {
 public:
 
+    static CServiceBase *GetService() { return s_service; }
+
     // Register the executable for a service with the Service Control Manager 
     // (SCM). After you call Run(ServiceBase), the SCM issues a Start command, 
     // which results in a call to the OnStart method in the service. This 
@@ -44,6 +46,13 @@ public:
 
     // Stop the service.
     void Stop();
+
+    // Log a message to the Application event log.
+    void WriteEventLogEntry(PWSTR pszMessage, WORD wType);
+
+    // Log an error message to the Application event log.
+    void WriteErrorLogEntry(PWSTR pszFunction, 
+        DWORD dwError = GetLastError());    
 
 protected:
 
@@ -78,14 +87,9 @@ protected:
         DWORD dwWin32ExitCode = NO_ERROR, 
         DWORD dwWaitHint = 0);
 
-    // Log a message to the Application event log.
-    void WriteEventLogEntry(PWSTR pszMessage, WORD wType);
-
-    // Log an error message to the Application event log.
-    void WriteErrorLogEntry(PWSTR pszFunction, 
-        DWORD dwError = GetLastError());
-
 private:
+
+    static DWORD WINAPI StopThread(LPVOID);
 
     // Entry point for the service. It registers the handler function for the 
     // service and starts the service.
