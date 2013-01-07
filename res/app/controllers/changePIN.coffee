@@ -63,7 +63,7 @@ class ChangePIN extends Spine.Controller
 
     # doAction process
     df = app.Loading()
-    @delay (-> @doAction(params); df())
+    @delay (-> @doAction(params).done df)
 
     false
   
@@ -71,10 +71,10 @@ class ChangePIN extends Spine.Controller
 
   valid: (oldpin, pin, pin_confirm) -> 
 
-    return "Old PIN must be between #{@minLength} and #{@maxLength} caracters." unless oldpin.length >= @minLength and oldpin.length <= @maxLength
+    return app.$T('old_invalid_pin_length').Format(@minLength, @maxLength) unless oldpin.length >= @minLength and oldpin.length <= @maxLength
     
-    return "New PIN must be between #{@minLength} and #{@maxLength} caracters." unless pin.length >= @minLength and pin.length <= @maxLength 
+    return app.$T('new_invalid_pin_length').Format(@minLength, @maxLength) unless pin.length >= @minLength and pin.length <= @maxLength 
    
-    return "The PIN confirmation does not match." unless pin is pin_confirm 
+    return app.$T('confirmation_dont_match') unless pin is pin_confirm 
     
 module.exports = ChangePIN

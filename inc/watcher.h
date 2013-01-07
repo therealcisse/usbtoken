@@ -6,13 +6,13 @@
 	#include <windows.h>
 #endif
 
-#include "usbtoken/client_handler.h"
+#include "epUSBToken/client_handler.h"
 
 namespace epsilon {	
 
 #if defined(WIN32)
 
-	unsigned __stdcall WatchToken(void *lpParam);
+	void WatchToken(void *lpParam);
 
 #elif defined(OS_LINUX)
 

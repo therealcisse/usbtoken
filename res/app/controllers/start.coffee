@@ -81,7 +81,7 @@ class Start extends Spine.Controller
   doDetect: =>
     @app.el.attr('class', "#{@app.className} detecting") #
     @el.attr('class', "#{@className} detecting") #
-    @app.info('Detection en cour . . .')
+    @app.info(app.$T('msg_is_detecting'))
     
     @delay @app.doDetectToken, 200 
 

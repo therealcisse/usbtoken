@@ -4,7 +4,6 @@ Token    = require('models/token')
 Façade   = require('lib/façade')
 Wizard   = require('lib/wizard')
 GetLabel = require('controllers/get-label')
-Async    = require('lib/async')
 
 emailRegex = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,6}$/i
 
@@ -49,10 +48,10 @@ class KeyMgr.X509View extends Spine.Controller
         df()
 
         if not ok
-          @controller.app.alert(msg: "An error occured while deleting the certificate, please try again", closable: true)
+          @controller.app.alert(msg: app.$T('err_while_x_x').Format(app.$T('deleting'), app.$T('x509')), closable: true)
           return false            
 
-        @controller.app.info(msg: "The X509.Certificate was successfully deleted", closable: true)
+        @controller.app.info(msg: app.$T('success_while_x_x').Format('X509.Certificate',  app.$T('deleted')), closable: true)
         @controller.app.delay (-> @navigate("#/keys")), 100
         return false
 
@@ -64,11 +63,11 @@ class KeyMgr.X509View extends Spine.Controller
         df()
 
         if not ok
-          @controller.app.alert(msg: "Failed to export the certificate, please try again", closable: true)
+          @controller.app.alert(msg: app.$T('err_while_x_x').Format(app.$T('exporting'), app.$T('x509')), closable: true)
           @doExportX509.err()
           return false            
 
-        @controller.app.info(msg: "The X509 Certificate was successfully exported", closable: true)
+        @controller.app.info(msg: app.$T('success_while_x_x').Format(app.$T('x509'),  app.$T('exported')), closable: true)
         @doExportX509.close()
         return false        
 
@@ -127,7 +126,7 @@ class KeyMgr.X509View extends Spine.Controller
       delete @app      
       
     @append @toolsbar.render(), @key 
-    @delay -> Façade.SetWindowText('Keys')   
+    @delay -> Façade.SetWindowText(app.$T('title_keys'))   
 
 # X509View >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
  
@@ -157,7 +156,7 @@ class KeyMgr.KeyList extends Spine.Controller
       delete @app      
       
     @append @toolsbar.render(), @keys
-    @delay -> Façade.SetWindowText('Keys')
+    @delay -> Façade.SetWindowText(app.$T('title_keys'))
 
   selectionChanged: (key, hasSelection=true) =>
     @log 'KeyList.Toolsbar#selectionChanged'
@@ -180,6 +179,8 @@ class KeyMgr.KeyList extends Spine.Controller
     @selectedKeys = []
     @selectionChanged()
 
+    df = app.Loading()
+
     Façade.GetCerts (x509s) =>
       @$('.spinner').remove() if x509s.length
       
@@ -195,8 +196,10 @@ class KeyMgr.KeyList extends Spine.Controller
         #     df()
         # ), 100
 
+        df()
+
         if prkeys.length is 0 and @$('.spinner').length
-          @keys.html '<div style="margin: 3.5em 2em;">No keys founds :-(</div>'
+          @keys.html "<div style='margin: 3.5em 2em;'>#{app.$T('msg_no_keys')} :-(</div>"
 
   class @Key extends Spine.Controller
 
@@ -272,13 +275,12 @@ class KeyMgr.KeyList extends Spine.Controller
         df()
 
         if not ok
-          @app.alert(msg: "An error occured while deleting the key, please try again", closable: true)
+          @app.alert(msg: app.$T('err_while_x_x').Format(app.$T('deleting'),  app.$T('prkey')), closable: true)
           return false      
 
         @keyList.selectionChanged(@key, false)
         @el.remove()
-        @app.info(msg: "The Private Key was successfully deleted", closable: true)
-        # @app.delay @app.reload, 500
+        @app.info(msg: app.$T('success_while_x_x').Format(app.$T('prkey'),  app.$T('deleted')), closable: true)
         return false
 
     genCSR: (evt) ->
@@ -317,11 +319,11 @@ class KeyMgr.KeyList extends Spine.Controller
         df()
 
         if not ok
-          @app.alert(msg: "Failed to export the certificate, please try again", closable: true)
+          @app.alert(msg: app.$T('err_while_x_x').Format(app.$T('exporting'), app.$('x509')), closable: true)
           @doExportX509.err()
           return false            
 
-        @app.info(msg: "The X509 Certificate was successfully exported", closable: true)
+        @app.info(msg: app.$T('success_while_x_x').Format(app.$('x509'),  app.$T('exported')), closable: true)
         @doExportX509.close()
         return false        
 
@@ -400,7 +402,7 @@ class KeyMgr.KeyList extends Spine.Controller
       # private
 
       @valid: (self, params) ->
-        return "File Name is required." unless params['fileName'].length
+        return app.$T('x_required').Format(app.$T('label_file_name')) unless params['fileName'].length
         
       @GetFileName: (label) ->
         return label if label.indexOf('/') is -1
@@ -417,13 +419,12 @@ class KeyMgr.KeyList extends Spine.Controller
         df()
 
         if not ok
-          @app.alert(msg: "An error occured while deleting the certificate, please try again", closable: true)
+          @app.alert(msg: app.$T('err_while_x_x').Format(app.$T('deleting'),  app.$T('x509')), closable: true)
           return false            
 
         @keyList.selectionChanged(@key, false)
         @el.remove()
-        @app.info(msg: "The X509.Certificate was successfully deleted", closable: true)
-        # @app.delay @app.reload, 500
+        @app.info(msg: app.$T('success_while_x_x').Format(app.$T('x509'),  app.$T('deleted')), closable: true)
         return false
 
       false
@@ -438,7 +439,7 @@ class KeyMgr.KeyList extends Spine.Controller
     events:
       'click .reload'       : 'reloadKeys'
       'click .purge'        : 'purgeSelection'
-      'click .export'       : 'exportSelection'
+      # 'click .export'       : 'exportSelection'
     
     # args(app)
     constructor: ->
@@ -459,59 +460,78 @@ class KeyMgr.KeyList extends Spine.Controller
       evt.preventDefault()
       evt.stopPropagation()  
 
-      keys = @keyList.getSelectedKeys()   
+      keys = @keyList.getSelectedKeys()  
+
+      done = => @app.info(msg: app.$T('success_while_x_x').Format(app.$T('selected_keys'),  app.$T('deleted')), closable: true, duration: 300)
+
+      removeX509 = (key) => 
+        ret = $.Deferred()
+
+        Façade.DelX509 key.id, (ok) =>
+
+          if ok
+
+            @keyList.selectionChanged(key, false)
+            jQuery("#key-#{key.id}").remove()
+
+            # @app.info(msg: app.$T('success_while_x_x').Format("{0} <b>#{key.label}</b>".Format(app.$T('x509')),  app.$T('deleted')), closable: true, duration: 300)
+
+            # @delay (-> removeKeys()), 100
+            ret.resolve()
+
+          else
+
+            @app.alert(msg: app.$T('err_while_x_x').Format(app.$T("deleting"), "{0} <b>#{key.label}</b>".Format(app.$T('x509'))), closable: true)
+            df()
+
+        ret
+
+      removePrKey = (key) => 
+        ret = $.Deferred()
+
+        Façade.DelPrKey key.id, (ok) =>
+
+          if ok
+
+            @keyList.selectionChanged(key, false)
+            jQuery("#key-#{key.id}").remove()
+
+            # @app.info(msg: app.$T('success_while_x_x').Format("{0} <b>#{key.label}</b>".Format(app.$T('prkey')),  app.$T('deleted')), closable: true, duration: 300)
+
+            # @delay (-> removeKeys()), 100
+            ret.resolve()
+
+          else
+
+            @app.alert(msg: app.$T('err_while_x_x').Format(app.$T("deleting"), "<b>#{key.label}</b>"), closable: true)
+            df()
+
+        ret
 
       removeKeys = =>
-        return (df(); (@reloadKeys.apply @, [evt] unless @keyList.keys.$('.key').length)) unless key = keys[keys.length - 1]
+        return (df(); done(); (@reloadKeys.apply @, [evt] unless @keyList.keys.$('.key').length)) unless key = keys[keys.length - 1]
       
         switch key.type
           
           when 'X509Certificate' 
             
-           Façade.DelX509 key.id, (ok) =>
-            
-              if ok
+            removeX509(key).done removeKeys
 
-                @keyList.selectionChanged(key, false)
-                jQuery("#key-#{key.id}").remove()
-
-                @app.info(msg: "The X509.Certificate <b>#{key.label}</b> was successfully deleted", closable: true, duration: 300)
-
-                @delay (-> removeKeys()), 100
-
-              else
-
-                @app.alert(msg: "The was an error while deleting <b>#{key.label}</b>, please try again", closable: true)
-                df()
           
           when 'PrKey'
             
-            Façade.DelPrKey key.id, (ok) =>
-            
-              if ok
-
-                @keyList.selectionChanged(key, false)
-                jQuery("#key-#{key.id}").remove()
-
-                @app.info(msg: "The Private Key <b>#{key.label}</b> was successfully deleted", closable: true, duration: 300)
-
-                @delay (-> removeKeys()), 100
-
-              else
-
-                @app.alert(msg: "The was an error while deleting <b>#{key.label}</b>, please try again", closable: true)
-                df()
+            removePrKey(key).done removeKeys
 
       removeKeys()            
       false
 
-    exportSelection: (evt) ->
-      evt.preventDefault()
-      evt.stopPropagation()
+    # exportSelection: (evt) ->
+    #   evt.preventDefault()
+    #   evt.stopPropagation()
 
-      @log "export keys"
+    #   @log "export keys"
 
-      false
+    #   false
 
     reloadKeys: (evt) ->
       evt.preventDefault()
@@ -529,8 +549,6 @@ class KeyMgr.KeyList extends Spine.Controller
 
 class KeyMgr.GenForm extends Wizard
 
-  @HEADER: 'Generate Private Key'  
-
   hasCancel: true 
   
   doGenKey: (params) ->
@@ -546,46 +564,49 @@ class KeyMgr.GenForm extends Wizard
       if ok
         # show dlg asking if user wants to generate a CSR
 
-        hideDlg = (el) -> window.jQuery(el or '.modal').closest('.dlg').modal('hide')
+        # hideDlg = (el) -> window.jQuery(el or '.modal').closest('.dlg').modal('hide')
         goBack = => @delay (=> @navigate "/")
-        _yes = no
 
-        @controller.app.dlg({
-          msg: '<p>La cle a ete genere avec success.</p><p>Do you want generate a <b><i>Certificate Signing Request</i></b>?</p>'
-          hidden: -> goBack() if not _yes
-          buttons: [
-            {
-              id: 'dlg-yes'
-              title: 'Yes'
-              primary: true              
-              fn: (evt) => 
+        @controller.info msg: app.$T('prkey_gen_success'), closable: true
+        goBack()
+        # _yes = no
 
-                _yes = yes
+        # @controller.app.dlg({
+        #   msg: app.$T('prkey_gen_success')
+        #   hidden: -> goBack() if not _yes
+        #   buttons: [
+        #     {
+        #       id: 'dlg-yes'
+        #       title: 'Yes'
+        #       primary: true              
+        #       fn: (evt) => 
 
-                hideDlg(evt.target)
+        #         _yes = yes
 
-                @controller.steps.unshift({
-                  Clss: KeyMgr.GenForm.GetX509ReqInfo
-                  args:
-                    id: keyid
-                    className: 'get-x509-req-info v-scroll gen-key'
-                    controller: @controller
-                    fn: @controller.app.doGenX509Req
-                })
+        #         hideDlg(evt.target)
 
-                @controller.next @, {}
-            },
-            {
-              id: 'dlg-no'
-              title: 'No'
-              fn: (evt) -> hideDlg(evt.target); # goBack()
-            }
-          ]
-          })
+        #         @controller.steps.unshift({
+        #           Clss: KeyMgr.GenForm.GetX509ReqInfo
+        #           args:
+        #             id: keyid
+        #             className: 'get-x509-req-info v-scroll gen-key'
+        #             controller: @controller
+        #             fn: @controller.app.doGenX509Req
+        #         })
+
+        #         @controller.next @, {}
+        #     },
+        #     {
+        #       id: 'dlg-no'
+        #       title: 'No'
+        #       fn: (evt) -> hideDlg(evt.target); # goBack()
+        #     }
+        #   ]
+        #   })
 
         return false
       
-      @controller.alert msg: "Il y a eu une erreur, essayer de nouveau.", closable: true
+      @controller.alert msg: app.$T('msg_err'), closable: true
       @controller.doGenKey.err?()
 
   class @GetX509ReqInfo extends Spine.Controller
@@ -667,13 +688,15 @@ class KeyMgr.GenForm extends Wizard
 
       ValidateEmail = (emailAddress) -> emailRegex.test(emailAddress)
 
-      return "Full Name is required." unless params['cn'].length    
-      return "Email address is required." unless params['emailAddress'].length  
-      return "Email address is invalid." unless ValidateEmail(params['emailAddress']) 
+      return app.$T('x_required').Format(app.$T('label_full_name')) unless params['cn'].length    
+      return app.$T('x_required').Format(app.$T('label_email_address')) unless params['emailAddress'].length  
+      return app.$T('x_required').Format(app.$T('label_email_address')) unless ValidateEmail(params['emailAddress']) 
 
   # args(app)
   constructor: ->
     super
+
+    @constructor.HEADER = app.$T('msg_gen_prkey')
 
     @steps = [      
 
@@ -681,7 +704,7 @@ class KeyMgr.GenForm extends Wizard
         Clss: GetLabel
         args:
           name: 'get-info'
-          title: 'Key Name'
+          title: app.$T('label_key_name')
           header: KeyMgr.GenForm.HEADER
           className: 'get-label gen-key'
           controller: @
@@ -777,8 +800,8 @@ class KeyMgr.GetKeyInfo extends Spine.Controller
   # private
 
   @valid: (self, params) ->
-    return "#{self.title} is required." unless params['label'].length    
-    return "File name is required." unless params['path'].length  
+    return app.$T('x_required').Format(self.title) unless params['label'].length    
+    return app.$T('x_required').Format(app.$T('label_file_name')) unless params['path'].length  
     
     # if self.hasPassphrase 
       # return "Passphrase is required." if KeyMgr.GetKeyInfo.GetExt(params['path']) in [ 'p12', 'pfx' ] and not params['path'].length
@@ -799,8 +822,6 @@ class KeyMgr.GetKeyInfo extends Spine.Controller
 
 class KeyMgr.ImportPrKey extends Wizard
 
-  @HEADER: 'Import Private Key'
-
   doImportPrKey: (params) ->
     @controller.log "doImportPrKey:#{params}"
     df = app.Loading()
@@ -812,15 +833,17 @@ class KeyMgr.ImportPrKey extends Wizard
       df()
 
       if ok
-        @controller.info msg: "La cle privee a ete ajoute avec success.", closable: true
+        @controller.info msg: app.$T('x_import_success').Format(app.$T('prkey')), closable: true
         @delay (=> @navigate "/"), 700
         return false
       
-      @controller.alert msg: "Il y a eu une erreur, essayer de nouveau.", closable: true
+      @controller.alert msg: app.$T('msg_err'), closable: true
       @controller.doImportPrKey.err?()    
 
   constructor: ->
     super
+
+    @constructor.HEADER = app.$T('msg_import_x').Format(app.$T('prkey'))
 
     @steps = [      
 
@@ -840,8 +863,6 @@ class KeyMgr.ImportPrKey extends Wizard
 
 class KeyMgr.ImportX509 extends Wizard
 
-  @HEADER: 'Import X.509 Certificate'  
-
   doImportX509: (params) ->
     @controller.log "doImportX509:#{params}"
     df = app.Loading()
@@ -853,15 +874,17 @@ class KeyMgr.ImportX509 extends Wizard
       df()
 
       if ok
-        @controller.info msg: "Le certificat a ete ajoute avec success.", closable: true
+        @controller.info msg: app.$T('success_while_x_x').Format(app.$T('x509'), app.$T('added')), closable: true
         @delay (=> @navigate "/"), 700
         return false
       
-      @controller.alert msg: "Il y a eu une erreur, essayer de nouveau.", closable: true
+      @controller.alert msg: app.$T('msg_err'), closable: true
       @controller.doImportX509.err?()    
 
   constructor: ->
     super
+
+    @constructor.HEADER = app.$T('msg_import_x').Format(app.$T('x509'))
 
     @steps = [      
 
@@ -871,7 +894,7 @@ class KeyMgr.ImportX509 extends Wizard
           name: 'get-key-info'
           controller: @
           header: KeyMgr.ImportX509.HEADER
-          title: "Certificate Name"
+          title: app.$T('label_x509_name')
           className: 'import-key x509_certificate'
           fn: @doImportX509
       }

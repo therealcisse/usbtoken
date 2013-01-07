@@ -29,6 +29,7 @@
 #include <conio.h>
 #endif
 #include <ctype.h>
+ 
 #include "util_opensc.h"
 
 int

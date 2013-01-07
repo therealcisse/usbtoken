@@ -2,12 +2,15 @@
 #include <string>
 
 #include "inc/ep_pkcs15.h"
+#include "inc/token.h"
 
 #include "libopensc/pkcs15.h"
 #include "pkcs15init/pkcs15-init.h"
 #include "pkcs15init/profile.h"
 
 #include "inc/util_pkcs15.h"
+
+#include <windows.h>
 
 namespace epsilon {
 
@@ -87,11 +90,38 @@ namespace epsilon {
 	  out: ReleaseP15Card(p15card);
 	}
 
-	bool TokenContext::Bind(const char *reader) {
-		// AutoLock lock_(this);
+	bool TokenContext::isTokenPresent(sc_context **ctx) {
+		sc_context_param_t ctx_param;
+  
+		memset(&ctx_param, 0, sizeof(ctx_param));
+		ctx_param.ver      = 0;
+		ctx_param.app_name = E_TOKEN_APPLICATION_NAME;
+		ctx_param.thread_ctx = &sc_thread_ctx;
 
+		if (sc_context_create(ctx, &ctx_param))
+			return false;
+
+		if (sc_ctx_get_reader_count(*ctx) > 0)
+
+			/* Automatically try to skip to a reader with a card if reader not specified */
+			for (unsigned int i = 0; i < sc_ctx_get_reader_count(*ctx); i++) {
+				sc_reader *reader = sc_ctx_get_reader(*ctx, i);
+				if (sc_detect_card_presence(reader) & SC_READER_CARD_PRESENT)
+					return true;
+			}
+
+		sc_release_context(*ctx);
+		*ctx = NULL;
+
+		return false;
+	}
+
+	bool TokenContext::Bind(const char *reader) {
+		if(in_context)
+			return true;
+				
 	  /* Connect to the card */
-		if (!::util::ep_open_reader_and_card(&ctx, reader, &card))
+		if (!::util::ep_open_reader_and_card(&ctx, reader, &card)) 
 	    return false;  	
 	    
 	  /* Bind the card-specific operations and load the profile */
@@ -108,14 +138,12 @@ namespace epsilon {
 
 		  return false;
 	  }
-
+	  
 	  in_context = true;
 	  return true;
 	}
 
 	void TokenContext::Destroy() {
-		// AutoLock lock_(this);
-
 		if(!InContext()) return;
 
 	  if (profile) {
@@ -147,27 +175,22 @@ namespace epsilon {
 	}
 
 	sc_profile *TokenContext::GetProfile() const {
-		// AutoLock lock_(this);
 		return profile;
 	}
 
-	std::string TokenContext::GetProfileName() const {
+	std::string TokenContext::GetProfileName() {
 		return kProfileName;
 	}
 
 	sc_context *TokenContext::GetSCContext() const {
-		// AutoLock lock_(this);
 		return ctx;		
 	}
 
 	sc_card *TokenContext::GetCard() const {
-		// AutoLock lock_(this);
 		return card;
 	}
 
 	bool TokenContext::InContext() const {
-		// AutoLock lock_(this);
 		return in_context;
 	}
-
 }

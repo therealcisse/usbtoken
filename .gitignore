@@ -7,3 +7,10 @@ bootstrap.css
 bootstrap.js
 conf
 utils
+wixobj
+test
+*.msi
+*.wxpdb
+*.min.js
+*.min.css
+*.min.html

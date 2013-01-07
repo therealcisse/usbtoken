@@ -31,6 +31,9 @@
 #define IDS_TOKEN_REMOVED_TITLE         307
 #define IDS_TOKEN_REMOVED_TEXT          308
 
+#define IDS_EP_TOKEND_START_TITLE         397
+#define IDS_EP_TOKEND_START_TEXT          398
+
 #define IDM_TOKEN_INSERTED              321
 #define IDM_TOKEN_REMOVED               323
 

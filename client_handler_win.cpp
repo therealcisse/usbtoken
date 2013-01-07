@@ -90,7 +90,7 @@ std::string ClientHandler::GetDownloadPath(const std::string& file_name) {
 	bi.hwndOwner = GetMainHwnd();
 	//bi.pidlRoot = NULL;
 	//bi.pszDisplayName = szFolderPath;
-	bi.lpszTitle = TEXT("Select a folder");
+	bi.lpszTitle = L"Select a folder";
 	bi.ulFlags = BIF_RETURNONLYFSDIRS;
 	// Set the callback function
 	//bi.lpfn = NULL;
@@ -99,7 +99,7 @@ std::string ClientHandler::GetDownloadPath(const std::string& file_name) {
 
 	if(pIIL != NULL)
 		if (::SHGetPathFromIDList(pIIL, (TCHAR *)&szFolderPath)) {
-			if (szFolderPath != TEXT("")){
+			if (szFolderPath != L""){
 				path = CefString(szFolderPath);
 				path += "\\" + file_name;
 			}
@@ -112,19 +112,4 @@ std::string ClientHandler::GetDownloadPath(const std::string& file_name) {
 		}	
 
 	return path;
-}
-
-
-std::string ClientHandler::_GetDownloadPath(const std::string& file_name) {
-  TCHAR szFolderPath[MAX_PATH];
-  std::string path;
-
-  // Save the file in the user's "My Documents" folder.
-  if (SUCCEEDED(SHGetFolderPath(NULL, CSIDL_PERSONAL | CSIDL_FLAG_CREATE,
-                                NULL, 0, szFolderPath))) {
-    path = CefString(szFolderPath);
-    path += "\\" + file_name;
-  }
-
-  return path;
 }

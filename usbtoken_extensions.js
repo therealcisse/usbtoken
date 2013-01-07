@@ -22,4 +22,9 @@ if (!app)
     return RemoveMessageCallback(name);
   };
 
+  native function GetCurrentLanguage();
+  app.GetCurrentLanguage = function() {
+    return GetCurrentLanguage();
+  };
+
 })();;

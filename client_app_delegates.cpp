@@ -12,7 +12,6 @@ void ClientApp::CreateBrowserDelegates(BrowserDelegateSet& delegates) {
 
 // static
 void ClientApp::CreateRenderDelegates(RenderDelegateSet& delegates) {
-  //client_renderer::CreateRenderDelegates(delegates);
 }
 
 // static

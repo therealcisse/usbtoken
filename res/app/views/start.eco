@@ -7,7 +7,7 @@
 <div class="absent">
 
   <ul class="nav nav-list">
-    <li><a title="Detecter encore l'etat de supporte" class='action' href="#"><i class="icon-refresh"></i>Re-essayer</a>
+    <li><a title="<%= app.$T('tooltip_detect_again') %>" class='action' href="#"><i class="icon-refresh"></i><%= app.$T('action_detect_again') %></a>
     </li>
     </li>
   </ul>
@@ -17,7 +17,7 @@
 <div class="in-use">
 
   <ul class="nav nav-list">
-    <li><a title="Detecter encore l'etat de supporte" class='action' href="#"><i class="icon-refresh"></i>Re-essayer</a>
+    <li><a title="<%= app.$T('tooltip_detect_again') %>" class='action' href="#"><i class="icon-refresh"></i><%= app.$T('action_detect_again') %></a>
     </li>
     </li>
   </ul>
@@ -27,7 +27,7 @@
 <div class="readonly">
 
   <ul class="nav nav-list">
-    <li><a title="Detecter encore l'etat de supporte" class='action' href="#"><i class="icon-refresh"></i>Re-essayer</a>
+    <li><a title="<%= app.$T('tooltip_detect_again') %>" class='action' href="#"><i class="icon-refresh"></i><%= app.$T('action_detect_again') %></a>
     </li>
     </li>
   </ul>
@@ -37,9 +37,9 @@
 <div class="locked blank">
 
   <ul class="nav nav-list">
-    <li><a title="Detecter encore l'etat de supporte" class='action' href="#"><i class="icon-refresh"></i>Re-detecter</a>
+    <li><a title="<%= app.$T('tooltip_detect_again') %>" class='action' href="#"><i class="icon-refresh"></i><%= app.$T('action_detect_again') %></a>
     </li>
-    <li><a title="Formatter le supporte" class="init" href="#/init"><i class="icon-bolt"></i>Format token</a>
+    <li><a title="<%= app.$T('tooltip_format') %>" class="init" href="#/init"><i class="icon-bolt"></i><%= app.$T('action_format') %></a>
     </li>
   </ul>
 

@@ -27,7 +27,7 @@
 
 //#include "inc/token.h"
 
-#include "usbtoken/client_handler.h"
+#include "epUSBToken/client_handler.h"
 
 #define	MAX_CERTS	4
 

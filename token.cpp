@@ -4,6 +4,7 @@
 #include "inc/token.h"
 #include "inc/pkcs15.h"
 #include "inc/ep_pkcs15.h"
+#include "inc/op.h"
 
 #include "inc/util_pkcs15.h"
 #include "resource.h"
@@ -83,36 +84,36 @@ bool Token::InitToken(const char* sopin, const char* sopuk, const char *label) {
 	return false;
 }
 
-bool Token::InitPIN(const char *pin, const char *puk) {
-	CefRefPtr<TokenContext> ctx = TokenContext::GetGlobalContext();
-	ASSERT(!ctx->InContext());
-
-	if(ctx->Bind()) {
-		  sc_pkcs15_card *p15card;
-		  struct sc_pkcs15init_pinargs args;
-		  int r = -1;
-
-		  if ((p15card = BindP15Card(ctx)) == NULL)
-				goto out;
-
-  memset(&args, 0, sizeof(args));
-  //sc_pkcs15_format_id(pin_id, &args.auth_id);
-  args.pin = (u8 *) pin;
-  args.pin_len = strlen(pin);
-
-  args.puk = (u8 *) puk;
-  args.puk_len = puk ? strlen(puk) : 0;
-
-  r = sc_pkcs15init_store_pin(p15card, ctx->GetProfile(), &args);			
-
-		 ReleaseP15Card(p15card);
-		 
-		 out: ctx->Destroy();		
-		 return r < 0 ? false : true;	
-	}
-
-	return false;
-}
+//bool Token::InitPIN(const char *pin, const char *puk) {
+//	CefRefPtr<TokenContext> ctx = TokenContext::GetGlobalContext();
+//	ASSERT(!ctx->InContext());
+//
+//	if(ctx->Bind()) {
+//		  sc_pkcs15_card *p15card;
+//		  struct sc_pkcs15init_pinargs args;
+//		  int r = -1;
+//
+//		  if ((p15card = BindP15Card(ctx)) == NULL)
+//				goto out;
+//
+//  memset(&args, 0, sizeof(args));
+//  //sc_pkcs15_format_id(pin_id, &args.auth_id);
+//  args.pin = (u8 *) pin;
+//  args.pin_len = strlen(pin);
+//
+//  args.puk = (u8 *) puk;
+//  args.puk_len = puk ? strlen(puk) : 0;
+//
+//  r = sc_pkcs15init_store_pin(p15card, ctx->GetProfile(), &args);			
+//
+//		 ReleaseP15Card(p15card);
+//		 
+//		 out: ctx->Destroy();		
+//		 return r < 0 ? false : true;	
+//	}
+//
+//	return false;
+//}
 
 bool Token::ChangePIN(const char *pincode, const char *newpin) {
 	CefRefPtr<TokenContext> ctx = TokenContext::GetGlobalContext();
@@ -258,11 +259,17 @@ const char* kMessageExportX509   = "export.x509";
 const char* kMessageDelX509  = "del.x509";
 const char* kMessageDelPrKey = "del.prkey";
 
+const char* kMessageSetLang = "set.lang";
+
 bool Token::OnProcessMessageReceived(
 	CefRefPtr<ClientHandler> handler,
 	CefRefPtr<CefBrowser> browser,
 	CefProcessId source_process,
 	CefRefPtr<CefProcessMessage> message) {
+
+	//::util::ep_gen_x509_req(ctx, handler, 
+	//"8e8e701ea54e827ac8bef445c23ec40e4cc1bbc3", (const unsigned char *)"qq", (const unsigned char *)"qq", 
+	//(const unsigned char *)"qq", (const unsigned char *)"qq", (const unsigned char *)"qq", (const unsigned char *)"qq", (const unsigned char *)"qq@qq.com", "4444");
 
 	const std::string & message_name = message->GetName();
 
@@ -273,81 +280,80 @@ bool Token::OnProcessMessageReceived(
 
 			CefRefPtr<CefDictionaryValue> args = argList->GetDictionary(0);
 			CefString MsgId = args->GetString(CefString("MsgId"));
-			CefRefPtr<TokenContext> ctx = TokenContext::GetGlobalContext();
-			ep_token_info info;
+			bool isAuthenticated = args->HasKey(CefString(E_KEY_AUTHENTICATION_DATA));
 
-			/* Does this really means that token is blank? */
-			if(!ctx->Bind()) {
-				browser->SendProcessMessage(PID_RENDERER, 
-					CreateMsg(kMessageGetStatus, MsgId, E_TOKEN_ABSENT));
-				goto destroy;
-			}
+			class GetStatusOp : public Op {
+				const char *MsgId;
+				bool isAuthenticated;
+			public:
+				GetStatusOp(CefRefPtr<CefBrowser> browser, const char *MsgId, bool isAuthenticated)
+					: Op(browser),
+					  MsgId(::strdup(MsgId)),
+					  isAuthenticated(isAuthenticated)
+				{
+				}
 
-			/* Get all token information */
-			GetTokenInfo(ctx, &info);
+				CefRefPtr<CefProcessMessage> Do() const {
+					CefRefPtr<TokenContext> ctx = TokenContext::GetGlobalContext();
+					ep_token_info info;
 
-			if(info.token_absent) {
-				browser->SendProcessMessage(PID_RENDERER, 
-					CreateMsg(kMessageGetStatus, MsgId, E_TOKEN_ABSENT));
-				goto destroy;
-			}
+					/* Does this really means that token is blank? */
+					if(!ctx->Bind())
+						return CreateMsg(kMessageGetStatus, MsgId, E_TOKEN_ABSENT);
 
-			if(!info.token_initialized) {
-				browser->SendProcessMessage(PID_RENDERER, 
-					CreateMsg(kMessageGetStatus, MsgId, E_TOKEN_BLANK, &info));
-				goto destroy;
-			}
+					/* Get all token information */
+					GetTokenInfo(ctx, &info);
+					ctx->Destroy();
 
-			if(info.readonly) {
-				browser->SendProcessMessage(PID_RENDERER, 
-					CreateMsg(kMessageGetStatus, MsgId, E_TOKEN_READONLY));
-				goto destroy;
-			}
+					if(info.token_absent) 
+						return CreateMsg(kMessageGetStatus, MsgId, E_TOKEN_ABSENT);
 
-			if(info.inuse) {
-				browser->SendProcessMessage(PID_RENDERER, 
-					CreateMsg(kMessageGetStatus, MsgId, E_TOKEN_IN_USE));
-				goto destroy;
-			}
+					if(!info.token_initialized)
+						return CreateMsg(kMessageGetStatus, MsgId, E_TOKEN_BLANK, &info);
 
-			if(!info.pin_initialized) {
-				browser->SendProcessMessage(PID_RENDERER, 
-					CreateMsg(kMessageGetStatus, MsgId, E_PIN_NOT_INITIALIZED));
-				goto destroy;
-			}
+					if(info.readonly)
+						return CreateMsg(kMessageGetStatus, MsgId, E_TOKEN_READONLY);
 
-			if(info.tries_left == 0) {
-				browser->SendProcessMessage(PID_RENDERER, 
-					CreateMsg(kMessageGetStatus, MsgId, E_PIN_BLOCKED, &info));
-				goto destroy;
-			}
+					if(info.inuse)
+						return CreateMsg(kMessageGetStatus, MsgId, E_TOKEN_IN_USE);
 
-			if(args->HasKey(CefString(E_KEY_AUTHENTICATION_DATA)))
+					if(!info.pin_initialized)
+						return CreateMsg(kMessageGetStatus, MsgId, E_PIN_NOT_INITIALIZED);
 
-				browser->SendProcessMessage(PID_RENDERER, 
-					CreateMsg(kMessageGetStatus, MsgId, E_TOKEN_AUTHENTICATED));
+					if(info.tries_left == 0)
+						return CreateMsg(kMessageGetStatus, MsgId, E_PIN_BLOCKED, &info);
+  
+					return isAuthenticated ?
 
-			else
+						CreateMsg(kMessageGetStatus, MsgId, E_TOKEN_AUTHENTICATED)
 
-				browser->SendProcessMessage(PID_RENDERER, 
-					CreateMsg(kMessageGetStatus, MsgId, E_TOKEN_AUTHENTICATION_REQUIRED, &info));
+						:
 
-			destroy : ctx->Destroy();
+						CreateMsg(kMessageGetStatus, MsgId, E_TOKEN_AUTHENTICATION_REQUIRED, &info);
+				}
 
-			//client_app_.RemoveMessageCallback(replyto.ToString(), browser->GetIdentifier());
+				IMPLEMENT_REFCOUNTING(GetStatusOp);
+			};
 
+			GetStatusOp::RunOp(new GetStatusOp(browser, MsgId.ToString().c_str(), isAuthenticated));
 			return true;				
 		}			
 	}
 
-	//if(message_name == kMessageSetTitle) {
-	//	CefRefPtr<CefListValue> argList = message->GetArgumentList();			
-	//	if(argList->GetSize() > 0 && argList->GetType(0) == VTYPE_STRING) {		
-	//		CefString action = argList->GetString(0);
-	//		handler->SetWindowTitle(CreateWindowText(action));
-	//		return true;
-	//	}
-	//}
+	if(message_name == kMessageSetLang) {
+		CefRefPtr<CefListValue> argList = message->GetArgumentList();			
+		if(argList->GetSize() > 0 && argList->GetType(0) == VTYPE_DICTIONARY) {	
+			CefRefPtr<CefDictionaryValue> args = argList->GetDictionary(0);			
+			
+			int langId = args->GetInt(CefString("LangID"));
+			CefString MsgId = args->GetString(CefString("MsgId"));
+
+			browser->SendProcessMessage(PID_RENDERER, 
+				CreateMsg(kMessageSetLang, MsgId, handler->SetLang(langId)));				
+
+			return true;
+		}
+	}
 
 	/* Login */
 
@@ -356,43 +362,61 @@ bool Token::OnProcessMessageReceived(
 		CefRefPtr<CefListValue> argList = message->GetArgumentList();			
 		if(argList->GetSize() > 0 && argList->GetType(0) == VTYPE_DICTIONARY) {		
 			
-			ep_token_info info;
 			CefRefPtr<CefDictionaryValue> args = argList->GetDictionary(0);			
 			
 			CefString MsgId = args->GetString(CefString("MsgId"));
 			CefString pin = args->GetString(CefString("pin"));
-			
-			bool r = VerifyPIN(pin.ToString().c_str());
 
-			CefRefPtr<TokenContext> ctx = TokenContext::GetGlobalContext();
+			class LoginOp: public Op {
+				const char *MsgId;
+				const char *pin;
+			public:
+
+				LoginOp(CefRefPtr<CefBrowser> browser, const char *pin, const char *MsgId): 
+					Op(browser), 
+					pin(::strdup(pin)), 
+					MsgId(::strdup(MsgId)) 
+				{
+				}
+
+				CefRefPtr<CefProcessMessage> Do() const {
+					bool r = VerifyPIN(pin);
+
+					ep_token_info info;
+					CefRefPtr<TokenContext> ctx = TokenContext::GetGlobalContext();
 			
-			if(ctx->Bind()) {
+					if(ctx->Bind()) {
 				
-				/* Get all token information */
-				GetTokenInfo(ctx, &info);
-				ctx->Destroy();
+						/* Get all token information */
+						GetTokenInfo(ctx, &info);
+						ctx->Destroy();
 
-				if(r)
+						return r ?
 
-					browser->SendProcessMessage(PID_RENDERER, 
-						CreateMsg(kMessageVerifyPIN, MsgId, E_TOKEN_AUTHENTICATED, &info));				
+							 CreateMsg(kMessageVerifyPIN, MsgId, E_TOKEN_AUTHENTICATED, &info)				
 			
-				else 
+						: 
 
-					browser->SendProcessMessage(PID_RENDERER, 
-						CreateMsg(kMessageVerifyPIN, MsgId, E_TOKEN_AUTHENTICATION_REQUIRED, &info));				
-			}
+							CreateMsg(kMessageVerifyPIN, MsgId, E_TOKEN_AUTHENTICATION_REQUIRED, &info);				
+					}
 
-			/*else 
-				 Some weird error happened */
+					/*else 
+						 Some weird error happened */
+
+					return NULL;
+				}
+
+				IMPLEMENT_REFCOUNTING(LoginOp);
+			};			
 			
+			LoginOp::RunOp(new LoginOp(browser, pin.ToString().c_str(), MsgId.ToString().c_str()));
 			return true;
 		}
 	}
 
 	/* Erase Token */
 
-	if(message_name == kMessageErase) {
+	/*if(message_name == kMessageErase) {
 		
 		CefRefPtr<CefListValue> argList = message->GetArgumentList();			
 		if(argList->GetSize() > 0 && argList->GetType(0) == VTYPE_DICTIONARY) {		
@@ -404,7 +428,7 @@ bool Token::OnProcessMessageReceived(
 		}
 			
 		return true;
-	}	
+	}*/	
 
 	/* Init Token */
 
@@ -420,17 +444,36 @@ bool Token::OnProcessMessageReceived(
 			CefString puk = args->GetString(CefString("puk"));
 			CefString label = args->GetString(CefString("label"));
 
-			browser->SendProcessMessage(PID_RENDERER, 
-				CreateMsg(kMessageInit, MsgId, InitToken(pin.ToString().c_str(), puk.ToString().c_str(), label.ToString().c_str())));				
+			class InitOp : public Op {
+				const char *MsgId;
+				const char *pin;
+				const char *puk;
+				const char *label;
+			public:
+				InitOp(CefRefPtr<CefBrowser> browser, const char *MsgId, const char *pin, const char *puk, const char *label)
+					: Op(browser),
+					  MsgId(::strdup(MsgId)),
+					  pin(::strdup(pin)),
+					  puk(::strdup(puk)),
+					  label(::strdup(label))
+				{
+				}
+
+				CefRefPtr<CefProcessMessage> Do() const {
+					return CreateMsg(kMessageInit, MsgId, InitToken(pin, puk, label));
+				}
+
+				IMPLEMENT_REFCOUNTING(InitOp);
+			};
 			
+			InitOp::RunOp(new InitOp(browser, MsgId.ToString().c_str(), pin.ToString().c_str(), puk.ToString().c_str(), label.ToString().c_str()));
+			return true;
 		}
-			
-		return true;
 	}		
 
 	/* Set PIN Token */
 
-	if(message_name == kMessageSetPIN) {
+	/*if(message_name == kMessageSetPIN) {
 		
 		CefRefPtr<CefListValue> argList = message->GetArgumentList();			
 		if(argList->GetSize() > 0 && argList->GetType(0) == VTYPE_DICTIONARY) {		
@@ -447,7 +490,7 @@ bool Token::OnProcessMessageReceived(
 		}
 			
 		return true;
-	}
+	}*/
 
 	/* Change PIN Token */
 
@@ -461,13 +504,30 @@ bool Token::OnProcessMessageReceived(
 			
 			CefString pin = args->GetString(CefString("pincode"));			
 			CefString newpin = args->GetString(CefString("pin"));
+			
+			class ChangePINOp : public Op {
+				const char *MsgId;
+				const char *pin;
+				const char *newpin;
+			public:
+				ChangePINOp(CefRefPtr<CefBrowser> browser, const char *MsgId, const char *pin, const char *newpin)
+					: Op(browser),
+					  MsgId(::strdup(MsgId)),
+					  pin(::strdup(pin)),
+					  newpin(::strdup(newpin))
+				{
+				}
 
-			browser->SendProcessMessage(PID_RENDERER, 
-				CreateMsg(kMessageChangePIN, MsgId, ChangePIN(pin.ToString().c_str(), newpin.ToString().c_str())));				
+				CefRefPtr<CefProcessMessage> Do() const {
+					return CreateMsg(kMessageChangePIN, MsgId, ChangePIN(pin, newpin));
+				}
+
+				IMPLEMENT_REFCOUNTING(ChangePINOp);
+			};
 			
+			ChangePINOp::RunOp(new ChangePINOp(browser, MsgId.ToString().c_str(), pin.ToString().c_str(), newpin.ToString().c_str()));
+			return true;			
 		}
-			
-		return true;
 	}		
 
 	/* Unblock Token */
@@ -481,25 +541,42 @@ bool Token::OnProcessMessageReceived(
 			CefString MsgId = args->GetString(CefString("MsgId"));		
 			
 			CefString puk = args->GetString(CefString("puk"));			
-			CefString pin = args->GetString(CefString("pin"));			
+			CefString pin = args->GetString(CefString("pin"));	
+
+			class UnblockPINOp : public Op {
+				const char *MsgId;
+				const char *puk;
+				const char *pin;
+			public:
+				UnblockPINOp(CefRefPtr<CefBrowser> browser, const char *MsgId, const char *puk, const char *pin)
+					: Op(browser),
+					  MsgId(::strdup(MsgId)),
+					  puk(::strdup(puk)),
+					  pin(::strdup(pin))
+				{
+				}
+
+				CefRefPtr<CefProcessMessage> Do() const {
+					return CreateMsg(kMessageUnblockPIN, MsgId, UnblockPIN(puk, pin));
+				}
+
+				IMPLEMENT_REFCOUNTING(UnblockPINOp);
+			};
 			
-			browser->SendProcessMessage(PID_RENDERER, 
-				CreateMsg(kMessageUnblockPIN, MsgId, UnblockPIN(puk.ToString().c_str(), pin.ToString().c_str())));				
-			
+			UnblockPINOp::RunOp(new UnblockPINOp(browser, MsgId.ToString().c_str(), puk.ToString().c_str(), pin.ToString().c_str()));
+			return true;			
 		}
-			
-		return true;
 	}		
 
 	/* Get Readers */
 
-	if(message_name == kMessageGetReaders) {
+	/*if(message_name == kMessageGetReaders) {
 		
 		CefRefPtr<CefListValue> argList = message->GetArgumentList();			
 		if(argList->GetSize() > 0 && argList->GetType(0) == VTYPE_DICTIONARY) {		
 			
 			CefRefPtr<CefDictionaryValue> args = argList->GetDictionary(0);
-			CefString replyto = args->GetString(CefString("replyto"));
+			CefString replyto = args->GetString(CefString("replyto"));*/
 /*
 
   sc_context_param_t ctx_param;
@@ -522,10 +599,10 @@ bool Token::OnProcessMessageReceived(
 
 			*/
 			
-		}
+	/*	}
 			
 		return true;
-	}		
+	}*/		
 
 	if(message_name == kMessageGetPrKeys) {
 		CefRefPtr<CefListValue> argList = message->GetArgumentList();			
@@ -534,26 +611,45 @@ bool Token::OnProcessMessageReceived(
 			CefRefPtr<CefDictionaryValue> args = argList->GetDictionary(0);
 			CefString MsgId = args->GetString(CefString("MsgId"));
 
-			CefRefPtr<TokenContext> ctx = TokenContext::GetGlobalContext();
+			class GetPrKeysOp : public Op {
+				const char *MsgId;
+			public:
+				GetPrKeysOp(CefRefPtr<CefBrowser> browser, const char *MsgId)
+					: Op(browser),
+					  MsgId(::strdup(MsgId))
+				{
+				}
+
+				CefRefPtr<CefProcessMessage> Do() const {
+					CefRefPtr<TokenContext> ctx = TokenContext::GetGlobalContext();
 			
-			if(ctx->Bind()) {
-				struct ep_key_info *key_info[32];
-				size_t len = 0;
+					if(ctx->Bind()) {
+						struct ep_key_info *key_info[32];
+						size_t len = 0;
 
-				bool ok = GetPrKeys(ctx, key_info, &len);
+						bool ok = GetPrKeys(ctx, key_info, &len);
 
-			browser->SendProcessMessage(PID_RENDERER, 
-				CreateKeysMsg(kMessageGetPrKeys, MsgId, ok, key_info, len));	
+						CefRefPtr<CefProcessMessage> response = CreateKeysMsg(kMessageGetPrKeys, MsgId, ok, key_info, len);	
 
-			for(size_t i = 0; i < len; ++i)
-				free(key_info[i]);
+						for(size_t i = 0; i < len; ++i)
+							free(key_info[i]);
 
-				ctx->Destroy();
-			}
+						ctx->Destroy();
+						return response;
+					}
+
+					return CreateKeysMsg(kMessageGetPrKeys, MsgId, false, NULL, 0);
+				}
+
+				IMPLEMENT_REFCOUNTING(GetPrKeysOp);
+			};
+
+			GetPrKeysOp::RunOp(new GetPrKeysOp(browser, MsgId.ToString().c_str()));
+			return true;
 		}
 	}
 
-	if(message_name == kMessageGetPubKeys) {
+	/*if(message_name == kMessageGetPubKeys) {
 		CefRefPtr<CefListValue> argList = message->GetArgumentList();			
 		if(argList->GetSize() > 0 && argList->GetType(0) == VTYPE_DICTIONARY) {		
 			
@@ -577,7 +673,7 @@ bool Token::OnProcessMessageReceived(
 				ctx->Destroy();
 			}
 		}
-	}
+	}*/
 
 	if(message_name == kMessageGetCerts) {
 		CefRefPtr<CefListValue> argList = message->GetArgumentList();			
@@ -586,22 +682,41 @@ bool Token::OnProcessMessageReceived(
 			CefRefPtr<CefDictionaryValue> args = argList->GetDictionary(0);
 			CefString MsgId = args->GetString(CefString("MsgId"));
 
-			CefRefPtr<TokenContext> ctx = TokenContext::GetGlobalContext();
+			class GetX509sOp : public Op {
+				const char *MsgId;
+			public:
+				GetX509sOp(CefRefPtr<CefBrowser> browser, const char *MsgId)
+					: Op(browser),
+					  MsgId(::strdup(MsgId))
+				{
+				}
+
+				CefRefPtr<CefProcessMessage> Do() const {
+					CefRefPtr<TokenContext> ctx = TokenContext::GetGlobalContext();
 			
-			if(ctx->Bind()) {
-				struct ep_key_info *key_info[32];
-				size_t len = 0;
+					if(ctx->Bind()) {
+						struct ep_key_info *key_info[32];
+						size_t len = 0;
 
-				bool ok = GetCerts(ctx, key_info, &len);
+						bool ok = GetCerts(ctx, key_info, &len);
 
-			browser->SendProcessMessage(PID_RENDERER, 
-				CreateKeysMsg(kMessageGetCerts, MsgId, ok, key_info, len));	
+						CefRefPtr<CefProcessMessage> response = CreateKeysMsg(kMessageGetCerts, MsgId, ok, key_info, len);	
 
-			for(size_t i = 0; i < len; ++i)
-				free(key_info[i]);
+						for(size_t i = 0; i < len; ++i)
+							free(key_info[i]);
 
-				ctx->Destroy();
-			}
+						ctx->Destroy();
+						return response;
+					}
+
+					return CreateKeysMsg(kMessageGetCerts, MsgId, false, NULL, 0);
+				}
+
+				IMPLEMENT_REFCOUNTING(GetX509sOp);
+			};
+
+			GetX509sOp::RunOp(new GetX509sOp(browser, MsgId.ToString().c_str()));
+			return true;
 		}
 	}
 
@@ -613,24 +728,45 @@ bool Token::OnProcessMessageReceived(
 			CefString MsgId = args->GetString(CefString("MsgId"));
 			CefString id = args->GetString(CefString("id"));
 
-			CefRefPtr<TokenContext> ctx = TokenContext::GetGlobalContext();
+			class GetX509Op : public Op {
+				const char *MsgId;
+				const char *id;
+			public:
+				GetX509Op(CefRefPtr<CefBrowser> browser, const char *MsgId, const char *id)
+					: Op(browser),
+					  MsgId(::strdup(MsgId)),
+					  id(::strdup(id))
+				{
+				}
+
+				CefRefPtr<CefProcessMessage> Do() const {
+					CefRefPtr<TokenContext> ctx = TokenContext::GetGlobalContext();
 			
-			if(ctx->Bind()) {
-				ep_key_info key_info;
+					if(ctx->Bind()) {
+						ep_key_info key_info;
 
-				bool ok = GetCert(ctx, id.ToString().c_str(), &key_info);
+						bool ok = GetCert(ctx, id, &key_info);						
 
-			browser->SendProcessMessage(PID_RENDERER, 
-				CreateKeyMsg(kMessageGetCert, MsgId, ok, key_info));	
+						CefRefPtr<CefProcessMessage> response = CreateKeyMsg(kMessageGetCert, MsgId, ok, key_info);	
 
-				if(key_info.key.cert.data) free(key_info.key.cert.data);
+						if(key_info.key.cert.data) free(key_info.key.cert.data);
 
-				ctx->Destroy();
-			}
+						ctx->Destroy();
+						return response;
+					}		
+
+					return CreateMsg(kMessageGetCert, MsgId, false);
+				}
+
+				IMPLEMENT_REFCOUNTING(GetX509Op);
+			};
+
+			GetX509Op::RunOp(new GetX509Op(browser, MsgId.ToString().c_str(), id.ToString().c_str()));
+			return true;
 		}
 	}
 
-	if(message_name == kMessageGetPubkey) {
+	/*if(message_name == kMessageGetPubkey) {
 		CefRefPtr<CefListValue> argList = message->GetArgumentList();			
 		if(argList->GetSize() > 0 && argList->GetType(0) == VTYPE_DICTIONARY) {		
 			
@@ -654,9 +790,9 @@ bool Token::OnProcessMessageReceived(
 				ctx->Destroy();
 			}
 		}
-	}
+	}*/
 
-	if(message_name == kMessageGetPrkey) {
+	/*if(message_name == kMessageGetPrkey) {
 		CefRefPtr<CefListValue> argList = message->GetArgumentList();			
 		if(argList->GetSize() > 0 && argList->GetType(0) == VTYPE_DICTIONARY) {		
 			
@@ -677,7 +813,7 @@ bool Token::OnProcessMessageReceived(
 				ctx->Destroy();
 			}
 		}
-	}
+	}*/
 
 	if(message_name == kMessageImportPrKey) {
 		CefRefPtr<CefListValue> argList = message->GetArgumentList();			
@@ -688,53 +824,83 @@ bool Token::OnProcessMessageReceived(
 			
 			CefString format = args->GetString(CefString("format"));			
 			CefString label = args->GetString(CefString("label"));
-			CefString paraphrase = args->GetString(CefString("paraphrase"));
+			CefString passphrase = args->GetString(CefString("passphrase"));
 			CefString authData = args->GetString(CefString("authData"));
 
-			CefString path = args->GetString(CefString("path"));
+			CefString data = args->GetString(CefString("data"));	
+			size_t data_len = args->GetInt(CefString("data_len"));	
 
-			CefRefPtr<TokenContext> ctx = TokenContext::GetGlobalContext();
+			//CefString path = args->GetString(CefString("path"));
+
+			class ImportPrKeyOp : public Op {
+				const char *MsgId;
+				const char *data;
+				size_t data_len;
+				const char *format;
+				const char *label;
+				const char *passphrase;
+				const char *authData;
+			public:
+				ImportPrKeyOp(CefRefPtr<CefBrowser> browser, const char *MsgId, const char *data, size_t data_len, const char *label, const char *format, const char *passphrase, const char *authData)
+					: Op(browser),
+					  MsgId(::strdup(MsgId)),
+					  data(::strdup(data)),
+					  data_len(data_len),
+					  format(::strdup(format)),
+					  label(::strdup(label)),
+					  passphrase(::strdup(passphrase)),
+					  authData(::strdup(authData))
+				{
+				}
+
+				CefRefPtr<CefProcessMessage> Do() const {
+					CefRefPtr<TokenContext> ctx = TokenContext::GetGlobalContext();
 			
-			if(ctx->Bind()) {
+					if(ctx->Bind()) {
+						bool r = ImportPrKey(ctx, data, data_len, label, format, passphrase, authData);
+						ctx->Destroy();
 
-				CefString data = args->GetString(CefString("data"));	
-				size_t data_len = args->GetInt(CefString("data_len"));	
+						// needs: id, authid
+						return CreateMsg(kMessageImportPrKey, MsgId, r);						
+					}
 
-				// needs: id, authid
-			browser->SendProcessMessage(PID_RENDERER, 
-				CreateMsg(kMessageImportPrKey, MsgId, ImportPrKey(ctx, data.ToString().c_str(), data_len, label.ToString().c_str(), format.ToString().c_str(), paraphrase.ToString().c_str(), authData.ToString().c_str())));			
+					return CreateMsg(kMessageImportPrKey, MsgId, false);
+				}
 
-				ctx->Destroy();
-			}
+				IMPLEMENT_REFCOUNTING(ImportPrKeyOp);
+			};
+
+			ImportPrKeyOp::RunOp(new ImportPrKeyOp(browser, MsgId.ToString().c_str(), data.ToString().c_str(), data_len, label.ToString().c_str(), format.ToString().c_str(), passphrase.ToString().c_str(), authData.ToString().c_str()));
+			return true;
 		}
 	}
 
-	if(message_name == kMessageImportPubKey) {
-		CefRefPtr<CefListValue> argList = message->GetArgumentList();			
-		if(argList->GetSize() > 0 && argList->GetType(0) == VTYPE_DICTIONARY) {		
-			
-			CefRefPtr<CefDictionaryValue> args = argList->GetDictionary(0);
-			CefString MsgId = args->GetString(CefString("MsgId"));			
-			
-			CefString format = args->GetString(CefString("format"));			
-			CefString label = args->GetString(CefString("label"));
-			CefString authData = args->GetString(CefString("authData"));
+	//if(message_name == kMessageImportPubKey) {
+	//	CefRefPtr<CefListValue> argList = message->GetArgumentList();			
+	//	if(argList->GetSize() > 0 && argList->GetType(0) == VTYPE_DICTIONARY) {		
+	//		
+	//		CefRefPtr<CefDictionaryValue> args = argList->GetDictionary(0);
+	//		CefString MsgId = args->GetString(CefString("MsgId"));			
+	//		
+	//		CefString format = args->GetString(CefString("format"));			
+	//		CefString label = args->GetString(CefString("label"));
+	//		CefString authData = args->GetString(CefString("authData"));
 
-			CefRefPtr<TokenContext> ctx = TokenContext::GetGlobalContext();
-			
-			if(ctx->Bind()) {
+	//		CefRefPtr<TokenContext> ctx = TokenContext::GetGlobalContext();
+	//		
+	//		if(ctx->Bind()) {
 
-				CefString data = args->GetString(CefString("data"));
-				size_t data_len = args->GetInt(CefString("data_len"));
+	//			CefString data = args->GetString(CefString("data"));
+	//			size_t data_len = args->GetInt(CefString("data_len"));
 
-				// needs: id
-			browser->SendProcessMessage(PID_RENDERER, 
-				CreateMsg(kMessageImportPubKey, MsgId, ImportPubKey(ctx, data.ToString().c_str(), data_len, label.ToString().c_str(), format.ToString().c_str(), authData.ToString().c_str())));			
+	//			// needs: id
+	//		browser->SendProcessMessage(PID_RENDERER, 
+	//			CreateMsg(kMessageImportPubKey, MsgId, ImportPubKey(ctx, data.ToString().c_str(), data_len, label.ToString().c_str(), format.ToString().c_str(), authData.ToString().c_str())));			
 
-				ctx->Destroy();
-			}
-		}
-	}
+	//			ctx->Destroy();
+	//		}
+	//	}
+	//}
 
 	if(message_name == kMessageImportCert) {
 		CefRefPtr<CefListValue> argList = message->GetArgumentList();			
@@ -747,19 +913,46 @@ bool Token::OnProcessMessageReceived(
 			CefString label = args->GetString(CefString("label"));
 			CefString authData = args->GetString(CefString("authData"));
 
-			CefRefPtr<TokenContext> ctx = TokenContext::GetGlobalContext();
+			CefString data = args->GetString(CefString("data"));	
+			size_t data_len = args->GetInt(CefString("data_len"));	
+
+			class ImportX509Op : public Op {
+				const char *MsgId;
+				const char *data;
+				size_t data_len;
+				const char *format;
+				const char *label;
+				const char *authData;
+			public:
+				ImportX509Op(CefRefPtr<CefBrowser> browser, const char *MsgId, const char *data, size_t data_len, const char *label, const char *format, const char *authData)
+					: Op(browser),
+					  MsgId(::strdup(MsgId)),
+					  data(::strdup(data)),
+					  data_len(data_len),
+					  format(::strdup(format)),
+					  label(::strdup(label)),
+					  authData(::strdup(authData))
+				{
+				}
+
+				CefRefPtr<CefProcessMessage> Do() const {
+					CefRefPtr<TokenContext> ctx = TokenContext::GetGlobalContext();
 			
-			if(ctx->Bind()) {
+					if(ctx->Bind()) {
+						bool r = ImportCert(ctx, data, data_len, label, format, authData);
+						ctx->Destroy();
 
-				CefString data = args->GetString(CefString("data"));	
-				size_t data_len = args->GetInt(CefString("data_len"));	
+						return CreateMsg(kMessageImportCert, MsgId, r);				
+					}
 
-				// needs: id
-			browser->SendProcessMessage(PID_RENDERER, 
-				CreateMsg(kMessageImportCert, MsgId, ImportCert(ctx, data.ToString().c_str(), data_len, label.ToString().c_str(), format.ToString().c_str(), authData.ToString().c_str())));			
+					return CreateMsg(kMessageImportCert, MsgId, false);
+				}
 
-				ctx->Destroy();
-			}
+				IMPLEMENT_REFCOUNTING(ImportX509Op);
+			};
+
+			ImportX509Op::RunOp(new ImportX509Op(browser, MsgId.ToString().c_str(), data.ToString().c_str(), data_len, label.ToString().c_str(), format.ToString().c_str(), authData.ToString().c_str()));
+			return true;
 		}
 	}
 
@@ -773,18 +966,39 @@ bool Token::OnProcessMessageReceived(
 			CefString label = args->GetString(CefString("label"));
 			CefString authData = args->GetString(CefString("authData"));
 
-			CefRefPtr<TokenContext> ctx = TokenContext::GetGlobalContext();
+			class GenKeyOp : public Op {
+				const char *MsgId;
+				const char *label;
+				const char *authData;
+			public:
+				GenKeyOp(CefRefPtr<CefBrowser> browser, const char *MsgId, const char *label, const char *authData)
+					: Op(browser),
+					  MsgId(::strdup(MsgId)),
+					  label(::strdup(label)),
+					  authData(::strdup(authData))
+				{
+				}
+
+				CefRefPtr<CefProcessMessage> Do() const {
+					CefRefPtr<TokenContext> ctx = TokenContext::GetGlobalContext();
 			
-			if(ctx->Bind()) {
+					if(ctx->Bind()) {
 
-				char *id = NULL;
-				bool ok = GenKey(ctx, (char *) label.ToString().c_str(), authData.ToString().c_str(), &id);
+						char *id = NULL;
+						bool ok = GenKey(ctx, (char *) label, authData, &id);
 
-			browser->SendProcessMessage(PID_RENDERER, 
-				CreateKeyGenMsg(kMessageGenKey, MsgId, id, ok));		
+						ctx->Destroy();
+						return CreateKeyGenMsg(kMessageGenKey, MsgId, id, ok);							
+					}
 
-				ctx->Destroy();
-			}
+					return CreateKeyGenMsg(kMessageGenKey, MsgId, NULL, false);
+				}
+
+				IMPLEMENT_REFCOUNTING(GenKeyOp);
+			};
+
+			GenKeyOp::RunOp(new GenKeyOp(browser, MsgId.ToString().c_str(), label.ToString().c_str(), authData.ToString().c_str()));
+			return true;
 		}
 	}
 
@@ -798,16 +1012,38 @@ bool Token::OnProcessMessageReceived(
 			CefString id = args->GetString(CefString("id"));
 			CefString authData = args->GetString(CefString("authData"));
 
-			CefRefPtr<TokenContext> ctx = TokenContext::GetGlobalContext();
+			class DelX509Op : public Op {
+				const char *MsgId;
+				const char *id;
+				const char *authData;
+			public:
+				DelX509Op(CefRefPtr<CefBrowser> browser, const char *MsgId, const char *id, const char *authData)
+					: Op(browser),
+					  MsgId(::strdup(MsgId)),
+					  id(::strdup(id)),
+					  authData(::strdup(authData))
+				{
+				}
+
+				CefRefPtr<CefProcessMessage> Do() const {
+					CefRefPtr<TokenContext> ctx = TokenContext::GetGlobalContext();
 			
-			if(ctx->Bind()) {
+					if(ctx->Bind()) {
+						bool r = DelX509(ctx, id, authData);
+						ctx->Destroy();
 
-				// needs: id
-			browser->SendProcessMessage(PID_RENDERER, 
-				CreateMsg(kMessageDelX509, MsgId, DelX509(ctx, id.ToString().c_str(), authData.ToString().c_str())));			
+						// needs: id
+						return CreateMsg(kMessageDelX509, MsgId, r);									
+					}
 
-				ctx->Destroy();
-			}
+					return CreateMsg(kMessageDelX509, MsgId, false);							
+				}
+
+				IMPLEMENT_REFCOUNTING(DelX509Op);
+			};
+
+			DelX509Op::RunOp(new DelX509Op(browser, MsgId.ToString().c_str(), id.ToString().c_str(), authData.ToString().c_str()));
+			return true;
 		}
 	}
 
@@ -821,16 +1057,38 @@ bool Token::OnProcessMessageReceived(
 			CefString id = args->GetString(CefString("id"));
 			CefString authData = args->GetString(CefString("authData"));
 
-			CefRefPtr<TokenContext> ctx = TokenContext::GetGlobalContext();
+			class DelPrKeyOp : public Op {
+				const char *MsgId;
+				const char *id;
+				const char *authData;
+			public:
+				DelPrKeyOp(CefRefPtr<CefBrowser> browser, const char *MsgId, const char *id, const char *authData)
+					: Op(browser),
+					  MsgId(::strdup(MsgId)),
+					  id(::strdup(id)),
+					  authData(::strdup(authData))
+				{
+				}
+
+				CefRefPtr<CefProcessMessage> Do() const {
+					CefRefPtr<TokenContext> ctx = TokenContext::GetGlobalContext();
 			
-			if(ctx->Bind()) {
+					if(ctx->Bind()) {
+						bool r = DelPrKey(ctx, id, authData);
+						ctx->Destroy();
 
-				// needs: id
-			browser->SendProcessMessage(PID_RENDERER, 
-				CreateMsg(kMessageDelPrKey, MsgId, DelPrKey(ctx, id.ToString().c_str(), authData.ToString().c_str())));			
+						// needs: id
+						return CreateMsg(kMessageDelPrKey, MsgId, r);									
+					}
 
-				ctx->Destroy();
-			}
+					return CreateMsg(kMessageDelPrKey, MsgId, false);							
+				}
+
+				IMPLEMENT_REFCOUNTING(DelPrKeyOp);
+			};
+
+			DelPrKeyOp::RunOp(new DelPrKeyOp(browser, MsgId.ToString().c_str(), id.ToString().c_str(), authData.ToString().c_str()));
+			return true;
 		}
 	}
 
@@ -861,7 +1119,9 @@ bool Token::OnProcessMessageReceived(
 
 				ctx->Destroy();
 			}
-		}
+
+			return true;
+		}		
 	}
 
 	if(message_name == kMessageExportX509) {
@@ -886,6 +1146,8 @@ bool Token::OnProcessMessageReceived(
 
 				ctx->Destroy();
 			}
+
+			return true;
 		}
 	}
 
@@ -894,6 +1156,7 @@ bool Token::OnProcessMessageReceived(
 #if defined(WIN32)
 
 		::SetTimer(handler->GetMainHwnd(), IDM_BROWSER_SHOW, 1500, NULL);
+		return true;
 
 #endif		
 		
@@ -902,12 +1165,12 @@ bool Token::OnProcessMessageReceived(
 	return false;
 }
 
-bool Token::GetPubKeys(CefRefPtr<TokenContext> ctx, ep_key_info **keys, size_t *len) {	
-	if((*len = ::util::ep_token_read_all_pubkeys(ctx, keys, 32)) < 0) 
-		return false; 
-	else 
-		return true;
-}
+//bool Token::GetPubKeys(CefRefPtr<TokenContext> ctx, ep_key_info **keys, size_t *len) {	
+//	if((*len = ::util::ep_token_read_all_pubkeys(ctx, keys, 32)) < 0) 
+//		return false; 
+//	else 
+//		return true;
+//}
 
 bool Token::GetCerts(CefRefPtr<TokenContext> ctx, ep_key_info **keys, size_t *len) {
 	if((*len = ::util::ep_token_read_all_certs(ctx, keys, 32)) < 0) 
@@ -923,13 +1186,13 @@ bool Token::GetPrKeys(CefRefPtr<TokenContext> ctx, ep_key_info **keys, size_t *l
 		return true;
 }
 
-bool Token::GetPubKey(CefRefPtr<TokenContext> ctx, const char *id, ep_key_info *key, const char *pin) {
-	return ::util::ep_token_read_pubkey(ctx, key, id, (unsigned char *) pin) < 0 ? false : true ;
-}
+//bool Token::GetPubKey(CefRefPtr<TokenContext> ctx, const char *id, ep_key_info *key, const char *pin) {
+//	return ::util::ep_token_read_pubkey(ctx, key, id, (unsigned char *) pin) < 0 ? false : true ;
+//}
 
-bool Token::GetPrKey(CefRefPtr<TokenContext> ctx, const char *id, ep_key_info *key) {
-	return ::util::ep_token_read_prkey(ctx, key, id) < 0 ? false : true ;
-}
+//bool Token::GetPrKey(CefRefPtr<TokenContext> ctx, const char *id, ep_key_info *key) {
+//	return ::util::ep_token_read_prkey(ctx, key, id) < 0 ? false : true ;
+//}
 
 bool Token::GetCert(CefRefPtr<TokenContext> ctx, const char *id, ep_key_info *key) {
 	return ::util::ep_token_read_certificate(ctx, key, id) < 0 ? false : true ;
@@ -943,9 +1206,9 @@ bool Token::ImportPrKey(CefRefPtr<TokenContext> ctx, const char *data, size_t le
 	return ::util::ep_store_private_key(ctx, data, len, label, format, (char *)passphrase, authData) < 0 ? false : true;
 }
 
-bool Token::ImportPubKey(CefRefPtr<TokenContext> ctx, const char *data, size_t len, const char *label, const char *format, const char *authData) {
-	return ::util::ep_store_public_key(ctx, data, len, label, format, authData) < 0 ? false : true;
-}
+//bool Token::ImportPubKey(CefRefPtr<TokenContext> ctx, const char *data, size_t len, const char *label, const char *format, const char *authData) {
+//	return ::util::ep_store_public_key(ctx, data, len, label, format, authData) < 0 ? false : true;
+//}
 
 bool Token::ImportCert(CefRefPtr<TokenContext> ctx, const char *data, size_t len, const char *label, const char *format, const char *authData) {
 	return ::util::ep_store_certificate(ctx, data, len, label, format, authData) < 0 ? false : true;
@@ -976,9 +1239,8 @@ CefRefPtr<CefProcessMessage> CreateKeysMsg(const std::string &key, const std::st
 	args->SetString("MsgId", id);
 	args->SetBool("ok", ok);
 
-	if(ok) {
-		CefRefPtr<CefListValue> keys = CefListValue::Create();
-
+	CefRefPtr<CefListValue> keys = CefListValue::Create();
+	if(ok)		
 		for(unsigned int i = 0; i < len; ++i) {
 			ep_key_info *key = key_info[i];
 			CefRefPtr<CefDictionaryValue> keyobj = CefDictionaryValue::Create();
@@ -1004,10 +1266,8 @@ CefRefPtr<CefProcessMessage> CreateKeysMsg(const std::string &key, const std::st
 			keyobj->SetBool("native", key->native <= 0?false:true);	
 
 			keys->SetDictionary(i, keyobj);
-		}
-
-		args->SetList("keys", keys);	
-	}
+		}			
+	args->SetList("keys", keys);
 
 	response->GetArgumentList()->SetDictionary(0, args);
 	return response;

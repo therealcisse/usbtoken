@@ -62,6 +62,8 @@ class App extends Spine.Controller
   constructor: ->
     super
 
+    @lang = app.GetCurrentLanguage()
+
     Façade.Load()
 
     app.setMessageCallback 'debug', ([response]) ->
@@ -70,7 +72,7 @@ class App extends Spine.Controller
     app.setMessageCallback 'token_removed', ([response]) =>
       Façade.ShowIfHidden()
       
-      doLoad = => if @currentView.token_removed then @currentView.token_removed() else @delay @reload
+      doLoad = => if @currentView?.token_removed then @currentView.token_removed() else @delay @reload
       
       if Façade.reader 
         # if Façade.reader is response.reader      
@@ -82,7 +84,7 @@ class App extends Spine.Controller
         doLoad()
 
     app.setMessageCallback 'token_inserted', ([response]) =>
-      doLoad = => if @currentView.token_removed then @currentView.token_inserted() else @delay @reload
+      doLoad = => if @currentView?.token_removed then @currentView.token_inserted() else @delay @reload
 
       unless Façade.reader and Façade.reader is response.reader
         Façade.reader = response.reader
@@ -96,7 +98,7 @@ class App extends Spine.Controller
   
       '/login'              :   -> @setStatus(Token.AuthRequired)
       
-      '/erase'              :   @routeErase
+      # '/erase'              :   @routeErase
 
       '/gen-csr/:id'        :   (params) -> @ifLoggedIn() => @become @any(KeyMgr.GenForm.GetX509ReqInfo, controller: @, id: params.id, fn: @doGenX509Req)
       
@@ -118,7 +120,9 @@ class App extends Spine.Controller
 
       '/init'               :   -> @become @any(Init, app: @, fn: @routeInit)
       
-      '/setpin'             :   (params) -> @become @setpw(type: GetPass.PIN, fn: @routeSetPIN, controller: @)      
+      # '/setpin'             :   (params) -> @become @setpw(type: GetPass.PIN, fn: @routeSetPIN, controller: @)      
+      
+      '/SetLang/:langId'    :   @routeSetLang      
 
       '/'                   :   @routeDetectOne
 
@@ -129,7 +133,7 @@ class App extends Spine.Controller
 
     Spine.Route.setup()
 
-  reload: -> if document.location.hash in [ '#/', '' ] then document.location.reload() else @navigate('/')
+  reload: -> document.location = '/'
 
   ifLoggedIn: ->
     (fn) =>
@@ -223,12 +227,12 @@ class App extends Spine.Controller
         status: status
 
     switch status
-      when Token.Locked   then ret.alert = 'Votre PUK a ete bloque, veuillez re-initialisez votre support.' if not alert
-      when Token.Blank    then ret.alert = 'Le support doit etre initialize.' if not alert
-      when Token.Absent   then ret.alert = "Aucun supporte detecte, veuillez inserer votre supporte physique." if not alert
-      when Token.ReadOnly then ret.alert = "Le supporte est en mode lecture." if not alert
-      when Token.InUse    then ret.alert = "Le supporte est en cours d'utilisation." if not alert
-      when null           then ret.info  = 'Detection en cour, veuillez inserer votre support physique.' if not info
+      when Token.Locked   then ret.alert = app.$T('puk_blocked') if not alert
+      when Token.Blank    then ret.alert = app.$T('msg_init_token') if not alert
+      when Token.Absent   then ret.alert = app.$T('msg_no_token') if not alert
+      when Token.ReadOnly then ret.alert = app.$T("msg_readonly") if not alert
+      when Token.InUse    then ret.alert = app.$T('msg_in_use') if not alert
+      when null           then ret.info  = app.$T('msg_detecting') if not info
 
     ret
 
@@ -254,7 +258,7 @@ class App extends Spine.Controller
     args:
       app: @
       fn: @routeUnblock
-    alert: 'Votre PIN a ete bloque, veuillez entrez votre PUK.'
+    alert: app.$T('msg_pin_blocked')
 
   any: (Clss, args) ->
     Clss: Clss
@@ -290,7 +294,7 @@ class App extends Spine.Controller
         @currentView.rendered?()
 
   confirm: (fn, hidden = -> console.log('hidden');) ->
-    msg: 'Are you sure?'
+    msg: app.$T('msg_are_you_sure')
     hidden: hidden
     buttons: [
       {
@@ -358,6 +362,16 @@ class App extends Spine.Controller
 
   # Routes
 
+  routeSetLang: ({langId: $langId}) =>
+
+    unless @lang is $LANG['from_codes'][$langId]
+      
+      Façade.SetLang $langId, (ok) =>
+
+        if ok
+          
+          @reload()
+
   routeDetectOne: =>
     @log '@routeDetectOne'
     # @become @start()
@@ -368,7 +382,7 @@ class App extends Spine.Controller
     @log '@routeGetLabel'
 
     #TODO (save personal info)      
-    @delay (=> @navigate('#/keys'); @delay((-> @info(msg: 'Your information was successfully saved.', closable: true)), 100))
+    @delay (=> @navigate('#/keys'); @delay((-> @info(msg: app.$T('success_while_x_x').Format(app.$T('information'), app.$T('saved')), closable: true)), 100))
 
   doGenX509Req: (params) ->
     @log "doGenX509Req: #{params}"
@@ -381,26 +395,26 @@ class App extends Spine.Controller
 
       if ok 
 
-        @controller.info msg: "La requete a ete genere avec success.", closable: true, duration: 1500
+        @controller.info msg: app.$T('success_while_x_x').Format(app.$T('req'), app.$T('generated')), closable: true, duration: 1500
         @delay (=> @navigate "/"), 1500
         return false
 
-      @controller.alert msg: "Il y a eu une erreur, essayer de nouveau.", closable: true
+      @controller.alert msg: app.$T('msg_err'), closable: true
       @controller.doGenX509Req.err?()
 
-  routeInitPIN: (params) =>
-    @log '@routeInitPIN'    
+  # routeInitPIN: (params) =>
+  #   @log '@routeInitPIN'    
 
-    Façade.InitPIN params.pin, params.puk, (err) =>
+  #   Façade.InitPIN params.pin, params.puk, (err) =>
       
-      if ok
+  #     if ok
         
-        @delay (=> @info(msg: 'Your PIN was successfully changed.', closable: true); @delay((=> @navigate '#/keys'), 1000))
+  #       @delay (=> @info(msg: app.$T('success_while_x_x').Format('PIN', app.$T('changed')), closable: true); @delay((=> @navigate '#/keys'), 1000))
         
-        return false
+  #       return false
 
-      @routeInitPIN.err?()
-      @alert(msg: 'An unknown error occured, please try again.', closable: true)
+  #     @routeInitPIN.err?()
+  #     @alert(msg: app.$T('msg_err'), closable: true)
 
   routeChangePIN: (params) =>
     @log '@routeChangePIN'    
@@ -409,12 +423,12 @@ class App extends Spine.Controller
       
       if ok
 
-        @delay (=> @info(msg: 'Your PIN was successfully changed.', closable: true); @delay((=> @navigate '#/keys'), 1000))
+        @delay (=> @info(msg: app.$T('success_while_x_x').Format('PIN', app.$T('changed')), closable: true); @delay((=> @navigate '#/keys'), 1000))
         
         return false
 
       @routeChangePIN.err?()
-      @alert(msg: 'An unknown error occured, please try again.', closable: true)
+      @alert(msg: app.$T('msg_err'), closable: true)
 
   routeLogin: (params) =>
     @log '@routeLogin'
@@ -433,11 +447,11 @@ class App extends Spine.Controller
 
         if err <= 3
         
-          @alert msg: "PIN invalide, il ne vous reste que #{err} essaie#{if err > 1 then 's' else ''} avant le blockage de votre PIN.", closable: true
+          @alert msg: (if err > 1 then app.$T('msg_invalid_pin_login_counts').Format(err) else app.$T('msg_invalid_pin_login_count')), closable: true
 
         else 
 
-          @alert msg: "PIN invalide, essayer encore.", closable: true
+          @alert msg: app.$T('msg_invalid_pin_login'), closable: true
 
         @routeLogin.err?()
 
@@ -449,28 +463,28 @@ class App extends Spine.Controller
     Façade.InitToken pin, puk, label, (ok) =>
 
       if ok
-        @delay (=> @info(msg: 'Your token was successfully initialized.', closable: true); @delay( (=> @navigate('#/')), 1000))
+        @delay (=> @info(msg: app.$T('success_while_x_x').Format(app.$T('token'), app.$T('initialized')), closable: true); @delay( (=> @navigate('#/')), 1000))
 
         # show msg
         return false       
 
       @routeInit.err?()
-      @alert(msg: 'An unknown error occured, please try again.', closable: true)
+      @alert(msg: app.$T('msg_err'), closable: true)
       @delay (=> @navigate "/"), 700
   
-  routeErase: ->
-    @log '@routeErase'
+  # routeErase: ->
+  #   @log '@routeErase'
 
-    df = app.Loading()
-    Façade.EraseToken (ok) =>
-      df()
+  #   df = app.Loading()
+  #   Façade.EraseToken (ok) =>
+  #     df()
 
-      if ok
-        @delay (=> @info(msg: 'Your token was successfully erase . . .', closable: true); @delay(-> @navigate('/'))), 1000
-        # show msg
-        return false  
+  #     if ok
+  #       @delay (=> @info(msg: app.$T('success_while_x_x').Format(app.$T('token'), app.$T('erased')), closable: true); @delay(-> @navigate('/'))), 1000
+  #       # show msg
+  #       return false  
 
-      @alert(msg: 'An unknown error occured, please try again.', closable: true)
+  #     @alert(msg: app.$T('msg_err'), closable: true)
 
   routeLogout: ->
     @log '@routeLogout'
@@ -478,7 +492,7 @@ class App extends Spine.Controller
     Façade.Logout (err) =>
 
       if err
-        @delay(=> @info(msg: 'You have successfully logged out.', closable: true); @delay( (=> @navigate('/')), 200))        
+        @delay(=> @info(msg: app.$T('msg_logged_out'), closable: true); @delay( (=> @navigate('/')), 200))        
 
         # show msg
         return false
@@ -493,13 +507,13 @@ class App extends Spine.Controller
     Façade.Unblock params.puk, params.pin, (ok) =>
       
       if ok
-        @delay (=> @info(msg: 'You have successfully unblocked.', closable: true); @delay( (=> @navigate('/')), 1000))        
+        @delay (=> @info(msg: app.$T('success_while_x_x').Format(app.$T('token'), app.$T('unblocked')), closable: true); @delay( (=> @navigate('/')), 1000))        
 
         # show msg
         return false
 
       @routeUnblock.err?()
-      @delay (=> @navigate('/'); @delay( (=> @alert(msg: 'An unknown error occured, please try again.', closable: true)), 1000   ))
+      @delay (=> @navigate('/'); @delay( (=> @alert(msg: app.$T('msg_err'), closable: true)), 1000   ))
 
       # if err >= 0
 

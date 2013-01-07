@@ -19,7 +19,7 @@ class Login extends Spine.Controller
       @submitBtn.enable()
       @delay => @pin[0].focus()      
 
-    @delay -> Façade.SetWindowText('Login')
+    @delay -> Façade.SetWindowText(app.$T('title_login'))
 
   events:
     'submit form'         :   'submit'
@@ -62,7 +62,7 @@ class Login extends Spine.Controller
       return false
 
     df = app.Loading()       
-    @delay (=> @doLogin(params); df())
+    @delay (=> @doLogin(params).done df)
 
     false
 
@@ -79,6 +79,6 @@ class Login extends Spine.Controller
 
   @valid: (params) ->  
     Façade.GetPINOpts (opts) => 
-      return "PIN must be between #{opts['minlen']} and #{opts['maxlen']} caracters." unless params.pin.length >= opts['minlen'] and params.pin.length <= opts['maxlen'] 
+      return app.$T('invalid_pin_length').Format(opts['minlen'], opts['maxlen']) unless params.pin.length >= opts['minlen'] and params.pin.length <= opts['maxlen'] 
 
 module.exports = Login

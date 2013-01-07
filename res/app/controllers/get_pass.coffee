@@ -39,9 +39,9 @@ class GetPass extends Spine.Controller
         when GetPass.PIN
 
           {  
-            title: title or 'Enter PIN',
+            title: title or app.$T('enter_pin'),
             label: 'PIN',
-            actionLabel: 'Ok',
+            actionLabel: app.$T('ok'),
             minLength : opts['minlen'],
             maxLength : opts['maxlen']
             hasCancel: self.controller.hasCancel
@@ -50,9 +50,9 @@ class GetPass extends Spine.Controller
         when GetPass.PUK
 
           {
-            title: title or 'Enter PUK',
+            title: title or app.$T('enter_puk'),
             label: 'PUK',
-            actionLabel: 'Ok',
+            actionLabel: app.$T('ok'),
             minLength : opts['minlen'],
             maxLength : opts['maxlen']
             hasCancel: self.controller.hasCancel
@@ -80,13 +80,13 @@ class GetPass extends Spine.Controller
 
         when GetPass.PIN
 
-          return "PIN must be between #{opts['minlen']} and #{opts['maxlen']} caracters." unless params.pw.length >= opts['minlen'] and params.pw.length <= opts['maxlen']  
-          return "The PIN confirmation does not match." unless params.pw is params.pw_confirm  
+          return app.$T('invalid_pin_length').Format(opts['minlen'], opts['maxlen']) unless params.pw.length >= opts['minlen'] and params.pw.length <= opts['maxlen']  
+          return app.$T('confirmation_dont_match') unless params.pw is params.pw_confirm  
 
         when GetPass.PUK
 
-          return "PUK must be between #{opts['minlen']} and #{opts['maxlen']} caracters." unless params.pw.length >= opts['minlen'] and params.pw.length <= opts['maxlen']  
-          return "The PUK confirmation does not match." unless params.pw is params.pw_confirm  
+          return app.$T('invalid_puk_length').Format(opts['minlen'], opts['maxlen']) unless params.pw.length >= opts['minlen'] and params.pw.length <= opts['maxlen']  
+          return app.$T('confirmation_dont_match') unless params.pw is params.pw_confirm  
 
   cancel: (evt) ->
     evt.preventDefault()

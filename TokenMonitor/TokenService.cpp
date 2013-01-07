@@ -17,6 +17,8 @@
 * WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A PARTICULAR PURPOSE.
 \***************************************************************************/
 
+#include "inc\config.h"
+
 #include <windows.h>
 
 #include <commdlg.h>
@@ -48,7 +50,7 @@
 // 
 
 // Internal name of the service
-#define SERVICE_NAME             L"epUSBToken"
+#define SERVICE_NAME             L"epTokend"
 
 // Displayed name of the service
 #define SERVICE_DISPLAY_NAME     L"Epsilon USB Token Manager Service Monitor"
@@ -69,11 +71,18 @@
 // The password to the service account name
 #define SERVICE_PASSWORD         L""
 
-// The path to the Epsilon Token Manager Binary
-#define TOKEN_MANAGER_CMD         L"D:\\Users\\amadou\\Documents\\Visual\ Studio\ 2010\\Projects\\cef3\\Debug\\usbtoken.exe"
+//#if NTDDI_VERSION >= NTDDI_VISTA
 
+#define APP_CMD L"C:\\Program\ Files\ (x86)\\Epsilon\\Epsilon\ Token\ Manager\\epToken.exe"
+//#define APP_CMD L"D:\\Users\\amadou\\Documents\\Visual\ Studio\ 2010\\Projects\\cef3\\Release\\epToken.exe"
 
-// #define TOKEN_MANAGER_PIPE         L"\\\\.\\pipe\\epUSBToken"
+//#else
+
+#define APP_CMD_XP L"C:\\Program\ Files\\Epsilon\\Epsilon\ Token\ Manager\\epToken.exe"
+//#define APP_CMD_XP L"D:\\Users\\amadou\\Documents\\Visual\ Studio\ 2010\\Projects\\cef3\\Release\\epToken.exe"
+
+//#endif
+
 
 #define DESKTOP_ALL (DESKTOP_READOBJECTS | DESKTOP_CREATEWINDOW | \
                     DESKTOP_CREATEMENU | DESKTOP_HOOKCONTROL | DESKTOP_JOURNALRECORD | \
@@ -90,8 +99,14 @@
 
 HANDLE GetCurrentUserToken();
 BOOL RunTokenMgr(LPWSTR, LPPROCESS_INFORMATION);
-// HANDLE CreatePipe();
-BOOL MyPostQuitMessage(HANDLE, UINT = 0x0);
+
+#if NTDDI_VERSION < NTDDI_VISTA
+
+BOOL MyPostQuitMessage(UINT = 0x0);
+
+#endif
+
+BOOL IsWinVistaOrLater();
 
 BOOL AddAceToWindowStation(HWINSTA, PSID);
 
@@ -125,7 +140,7 @@ int wmain(int argc, wchar_t *argv[])
 
     if (argc > 1) 
     { 
-		size_t index  = (*argv[1] == L'-' || (*argv[1] == L'/')) ? ((*(argv[1] + 1) == L'-') ? 2 : 1) : 0;
+	     	size_t index  = (*argv[1] == L'-' || (*argv[1] == L'/')) ? ((*(argv[1] + 1) == L'-') ? 2 : 1) : 0;
 
         if (_wcsicmp(L"install", argv[1] + index) == 0) 
         { 
@@ -168,7 +183,7 @@ int wmain(int argc, wchar_t *argv[])
         wprintf(L" -install  to install the service.\n"); 
         wprintf(L" -remove   to remove the service.\n"); 
         wprintf(L" -start  to start the service.\n"); 
-        wprintf(L" -stop  to stop the service.\n"); 
+        wprintf(L" -stop  to stop the service.\n");
  
         TokenService svc(SERVICE_NAME); 
         if (!CServiceBase::Run(svc)) 
@@ -248,18 +263,18 @@ void TokenService::ServiceWorkerThread(void)
     WriteEventLogEntry(L"TokenService in ServiceWorkerThread", EVENTLOG_INFORMATION_TYPE);
 
     PROCESS_INFORMATION pi;
-    ZeroMemory(&pi, sizeof(PROCESS_INFORMATION));   
+    ZeroMemory(&pi, sizeof(PROCESS_INFORMATION)); 
 
-    if(RunTokenMgr(TOKEN_MANAGER_CMD, &pi)) {
+    if(RunTokenMgr(IsWinVistaOrLater() ? APP_CMD : APP_CMD_XP, &pi)) {
 
-       if (pi.hProcess != INVALID_HANDLE_VALUE) 
-       { 
-          WaitForSingleObject(pi.hProcess, INFINITE); // The process will be invalide if we close it.
-          CloseHandle(pi.hProcess); 
-       } 
+     if (pi.hProcess != INVALID_HANDLE_VALUE) 
+     { 
+      WaitForSingleObject(pi.hProcess, INFINITE); // The process will be invalide if we don't wait.
+      CloseHandle(pi.hProcess); 
+     } 
 
-       if (pi.hThread != INVALID_HANDLE_VALUE)
-          CloseHandle(pi.hThread);          
+     if (pi.hThread != INVALID_HANDLE_VALUE)
+      CloseHandle(pi.hThread);          
     }
 
     // while (!m_fStopping)
@@ -375,11 +390,18 @@ void TokenService::OnStop()
     WriteEventLogEntry(L"TokenService in OnStop", 
         EVENTLOG_INFORMATION_TYPE);
 
+#if NTDDI_VERSION < NTDDI_VISTA
+    MyPostQuitMessage();
+#endif
+
   // Indicate that the service is stopping and wait for the finish of the 
   // main service function (ServiceWorkerThread).
   m_fStopping = TRUE;
-  if (WaitForSingleObject(m_hStoppedEvent, INFINITE) != WAIT_OBJECT_0)
-    throw GetLastError();
+  WaitForSingleObject(m_hStoppedEvent, INFINITE);
+  // if (WaitForSingleObject(m_hStoppedEvent, INFINITE) != WAIT_OBJECT_0)
+	 //  exit(GetLastError()); //throw GetLastError();
+
+  // exit(0);
 }
 
 //
@@ -396,21 +418,28 @@ void TokenService::OnShutdown()
     WriteEventLogEntry(L"TokenService in OnShutdown", 
         EVENTLOG_INFORMATION_TYPE);
 
+#if NTDDI_VERSION < NTDDI_VISTA
+    MyPostQuitMessage();
+#endif
+
   // Indicate that the service is stopping and wait for the finish of the 
   // main service function (ServiceWorkerThread).
   m_fStopping = TRUE;
-  if (WaitForSingleObject(m_hStoppedEvent, INFINITE) != WAIT_OBJECT_0)
-    throw GetLastError();
+  WaitForSingleObject(m_hStoppedEvent, INFINITE);
+  // if (WaitForSingleObject(m_hStoppedEvent, INFINITE) != WAIT_OBJECT_0)
+  //   exit(GetLastError()); //throw GetLastError();
+
+  // exit(0);
 }
 
 HANDLE GetCurrentUserToken()
 {    
-    HANDLE currentToken;
-    HANDLE primaryToken = INVALID_HANDLE_VALUE;
+  HANDLE currentToken;
+  HANDLE primaryToken = INVALID_HANDLE_VALUE;
 
 #if NTDDI_VERSION >= NTDDI_VISTA
 
-    int dwSessionId = WTSGetActiveConsoleSessionId();
+  int dwSessionId = WTSGetActiveConsoleSessionId();
 
 #else
 
@@ -601,70 +630,41 @@ BOOL RunTokenMgr(LPWSTR lpCmdLine, LPPROCESS_INFORMATION lppi)
   return ret;
 }
 
-// HANDLE CreatePipe()
-// {
-  // SECURITY_ATTRIBUTES sa;
-  // sa.lpSecurityDescriptor = (PSECURITY_DESCRIPTOR)malloc(SECURITY_DESCRIPTOR_MIN_LENGTH);
-  
-  // if (!InitializeSecurityDescriptor(sa.lpSecurityDescriptor, SECURITY_DESCRIPTOR_REVISION)) {
-  //   CServiceBase::GetService()->WriteErrorLogEntry(L"InitializeSecurityDescriptor"); 
-  //   return INVALID_HANDLE_VALUE;
-  // }
+#if NTDDI_VERSION < NTDDI_VISTA
 
-  // if (!SetSecurityDescriptorDacl(sa.lpSecurityDescriptor, TRUE, (PACL)0, FALSE)) {
-  //   CServiceBase::GetService()->WriteErrorLogEntry(L"SetSecurityDescriptorDacl"); 
-  //   return INVALID_HANDLE_VALUE;
-  // }
+BOOL MyPostQuitMessage(UINT message)
+{
+  HANDLE hPipe = INVALID_HANDLE_VALUE;
+  while (true) 
+  { 
+    hPipe = ::CreateFile(L"\\\\.\\pipe\\epTokend", GENERIC_WRITE, 0, 0, OPEN_EXISTING, 0, 0);
+    
+    if (hPipe != INVALID_HANDLE_VALUE)
+      break;
 
-  // sa.nLength = sizeof sa;
-  // sa.bInheritHandle = TRUE;
+    // If any error except the ERROR_PIPE_BUSY has occurred,
+    // we should return FALSE. 
+    if (::GetLastError() != ERROR_PIPE_BUSY) 
+      return FALSE;
 
-  // To know the maximal size of the received data
-  // for reading from the pipe buffer
+    // The named pipe is busy. Let’s wait for 5 seconds. 
+    if (!WaitNamedPipe(L"\\\\.\\pipe\\epTokend", 5000)) 
+      return FALSE;
+  } 
 
-//   union maxSize
-//   {
-//       UINT _1;
-//   };
+  if(hPipe == NULL || INVALID_HANDLE_VALUE == hPipe) // WaitNamedPipe might have failed
+	  return FALSE;
 
-//   return ::CreateNamedPipe(TOKEN_MANAGER_PIPE,
-//                     PIPE_ACCESS_DUPLEX, 
-//                     PIPE_TYPE_MESSAGE | PIPE_READMODE_MESSAGE | PIPE_WAIT, 
-//                     PIPE_UNLIMITED_INSTANCES, sizeof maxSize, 
-//                     sizeof maxSize, NMPWAIT_USE_DEFAULT_WAIT, NULL);
-// }
+	DWORD dwBytesWritten = 0;
+  if (WriteFile(hPipe, (LPVOID)&message, sizeof UINT, &dwBytesWritten, 0) && sizeof UINT == dwBytesWritten) {
+	CloseHandle(hPipe);
+    return TRUE;
+  }
 
-// BOOL MyPostQuitMessage(HANDLE hPipe, UINT message)
-// {
-    // HANDLE hPipe = INVALID_HANDLE_VALUE;
-    // while (true) 
-    // { 
-    //     hPipe = ::CreateFile(TOKEN_MANAGER_PIPE, GENERIC_WRITE, 0, 0, OPEN_EXISTING, 0, 0);
-        
-    //     if (hPipe != INVALID_HANDLE_VALUE)
-    //         break;
+  return FALSE;
+}
 
-    //     // If any error except the ERROR_PIPE_BUSY has occurred,
-    //     // we should return FALSE. 
-    //     if (::GetLastError() != ERROR_PIPE_BUSY) 
-    //         return FALSE;
-
-    //     // The named pipe is busy. Let’s wait for 20 seconds. 
-    //     if (!WaitNamedPipe(TOKEN_MANAGER_PIPE, 20000)) 
-    //         return FALSE;
-    // } 
-
-    // return WriteFile(hPipe, (LPVOID)&message, sizeof UINT, NULL, 0) ? GetLastError() == ERROR_SUCCESS : FALSE;
-
-    // if (!WriteFile(hPipe, (LPVOID)&message, sizeof UINT, NULL, 0))
-    // {
-    //     CloseHandle(hPipe);
-    //     return FALSE;
-    // }
-
-    // CloseHandle(hPipe);
-    // return TRUE;
-// }
+#endif
 
 BOOL AddAceToWindowStation(HWINSTA hwinsta, PSID psid)
 {
@@ -1201,4 +1201,24 @@ BOOL GetLogonSID(HANDLE hToken, PSID *ppsid)
 VOID FreeLogonSID (PSID *ppsid) 
 {
   HeapFree(GetProcessHeap(), 0, (LPVOID)*ppsid);
+}
+
+BOOL IsWinVistaOrLater()
+{
+    // Initialize the OSVERSIONINFOEX structure.
+    OSVERSIONINFOEX osvi;
+    ZeroMemory(&osvi, sizeof(OSVERSIONINFOEX));
+    osvi.dwOSVersionInfoSize = sizeof(OSVERSIONINFOEX);
+    osvi.dwMajorVersion = 6;
+    osvi.dwMinorVersion = 0;
+
+    // Initialize the condition mask.
+    DWORDLONG dwlConditionMask = 0;
+    VER_SET_CONDITION(dwlConditionMask, VER_MAJORVERSION, VER_GREATER_EQUAL);
+    VER_SET_CONDITION(dwlConditionMask, VER_MINORVERSION, VER_GREATER_EQUAL);
+
+    // Perform the test.
+    return VerifyVersionInfo(&osvi, 
+                             VER_MAJORVERSION | VER_MINORVERSION,
+                             dwlConditionMask);
 }

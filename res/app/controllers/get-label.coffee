@@ -74,6 +74,6 @@ class GetLabel extends Spine.Controller
   # private
 
   @valid: (self ,params) ->
-    return "#{self.title} is required." unless params['label'].length
+    return app.$T('x_required').Format(self.title) unless params['label'].length
     
 module.exports = GetLabel

@@ -23,6 +23,8 @@
 
 #include "ep_pkcs11_scheme.h"
 
+#include "inc/util_pkcs15.h"
+
 ClientHandler::ClientHandler()
   : m_MainHwnd(NULL),
     app_running_(false),
@@ -38,8 +40,9 @@ ClientHandler::~ClientHandler() {
 #if defined(WIN32)
 
 	if (m_watcherHnd) {
-		ASSERT(TerminateThread(m_watcherHnd, 0));
-		ASSERT(CloseHandle(m_watcherHnd));
+		TerminateThread(m_watcherHnd, 0);
+		//CloseHandle(m_watcherHnd);
+		m_watcherHnd = NULL;
 	}
 
 #endif
@@ -96,13 +99,13 @@ bool ClientHandler::OnContextMenuCommand(
     CefRefPtr<CefContextMenuParams> params,
     int command_id,
     EventFlags event_flags) {
-  switch (command_id) {
+  //switch (command_id) {
     //case CLIENT_ID_SHOW_DEVTOOLS:
       //ShowDevTools(browser);
       //return true;
-    default:  // Allow default handling, if any.
+    //default:  // Allow default handling, if any.
       return false; //ExecuteTestMenu(command_id);
-  }
+  //}
 }
 void ClientHandler::OnLoadingStateChange(CefRefPtr<CefBrowser> browser,
                                          bool isLoading,

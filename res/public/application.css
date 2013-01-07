@@ -398,10 +398,24 @@ a:hover [class*=" icon-"] {
 }
 .statusbar .options a {
   color: #000;
+  font-weight: bolder;
 }
 .statusbar .options a:hover {
   color: #00f;
   text-decoration: none;
+}
+.statusbar .options li {
+  list-style: none;
+}
+.statusbar #language .dropdown-toggle .icon-flag {
+  font-size: 12px;
+}
+.statusbar #language li a:hover {
+  color: #fff;
+}
+.statusbar #language .dropdown-menu {
+  left: -100px;
+  min-width: 125px;
 }
 .copyright {
   margin: 5px 0;
@@ -638,7 +652,7 @@ body.metro-style .get-key-info .btn:not(.icon),
 body.metro-style .getpw .btn:not(.icon),
 body.metro-style .unblock .btn:not(.icon),
 body.metro-style .wizard-bottom .btn:not(.icon) {
-  padding: 3px 12px 5px;
+  padding: 5px 12px 5px;
   min-width: 6em;
   height: 2.142em;
   margin-top: 5px;

@@ -16,6 +16,8 @@
 
 #pragma region "Includes"
 
+#include "inc\config.h"
+
 #include <stdio.h>
 #include <string>
 #include <windows.h>
