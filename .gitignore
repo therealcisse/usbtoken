@@ -10,7 +10,7 @@ utils
 wixobj
 test
 *.msi
-*.wxpdb
+*.wixpdb
 *.min.js
 *.min.css
 *.min.html
