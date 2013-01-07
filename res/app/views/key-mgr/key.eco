@@ -1,3 +1,0 @@
-<div class="title"><%= @friendlyName %></div>
-<div class="tags">
-</div>

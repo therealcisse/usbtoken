@@ -6,9 +6,7 @@ Login        = require('controllers/login')
 Façade       = require('lib/façade')
 
 class Init extends Wizard
-
-  @HEADER: 'Initialize Token'
-
+  
   hasCancel: true
 
   doSetLabel: (params) ->
@@ -25,16 +23,18 @@ class Init extends Wizard
     @controller.fn.err = @controller.doSetPUK.err
 
     df = app.Loading()
-    @delay (=> @controller.fn(params.pin, params.puk, params['label']); df())   
+    @delay (=> @controller.fn(params.pin, params.puk, params['label']).done df)   
 
   unRenderMsg: (evt) -> 
-    'Votre supporte ne sera pas re-initializer'
+    app.$T('token_wont_be_initialized')
 
   unRendered: -> 
     # window.jQuery(window).unbind('beforeunload.init')
   
   constructor: ->
     super
+
+    @constructor.HEADER = app.$T('msg_init')
 
     # window.jQuery(window).bind('beforeunload.init', @unRenderMsg)
 
@@ -46,7 +46,7 @@ class Init extends Wizard
           name: 'get-label'
           controller: @
           header: Init.HEADER
-          title: "Token Name"      
+          title: app.$T('label_token_name')      
           fn: @doSetLabel
       }
 

@@ -1,7 +1,6 @@
 Spine = require('spine')
 
 Token = require('models/token')
-Key   = require('models/key')
 
 class Façade extends Spine.Module
   @extend Spine.Log
@@ -95,7 +94,7 @@ class Façade extends Spine.Module
 
       callback = (response) =>
         console.log "@GetPrKey: Reply: #{response.ok}"
-        @resolve(response.key)
+        @resolve(response.key, not response.ok)
 
       callback.MsgId = "#{++Façade.cnt}"      
       Façade.GetKey(id, 'get.prkey', callback)
@@ -105,20 +104,20 @@ class Façade extends Spine.Module
     ).promise()
 
 
-  @GetPubKey: (id, fn) ->
-    @log "GetPubKey:#{id}"
-    jQuery.Deferred(->
+  # @GetPubKey: (id, fn) ->
+  #   @log "GetPubKey:#{id}"
+  #   jQuery.Deferred(->
 
-      callback = (response) =>
-        console.log "@GetPubKey: Reply: #{response.ok}"
-        @resolve(response.key)
+  #     callback = (response) =>
+  #       console.log "@GetPubKey: Reply: #{response.ok}"
+  #       @resolve(response.key)
 
-      callback.MsgId = "#{++Façade.cnt}"      
-      Façade.GetKey(id, 'get.pubkey', callback)
+  #     callback.MsgId = "#{++Façade.cnt}"      
+  #     Façade.GetKey(id, 'get.pubkey', callback)
 
-      @always fn
+  #     @always fn
 
-    ).promise()
+  #   ).promise()
 
 
   @GetX509Certificate: (id, fn) ->
@@ -127,7 +126,7 @@ class Façade extends Spine.Module
 
       callback = (response) =>
         console.log "@GetX509Certificate: Reply: #{response.ok}"
-        @resolve(response.key)
+        @resolve(response.key, not response.ok)
 
       callback.MsgId = "#{++Façade.cnt}"      
       Façade.GetKey(id, 'get.x509-certificate', callback)  
@@ -137,22 +136,22 @@ class Façade extends Spine.Module
     ).promise()
 
 
-  @GetPubKeys: (fn) ->
-    @log "GetPubKeys"
-    jQuery.Deferred(->
+  # @GetPubKeys: (fn) ->
+  #   @log "GetPubKeys"
+  #   jQuery.Deferred(->
 
-      callback = (response) =>
-        console.log "@GetPubKeys: Reply: #{response.ok}"
-        @resolve(response.keys)
+  #     callback = (response) =>
+  #       console.log "@GetPubKeys: Reply: #{response.ok}"
+  #       @resolve(response.keys)
 
-      callback.MsgId = "#{++Façade.cnt}"
+  #     callback.MsgId = "#{++Façade.cnt}"
 
-      app.addFn "get.pubkeys", callback
-      app.sendMessage "get.pubkeys", [{MsgId: callback.MsgId, authData: Façade.authData}]
+  #     app.addFn "get.pubkeys", callback
+  #     app.sendMessage "get.pubkeys", [{MsgId: callback.MsgId, authData: Façade.authData}]
 
-      @always fn
+  #     @always fn
     
-    ).promise()
+  #   ).promise()
     
 
   @GetPrKeys: (fn) ->
@@ -172,6 +171,22 @@ class Façade extends Spine.Module
 
     ).promise()
 
+  @SetLang: (langId, fn) ->
+    @log "SetLang"
+    jQuery.Deferred(->
+
+      callback = (response) =>
+        console.log "@SetLang: Reply: #{response.ok}"
+        @resolve(response.ok)
+
+      callback.MsgId = "#{++Façade.cnt}"
+
+      app.addFn "set.lang", callback
+      app.sendMessage "set.lang", [{MsgId: callback.MsgId, LangID: parseInt(langId)}]
+
+      @always fn
+
+    ).promise()
   
   @GetCerts: (fn) ->
     @log "GetCerts"
@@ -271,30 +286,30 @@ class Façade extends Spine.Module
     ).promise()
 
 
-  @ImportPubKey: (data, data_len, label, format, fn) ->
-    @log "ImportPubKey(#{data_len}, #{label}, #{format})"
-    jQuery.Deferred(->
+  # @ImportPubKey: (data, data_len, label, format, fn) ->
+  #   @log "ImportPubKey(#{data_len}, #{label}, #{format})"
+  #   jQuery.Deferred(->
 
-      callback = (response) =>
-        console.log "@ImportPubKey: Reply: #{response.ok}"
-        @resolve(response.ok)
+  #     callback = (response) =>
+  #       console.log "@ImportPubKey: Reply: #{response.ok}"
+  #       @resolve(response.ok)
 
-      callback.MsgId = "#{++Façade.cnt}"
+  #     callback.MsgId = "#{++Façade.cnt}"
 
-      req = 
-        MsgId: callback.MsgId
-        data: data
-        data_len: data_len
-        label: label
-        format: format 
-        authData: Façade.authData
+  #     req = 
+  #       MsgId: callback.MsgId
+  #       data: data
+  #       data_len: data_len
+  #       label: label
+  #       format: format 
+  #       authData: Façade.authData
 
-      app.addFn "import.pubkey", callback
-      app.sendMessage "import.pubkey", [req]  
+  #     app.addFn "import.pubkey", callback
+  #     app.sendMessage "import.pubkey", [req]  
 
-      @always fn      
+  #     @always fn      
 
-    ).promise()
+  #   ).promise()
 
   
   @ImportX509: (data, data_len, label, format, fn) ->
@@ -394,22 +409,22 @@ class Façade extends Spine.Module
     ).promise()
 
 
-  @SetPIN: (pin, fn) ->
-    @log "@SetPIN"
-    jQuery.Deferred(->
+  # @SetPIN: (pin, fn) ->
+  #   @log "@SetPIN"
+  #   jQuery.Deferred(->
 
-      callback = (response) =>
-        console.log "@SetPIN: Reply: #{response.status}"
-        @resolve(response.ok)
+  #     callback = (response) =>
+  #       console.log "@SetPIN: Reply: #{response.status}"
+  #       @resolve(response.ok)
 
-      callback.MsgId = "#{++Façade.cnt}"
+  #     callback.MsgId = "#{++Façade.cnt}"
 
-      app.addFn "setpin", callback
-      app.sendMessage "setpin", [{MsgId: callback.MsgId, pin: pin}] 
+  #     app.addFn "setpin", callback
+  #     app.sendMessage "setpin", [{MsgId: callback.MsgId, pin: pin}] 
 
-      @always fn 
+  #     @always fn 
 
-    ).promise()
+  #   ).promise()
 
 
   @ChangePIN: (pincode, pin, fn) ->
@@ -447,22 +462,22 @@ class Façade extends Spine.Module
     ).promise()
 
 
-  @EraseToken: (fn) ->
-    @log "@EraseToken"
-    jQuery.Deferred(->
+  # @EraseToken: (fn) ->
+  #   @log "@EraseToken"
+  #   jQuery.Deferred(->
 
-      callback = (response) =>
-        console.log "@EraseToken: Reply: #{response.status}"
-        @resolve(response.ok)
+  #     callback = (response) =>
+  #       console.log "@EraseToken: Reply: #{response.status}"
+  #       @resolve(response.ok)
 
-      callback.MsgId = "#{++Façade.cnt}"
+  #     callback.MsgId = "#{++Façade.cnt}"
 
-      app.addFn "erase", callback
-      app.sendMessage "erase", [{MsgId: callback.MsgId}]
+  #     app.addFn "erase", callback
+  #     app.sendMessage "erase", [{MsgId: callback.MsgId}]
 
-      @always fn  
+  #     @always fn  
     
-    ).promise()
+  #   ).promise()
 
 
   @InitToken: (pin, puk, label, fn) ->

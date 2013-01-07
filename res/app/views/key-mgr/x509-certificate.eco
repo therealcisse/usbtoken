@@ -1,17 +1,17 @@
 
 <div class="subject x509-name">
 
-	<div class="header">Issued To:</div>
+	<div class="header"><%= app.$T('header_issued_to') %>:</div>
 
 	<div class="x509-entries">
 
 		<div class="x509-entry">
-				<div class="x509-entry-key">Organisation</div>
+				<div class="x509-entry-key"><%= app.$T('label_org') %></div>
 				<div class="x509-entry-value"><%= @subject.cn %></div>
 		</div>
 
 		<div class="x509-entry">
-				<div class="x509-entry-key">Organisation Unit</div>
+				<div class="x509-entry-key"><%= app.$T('label_org_unit') %></div>
 				<div class="x509-entry-value"><%= @subject.ou %></div>
 		</div>
 	</div>
@@ -23,17 +23,17 @@
 
 	<div class="issuer x509-name">
 
-		<div class="header">Issued By:</div>
+		<div class="header"><%= app.$T('header_issued_by') %>:</div>
 
 		<div class="x509-entries">
 
 			<div class="x509-entry">
-					<div class="x509-entry-key">Organisation</div>
+					<div class="x509-entry-key"><%= app.$T('label_org') %></div>
 					<div class="x509-entry-value"><%= @issuer.o %></div>
 			</div>
 
 			<div class="x509-entry">
-					<div class="x509-entry-key">Organisation Unit</div>
+					<div class="x509-entry-key"><%= app.$T('label_org_unit') %></div>
 					<div class="x509-entry-value"><%= @issuer.ou %></div>
 			</div>
 		</div>
@@ -45,16 +45,16 @@
 
 <div class="validity">
 
-		<div class="header">Validity:</div>
+		<div class="header"><%= app.$T('header_validity') %>:</div>
 
 		<div class="x509-entries">
 
 			<div class="x509-entry">
-					<div class="x509-entry-key">Not Before</div>
+					<div class="x509-entry-key"><%= app.$T('label_not_before') %></div>
 					<div class="x509-entry-value"><%= $.formatDate('dd/ mm/ yy', $.parseDate('ymd', @notBefore.substr(0, 6))) %></div>
 			</div>
 			<div class="x509-entry">
-					<div class="x509-entry-key">Not After</div>
+					<div class="x509-entry-key"><%= app.$T('label_not_before') %></div>
 					<div class="x509-entry-value"><%= $.formatDate('dd/ mm/ yy', $.parseDate('ymd', @notAfter.substr(0, 6))) %></div>
 			</div>
 		</div>

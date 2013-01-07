@@ -23,24 +23,24 @@ LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 #pragma code_page(1252)
 #endif //_WIN32
 
-IDS_INDEX          BINARY         "res\\public\\index.html"
-IDS_APPLICATION_JS BINARY         "res\\public\\application.js"
-IDS_BOOTSTRAP_JS   BINARY         "res\\public\\bootstrap.min.js"
-IDS_JQUERY_UI_JS   BINARY         "res\\public\\jquery-ui-1.8.23.custom.min.js"
+IDS_INDEX          BINARY         "epUSBToken\\res\\public\\index.min.html"
+IDS_APPLICATION_JS BINARY         "epUSBToken\\res\\public\\application.js"
+IDS_BOOTSTRAP_JS   BINARY         "epUSBToken\\res\\public\\bootstrap.min.js"
+IDS_JQUERY_UI_JS   BINARY         "epUSBToken\\res\\public\\jquery-ui-1.8.23.custom.min.js"
 
-IDS_APPLICATION_CSS BINARY        "res\\public\\application.css"
-IDS_BOOTSTRAP_CSS  BINARY         "res\\public\\bootstrap.min.css"
-IDS_FONTAWESOME_CSS BINARY        "res\\public\\font-awesome.css"
+IDS_APPLICATION_CSS BINARY        "epUSBToken\\res\\public\\application.css"
+IDS_BOOTSTRAP_CSS  BINARY         "epUSBToken\\res\\public\\bootstrap.min.css"
+IDS_FONTAWESOME_CSS BINARY        "epUSBToken\\res\\public\\font-awesome.min.css"
 
-IDS_LOGO           BINARY         "res\\public\\logo.png"
-IDS_LOADER         BINARY         "res\\public\\loader.gif"
-IDS_LOADING        BINARY         "res\\public\\loading.gif"
+IDS_LOGO           BINARY         "epUSBToken\\res\\public\\logo.png"
+IDS_LOADER         BINARY         "epUSBToken\\res\\public\\loader.gif"
+IDS_LOADING        BINARY         "epUSBToken\\res\\public\\loading.gif"
 
-IDS_FONTAWESOME_WOFF       BINARY         "res\\public\\fonts\\fontawesome-webfont.woff"
-IDS_FONTAWESOME_TTF        BINARY         "res\\public\\fonts\\fontawesome-webfont.ttf"
-IDS_FONTAWESOME_SVG        BINARY         "res\\public\\fonts\\fontawesome-webfont.svg"
+IDS_FONTAWESOME_WOFF       BINARY         "epUSBToken\\res\\public\\fonts\\fontawesome-webfont.woff"
+IDS_FONTAWESOME_TTF        BINARY         "epUSBToken\\res\\public\\fonts\\fontawesome-webfont.ttf"
+IDS_FONTAWESOME_SVG        BINARY         "epUSBToken\\res\\public\\fonts\\fontawesome-webfont.svg"
 
-IDS_USBTOKEN_EXTENSIONS        BINARY         "usbtoken_extensions.js"
+IDS_USBTOKEN_EXTENSIONS        BINARY         "epUSBToken\\usbtoken_extensions.js"
 
 //
 // Menu resources
@@ -103,19 +103,24 @@ BEGIN
    IDS_TOKEN_INSERTED_TITLE    "Token Inserted"
    IDS_TOKEN_INSERTED_TEXT     "A Token was just inserted."
 
+   IDS_EP_TOKEND_START_TITLE    "Token Service started"
+   IDS_EP_TOKEND_START_TEXT     "The token service started"
+
    IDS_TOKEN_REMOVED_TITLE     "Token Removed"
    IDS_TOKEN_REMOVED_TEXT      "The Token was just removed."
 
    IDS_PIN_BLOCKED_TITLE  "PIN Blocked"
    IDS_PIN_BLOCKED_TEXT   "Your has been blocked."    
+   
+   IDS_TOOLTIP   "Epsilon Token Manager 1.0"    
 END
 
 //
 // Icon resources
 //
 
-IDI_SMALL          ICON           "res\\small.ico"
-IDI_USBTOKEN       ICON           "res\\usbtoken.ico"
+IDI_SMALL          ICON           "epUSBToken\\res\\small.ico"
+IDI_USBTOKEN       ICON           "epUSBToken\\res\\epUSBToken.ico"
 
 #endif    // English (U.S.) resources
 /////////////////////////////////////////////////////////////////////////////

@@ -9,7 +9,7 @@
 #include "include/internal/cef_ptr.h"
 #include "include/cef_values.h"
 
-#include "usbtoken/client_handler.h"
+#include "epUSBToken/client_handler.h"
 
 #include "inc/ep_pkcs15.h"
 #include "inc/watcher.h"
@@ -64,29 +64,29 @@ namespace epsilon {
 #endif		
 		};
 
-		bool EraseToken();
-		bool InitToken(const char *, const char *, const char *);
-		bool InitPIN(const char *, const char *);
-		bool ChangePIN(const char *, const char *);
-		bool UnblockPIN(const char *, const char *);
-		bool VerifyPIN(const char *);
+		static bool EraseToken();
+		static bool InitToken(const char *, const char *, const char *);
+		//bool InitPIN(const char *, const char *);
+		static bool ChangePIN(const char *, const char *);
+		static bool UnblockPIN(const char *, const char *);
+		static bool VerifyPIN(const char *);
 
-		bool GetPubKeys(CefRefPtr<TokenContext>, ep_key_info **, size_t *);
-		bool GetCerts(CefRefPtr<TokenContext>, ep_key_info **, size_t *);
-		bool GetPrKeys(CefRefPtr<TokenContext>, ep_key_info **, size_t *);
+		//bool GetPubKeys(CefRefPtr<TokenContext>, ep_key_info **, size_t *);
+		static bool GetCerts(CefRefPtr<TokenContext>, ep_key_info **, size_t *);
+		static bool GetPrKeys(CefRefPtr<TokenContext>, ep_key_info **, size_t *);
 	
-		bool GetPubKey(CefRefPtr<TokenContext>, const char *, ep_key_info *, const char *);
-		bool GetPrKey(CefRefPtr<TokenContext>, const char *, ep_key_info *);
-		bool GetCert(CefRefPtr<TokenContext>, const char *, ep_key_info *);
+		//bool GetPubKey(CefRefPtr<TokenContext>, const char *, ep_key_info *, const char *);
+		//bool GetPrKey(CefRefPtr<TokenContext>, const char *, ep_key_info *);
+		static bool GetCert(CefRefPtr<TokenContext>, const char *, ep_key_info *);
 	
-		bool GenKey(CefRefPtr<TokenContext>, char *, const char *, char **);
+		static bool GenKey(CefRefPtr<TokenContext>, char *, const char *, char **);
 		
-		bool ImportPrKey(CefRefPtr<TokenContext>, const char *, size_t, const char *, const char *, const char *, const char *);
-		bool ImportPubKey(CefRefPtr<TokenContext>, const char *, size_t, const char *, const char *, const char *);
-		bool ImportCert(CefRefPtr<TokenContext>, const char *, size_t, const char *, const char *, const char *);
+		static bool ImportPrKey(CefRefPtr<TokenContext>, const char *, size_t, const char *, const char *, const char *, const char *);
+		//bool ImportPubKey(CefRefPtr<TokenContext>, const char *, size_t, const char *, const char *, const char *);
+		static bool ImportCert(CefRefPtr<TokenContext>, const char *, size_t, const char *, const char *, const char *);
 		
-		bool DelPrKey(CefRefPtr<TokenContext>, const char *, const char *);
-		bool DelX509(CefRefPtr<TokenContext>, const char *, const char *);
+		static bool DelPrKey(CefRefPtr<TokenContext>, const char *, const char *);
+		static bool DelX509(CefRefPtr<TokenContext>, const char *, const char *);
 
 		bool GenX509Req(CefRefPtr<TokenContext>, CefRefPtr<ClientHandler> handler, const char *, const unsigned char *, 
 			const unsigned char *, const unsigned char *, const unsigned char *, const unsigned char *, 
@@ -102,7 +102,7 @@ namespace epsilon {
 
 	private:
 		
-	  IMPLEMENT_REFCOUNTING(Token);	
+	  IMPLEMENT_REFCOUNTING(Token);	  
 	};
 
 	// Create the render delegate.

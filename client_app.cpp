@@ -252,6 +252,10 @@ class ClientAppExtensionHandler : public CefV8Handler {
         retval = CefV8Value::CreateBool(removed);
         handled = true;
       }
+    } else if (name == "GetCurrentLanguage") {
+      
+      retval = CefV8Value::CreateString(client_app_->GetCurrentLanguage());
+      handled = true;
     }
 
     if (!handled)
@@ -277,7 +281,7 @@ ClientApp::ClientApp()
   // Default schemes that support cookies.
   //cookieable_schemes_.push_back("http");
   //cookieable_schemes_.push_back("https");
-  cookieable_schemes_.push_back("pkcs11");
+  //cookieable_schemes_.push_back("pkcs11");
 }
 
 void ClientApp::SetMessageCallback(const std::string& message_name,
@@ -378,9 +382,9 @@ void ClientApp::OnFocusedNodeChanged(CefRefPtr<CefBrowser> browser,
                                      CefRefPtr<CefFrame> frame,
                                      CefRefPtr<CefDOMNode> node) {
   // Execute delegate callbacks.
-  RenderDelegateSet::iterator it = render_delegates_.begin();
-  for (; it != render_delegates_.end(); ++it)
-    (*it)->OnFocusedNodeChanged(this, browser, frame, node);
+  //RenderDelegateSet::iterator it = render_delegates_.begin();
+  //for (; it != render_delegates_.end(); ++it)
+  //  (*it)->OnFocusedNodeChanged(this, browser, frame, node);
 }
 
 bool ClientApp::OnProcessMessageReceived(

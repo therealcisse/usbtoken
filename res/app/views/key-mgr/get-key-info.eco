@@ -4,13 +4,13 @@
   <label><%= @title %></label>
   <input name="label" type="text" class="span3" autofocus>
 
-  <label><%= "File name" %></label>
+  <label><%= app.$T('label_file_name') %></label>
   <input name="path" type="file" class="span3">  
 
   <div class="passphrase">
-    <label>Enter passphrase</label>
+    <label><%= app.$T('label_paraphrase') %></label>
     <input name="passphrase" type="password" class="span3">
-    <cite class="help-block"><i class="icon-info-sign"></i> &nbsp;Leave blank if no passphrase.</cite>  
+    <cite class="help-block"><i class="icon-info-sign"></i> &nbsp;<%= app.$T('msg_leave_blank') %></cite>  
   </div>
 
   <br>
@@ -30,8 +30,8 @@
   <label>Country</label>
   <input name="country" type="text" class="span3"> -->
 
-  <button type="submit" class="btn default"><i class="icon-ok"></i> &nbsp;Ok</button>&nbsp;&nbsp;
+  <button type="submit" class="btn default"><i class="icon-ok"></i> &nbsp;<%= app.$T('ok') %></button>&nbsp;&nbsp;
 
-  <button type="button" class="cancel btn" style="margin-top:5px;">Cancel</button>
+  <button type="button" class="cancel btn" style="margin-top:5px;"><%= app.$T('action_cancel') %></button>
 
 </form>

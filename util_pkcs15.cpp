@@ -29,7 +29,7 @@
 #include <openssl/engine.h>
 #endif
 
-#include "usbtoken/usbtoken.h"
+#include "epUSBToken/usbtoken.h"
 
 #include "inc/token.h"
 #include "inc/ep_pkcs15.h"
@@ -71,6 +71,7 @@ static ENGINE *try_load_engine(const char *sopath)
 	if (e)
 		{
 		if (!ENGINE_ctrl_cmd_string(e, "SO_PATH", sopath, 0)
+			|| !ENGINE_ctrl_cmd_string(e, "LIST_ADD", "1", 0)		
 			|| !ENGINE_ctrl_cmd_string(e, "LOAD", NULL, 0))
 			{
 			ENGINE_free(e);
@@ -82,7 +83,8 @@ static ENGINE *try_load_engine(const char *sopath)
 
 ENGINE *setup_engine(const char *id, const char *sopath, const char *modulepath, const char *pin, const char *args)
         {
-        ENGINE *e = NULL;
+        ENGINE *e;
+		ENGINE_load_builtin_engines();
 
         if (id)
                 {
@@ -90,7 +92,7 @@ ENGINE *setup_engine(const char *id, const char *sopath, const char *modulepath,
 		if((e = ENGINE_by_id(id)) == NULL
 			&& (e = try_load_engine(sopath)) == NULL)
 			{
-			printf("invalid engine \"%s\"\n", id);
+			fprintf(stderr, "invalid engine \"%s\"\n", id);
 			//ERR_print_errors(err);
 			return NULL;
 			}
@@ -101,11 +103,11 @@ ENGINE *setup_engine(const char *id, const char *sopath, const char *modulepath,
 		return NULL;
 	}
 
-	//if(!ENGINE_init(e)) {
-	//     /* the engine couldn't initialise, release 'e' */
-	//     ENGINE_free(e);
-	//     return NULL;
-	// }			
+	if(!ENGINE_init(e)) {
+	     /* the engine couldn't initialise, release 'e' */
+	     ENGINE_free(e);
+	     return NULL;
+	 }			
 
  //   //ENGINE_ctrl_cmd(e, "SET_USER_INTERFACE", 0, ui_method, 0, 1);
 	//	if(!ENGINE_set_default(e, ENGINE_METHOD_ALL))
@@ -118,9 +120,13 @@ ENGINE *setup_engine(const char *id, const char *sopath, const char *modulepath,
 
 		printf("engine \"%s\" set.\n", ENGINE_get_id(e));
 
+		/* Release the functional reference from ENGINE_init() */
+		 ENGINE_finish(e);
+
 		/* Free our "structural" reference. */
 		ENGINE_free(e);
 		}
+
         return e;
         }
 #endif
@@ -613,6 +619,8 @@ int ep_gen_x509_req(CefRefPtr<epsilon::TokenContext> ctx, CefRefPtr<ClientHandle
 	struct sc_pkcs15_id kid;	
 	int r = -1, i;
 
+	ENGINE *e = NULL;
+
 	X509_REQ *x = NULL;
 	EVP_PKEY *pk = NULL;
 	STACK_OF(X509_EXTENSION) *exts = NULL;
@@ -717,11 +725,14 @@ int ep_gen_x509_req(CefRefPtr<epsilon::TokenContext> ctx, CefRefPtr<ClientHandle
 
 #endif
 
-	ENGINE *e = setup_engine(
+	e = setup_engine(
 					"pkcs11", 
-					Format("%s\\engines\\engine_pkcs11.dll", AppGetWorkingDirectory()).c_str(),
-					Format("%s\\opensc_pkcs11.dll", AppGetWorkingDirectory()).c_str(), authData, NULL
+					".\\engine_pkcs11.dll",
+					".\\opensc-pkcs11.dll", authData, NULL
 				);
+
+	const char *iid = ENGINE_get_id(e);
+	printf("%d", iid);
 
 	if(sc_pkcs15_find_prkey_by_id(p15card, &kid, &obj) == 0) {
 	
@@ -739,8 +750,10 @@ int ep_gen_x509_req(CefRefPtr<epsilon::TokenContext> ctx, CefRefPtr<ClientHandle
 			defaultFileName = Format("%s.csr", obj->label);
 			path = handler->GetDownloadPath(defaultFileName);
 
-			if (path.empty())
+			if (path.empty()) {
+				//Save to My Documents
 				  path = defaultFileName;
+			}
 
 			fp = fopen(path.c_str(), "w");
 
@@ -755,6 +768,9 @@ int ep_gen_x509_req(CefRefPtr<epsilon::TokenContext> ctx, CefRefPtr<ClientHandle
 	}
 	
 end: 
+
+	if(e)
+		e = NULL;
 
 	if(out)
 		free(out);
@@ -775,7 +791,7 @@ out :
 
 	epsilon::ReleaseP15Card(p15card);
 
-	return r;
+	return e == NULL && r;
 }
 
 int ep_export_x509_certificate(CefRefPtr<epsilon::TokenContext> ctx, CefRefPtr<ClientHandler> handler, const char *path, const char *id, const char *authData, unsigned int format) {

@@ -21,8 +21,8 @@
 
   <br>
 
-  <button type="submit" class="btn default"><i class="icon-ok"></i> &nbsp;Ok</button>&nbsp;&nbsp;
+  <button type="submit" class="btn default"><i class="icon-ok"></i> &nbsp;<%= app.$T('ok') %></button>&nbsp;&nbsp;
 
-  <% if @hasCancel : %> <button type="button" class="cancel btn" style="margin-top:5px;">Cancel</button> <% end %>
+  <% if @hasCancel : %> <button type="button" class="cancel btn" style="margin-top:5px;"><%= app.$T('action_cancel') %></button> <% end %>
 
 </form>

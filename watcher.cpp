@@ -5,10 +5,9 @@
 #include "inc/ep_pkcs15.h"
 
 #include "inc/watcher.h"
-#include "usbtoken/client_handler.h"
+#include "epUSBToken/client_handler.h"
 
 #include "include/cef_v8.h"
-#include "include/cef_runnable.h"
 
 #include "inc/ep_thread_ctx.h"
 
@@ -35,32 +34,30 @@ CefRefPtr<CefProcessMessage> Msg(const std::string &kMessageName, const char *re
 // Bring in platform-specific definitions.
 #if defined(WIN32)
 
-unsigned __stdcall WatchToken(void *lpParam) {
+void WatchToken(void *lpParam) {
   volatile bool out_ = true;
   volatile DWORD sleep_ = 1000;
+  sc_context *ctx = NULL;
   
-  ClientHandler * handler = (ClientHandler *) lpParam;
+  ClientHandler *handler = static_cast<ClientHandler *>(lpParam);
   ASSERT(handler != NULL);
 
   while(handler->app_running_) {
 
-    CefRefPtr<TokenContext> ctx = TokenContext::GetGlobalContext();
-	 
-    if(ctx->InContext()) goto sleep;
-
-    if(ctx->Bind()) {
+    if(TokenContext::isTokenPresent(&ctx)) {
+		ASSERT(ctx != NULL);
 
       if(out_) {
 
         unsigned int evt;
         sc_reader *found = NULL;    
 
-        if(sc_wait_for_event(ctx->GetSCContext(), SC_EVENT_READER_ATTACHED, &found, &evt, 0, NULL) == 0) {
+        if(sc_wait_for_event(ctx, SC_EVENT_READER_ATTACHED, &found, &evt, 0, NULL) == 0) {
 
-          sc_ctx_detect_readers(ctx->GetSCContext());
+          sc_ctx_detect_readers(ctx);
 
           /* Waiting for a card to be inserted */
-          if(sc_wait_for_event(ctx->GetSCContext(), SC_EVENT_CARD_INSERTED, &found, &evt, 0, NULL) == 0) {
+          if(sc_wait_for_event(ctx, SC_EVENT_CARD_INSERTED, &found, &evt, 0, NULL) == 0) {
             
             /* Card was inserted */           
             if(evt & SC_EVENT_CARD_INSERTED) {
@@ -69,7 +66,7 @@ unsigned __stdcall WatchToken(void *lpParam) {
 
               browser->SendProcessMessage(PID_RENDERER, Msg(E_TOKEN_INSERTED, found->name));
 
-              sleep_ = 10000;
+              sleep_ = 2500;
               out_ = false;
             }
           }
@@ -77,7 +74,8 @@ unsigned __stdcall WatchToken(void *lpParam) {
       
       }     
 
-      ctx->Destroy();
+	  sc_release_context(ctx);
+	  ctx = NULL;
     
     } else {
 
@@ -97,15 +95,18 @@ unsigned __stdcall WatchToken(void *lpParam) {
     sleep : Sleep(sleep_); 
   }
 
-  _endthreadex(0);
-  ASSERT(CloseHandle(handler->m_watcherHnd));
-  handler->m_watcherHnd = NULL;
+  _endthread();
 
-  return 0; 
+  if(handler->m_watcherHnd) {
+    //CloseHandle(handler->m_watcherHnd);
+    handler->m_watcherHnd = NULL;
+  }
+
+  //return 0; 
 }
   
 void TokenWatcher::Init(ClientHandler *handler) {
-  handler->m_watcherHnd = (void *)_beginthreadex(NULL, 0, &WatchToken, (void *)handler, 0, NULL);
+  handler->m_watcherHnd = (void *)_beginthread(WatchToken, 0, (void *)handler);
 }
 
 #endif

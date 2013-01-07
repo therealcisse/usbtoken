@@ -1,7 +1,7 @@
-<div class="form-header">Unblock your PIN</div>
+<div class="form-header"><%= app.$T('header_unblock') %></div>
 <form class="unblock form" method="post" action="#/unblock">
-  <label>Enter PUK</label>
+  <label><%= app.$T('label_puk') %></label>
   <input name="puk" type="password" class="span3" autofocus>
-  <cite class="help-block"><i class="icon-info-sign"></i> &nbsp;PUK must be between <%= @minLength %> and <%= @maxLength %> caracters.</cite>
-  <button type="submit" class="btn default"><i class="icon-unlock"></i> &nbsp;Unblock</button>
+  <cite class="help-block"><i class="icon-info-sign"></i> &nbsp;<%= app.$T('invalid_puk_length').Format(@minLength, @maxLength) %></cite>
+  <button type="submit" class="btn default"><i class="icon-unlock"></i> &nbsp;<%= app.$T('action_unblock') %></button>
 </form>

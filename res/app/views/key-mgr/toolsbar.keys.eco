@@ -3,22 +3,19 @@
 	
 	<div class="for-keys">
 		<div class="add btn-group">
-		  <a class="btn btn-large btn-success btn-primary default dropdown-toggle" data-toggle="dropdown"><i class="icon-plus"></i> Add <span class="split"></span><b class="caret"></b>
+		  <a class="btn btn-large btn-success btn-primary default dropdown-toggle" data-toggle="dropdown"><i class="icon-plus"></i> <%= app.$T('action_add') %> <span class="split"></span><b class="caret"></b>
 		  </a>
 		  <ul class="dropdown-menu">
-        <li><a class="add:gen" href="#/key/gen">Generate Private Key</a></li>
-        <li><a title="Import Private Key (e.g: PKCS12, PEM, DER)" class="add:import-prkey" href="#/ImportPrKey">Import Private Key</a></li>
-        <li><a title="Import X.509 Certificate (eg: PEM, DER)" class="add:import-certificate" href="#/ImportX509">Import X.509 Certificate</a></li>
-        <!--
-<li><a title="Import Public Key (PEM, DER, ...)" class="add:import-pubkey" href="#/ImportPubKey">Import Public Key</a></li>-->
-
+        <li><a href="#/key/gen"><%= app.$T('action_gen_key') %></a></li>
+        <li><a title="<%= app.$T('tooltip_import_prkey') %> (e.g: PKCS12, PEM, DER)" href="#/ImportPrKey"><%= app.$T('action_import_prkey') %></a></li>
+        <li><a title="<%= app.$T('tooltip_import_x509') %> (eg: PEM, DER)" href="#/ImportX509"><%= app.$T('action_import_x509') %></a></li>
 		  </ul>			
 		</div>
 		<div class="btn-group">
-			<a title="Reload keys" class="reload btn"><i class="icon-undo"></i></a>
+			<a title="<%= app.$T('tooltip_reload_keys') %>" class="reload btn"><i class="icon-undo"></i></a>
 		</div>
 		<div class="actions btn-group">			
-			<a title="Delete" href="#/purge" class="purge btn"><i class="icon-trash"></i></a>
+			<a title="<%= app.$T('tooltip_del') %>" href="#/purge" class="purge btn"><i class="icon-trash"></i></a>
 			<!-- <a title="Telecharger" href="#/export" class="export btn"><i class="icon-download-alt"></i></a> -->
 		</div>
 		<%- sysmenu.render() %>

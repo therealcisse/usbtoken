@@ -1,17 +1,17 @@
 <div class="modal">
   
   <div class="modal-header">
-    Export X509 Certificate <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+    <%= app.$T('header_export_x').Format(app.$T('x509')) %> <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
   </div>
 
   <form class="form export-x509">   
   
     <div class="modal-body">
       <p>            
-        <label>File Name</label>
+        <label><%= app.$T('label_file_name') %></label>
         <input value="<%= @fileName %>" name="fileName" type="text" class="span3" autofocus>
         
-        <label>Format</label>
+        <label><%= app.$T('label_export_format') %></label>
         <select name="format" classs="span3">
           <option value="PEM">PEM-Encoded X509 Certificate</option>
           <option value="DER">DER-Encoded X509 Certificate</option>
@@ -20,8 +20,8 @@
     </div> 
     
     <div class="modal-footer">
-      <button type="submit" class="btn default"><i class="icon-ok"></i> &nbsp;Export</button>
-      <button type="button" class="cancel btn">Cancel</button>
+      <button type="submit" class="btn default"><i class="icon-ok"></i> &nbsp;<%= app.$T('action_export') %></button>
+      <button type="button" class="cancel btn"><%= app.$T('action_cancel') %></button>
     </div>
   </form>
 </div>

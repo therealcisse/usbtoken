@@ -1,17 +1,17 @@
-<div class="form-header">Change your PIN</div>
+<div class="form-header"><%= app.$T('header_change_pin') %></div>
 <form class="changepin form" method="post" action="#/changepin">
 
-  <label>Enter old PIN</label>
+  <label><%= app.$T('label_old_pin') %></label>
   <input name="oldpin" type="password" class="span3" autofocus>
 
-  <label>Enter new PIN</label>
+  <label><%= app.$T('label_new_pin') %></label>
   <input name="pin" type="password" class="span3">
 
-  <label>Confirm PIN</label>
+  <label><%= app.$T('label_confirm_pin') %></label>
   <input name="pin_confirm" type="password" class="span3">
 
-  <button type="submit" class="btn default" style="margin-top:5px;"><i class="icon-retweet"></i> &nbsp;Change PIN</button> &nbsp;&nbsp;
+  <button type="submit" class="btn default" style="margin-top:5px;"><i class="icon-retweet"></i> &nbsp;<%= app.$T('action_change_pin') %></button> &nbsp;&nbsp;
 
-  <button type="button" class="cancel btn" style="margin-top:5px;">Cancel</button>
+  <button type="button" class="cancel btn" style="margin-top:5px;"><%= app.$T('action_cancel') %></button>
 
 </form>

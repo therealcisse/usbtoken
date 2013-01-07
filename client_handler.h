@@ -193,12 +193,11 @@ void SetLastDownloadFile(const std::string& fileName);
   // Create an external browser window that loads the specified URL.
   static void LaunchExternalBrowser(const std::string& url);
 
-  //void SetWindowTitle(const std::wstring);
+  bool SetLang(const int langId);
 
   // Returns the full download path for the specified file, or an empty path to
   // use the default temp directory.
   std::string GetDownloadPath(const std::string& file_name);
-  std::string _GetDownloadPath(const std::string& file_name);
 
   bool Save(const std::string& path, const std::string& data);
 

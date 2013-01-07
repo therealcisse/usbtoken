@@ -1,31 +1,31 @@
-<div class="form-header">Create a Certificate Signing Request</div>
+<div class="form-header"><%= app.$T('header_create_x').Format(app.$T('csr')) %></div>
 <form class="form get-x509-req-info">
   
-  <label>Full Name</label>
+  <label><%= app.$T('label_full_name') %></label>
   <input name="cn" type="text" class="span3" autofocus>
   
-  <label>Organization</label>
+  <label><%= app.$T('label_org') %></label>
   <input name="o" type="text" class="span3">
   
-  <label>Department Name</label>
+  <label><%= app.$T('label_dept_name') %></label>
   <input name="ou" type="text" class="span3">
 
-  <label>Country</label>
+  <label><%= app.$T('label_country') %></label>
   <select name="country" class="span3"><% for country in @countries : %> <option value="<%= country.code %>" <%= "selected" if country.value is 'MA'; %>><%= country.name %></option> <% end %></select>
 
-  <label>City</label>
+  <label><%= app.$T('label_city') %></label>
   <input name="city" type="text" class="span3">
   
-  <label>Region or Province</label>
+  <label><%= app.$T('label_region') %></label>
   <input name="region" type="text" class="span3">
   
-  <label>Email Address</label>
+  <label><%= app.$T('label_email_address') %></label>
   <input name="emailAddress" type="text" class="span3">
 
   <br>
 
-  <button type="submit" class="btn default"><i class="icon-ok"></i> &nbsp;Create Request</button>&nbsp;&nbsp;
+  <button type="submit" class="btn default"><i class="icon-ok"></i> &nbsp;<%= app.$T('action_create_req') %></button>&nbsp;&nbsp;
 
-  <button type="button" class="cancel btn" style="margin-top:5px;">Cancel</button>
+  <button type="button" class="cancel btn" style="margin-top:5px;"><%= app.$T('action_cancel') %></button>
 
 </form>

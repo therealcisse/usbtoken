@@ -58,7 +58,7 @@ class PKCS11SchemeHandlerFactory : public CefSchemeHandlerFactory {
       return new CefStreamResourceHandler("text/javascript", stream);
     }
 
-    if (strstr(c_str, "bootstrap.min.js") != NULL) {
+    if (strstr(c_str, "bootstrap.js") != NULL) {
       // Show the binding contents
       CefRefPtr<CefStreamReader> stream =
   	  GetBinaryResourceReader(IDS_BOOTSTRAP_JS);
@@ -66,7 +66,7 @@ class PKCS11SchemeHandlerFactory : public CefSchemeHandlerFactory {
       return new CefStreamResourceHandler("text/javascript", stream);
     }
 
-    if (strstr(c_str, "jquery-ui-1.8.23.custom.min.js") != NULL) {
+    if (strstr(c_str, "jquery-ui-1.8.23.custom.js") != NULL) {
       // Show the binding contents
       CefRefPtr<CefStreamReader> stream =
   	  GetBinaryResourceReader(IDS_JQUERY_UI_JS);
@@ -82,7 +82,7 @@ class PKCS11SchemeHandlerFactory : public CefSchemeHandlerFactory {
       return new CefStreamResourceHandler("text/css", stream);
     }
 
-    if (strstr(c_str, "bootstrap.min.css") != NULL) {
+    if (strstr(c_str, "bootstrap.css") != NULL) {
       // Show the binding contents
       CefRefPtr<CefStreamReader> stream =
   	  GetBinaryResourceReader(IDS_BOOTSTRAP_CSS);

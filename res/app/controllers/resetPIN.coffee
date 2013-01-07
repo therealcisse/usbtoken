@@ -13,7 +13,7 @@ class ResetPIN extends Wizard
     @controller.fn.err = @controller.doSetPIN.err
     
     df = app.Loading()
-    @delay (=> @controller.fn(params); df())
+    @delay (=> @controller.fn(params).done df)
 
     # Façade.resetPIN params.puk, params.pin, (err) =>
     #   if err
@@ -59,11 +59,11 @@ class ResetPIN extends Wizard
       {
         Clss: GetPass
         infoMsg:
-          msg: 'Please reset your PIN'
+          msg: app.$T('msg_reset_pin')
           closable: true
         args: 
           name: 'getpin'
-          title: 'Reset your PIN'
+          title: app.$T('title_reset_pin')
           controller: @
           type: GetPass.PIN
           fn: @doSetPIN

@@ -16,7 +16,7 @@ class Unblock extends Spine.Controller
       @submitBtn.enable()
       @delay => @puk[0].focus()
 
-    @delay -> Façade.SetWindowText('Unblock')
+    @delay -> Façade.SetWindowText(app.$T('title_unblock'))
       
   events:
     'submit form' :   'unblock'
@@ -62,6 +62,6 @@ class Unblock extends Spine.Controller
 
   @valid: (params) ->  
     Façade.GetPINOpts (opts) => 
-      return "PUK must be between #{opts['minlen']} and #{opts['maxlen']} caracters." unless params.puk.length >= opts['minlen'] and params.puk.length <= opts['maxlen']    
+      return app.$T('invalid_puk_length').Format(opts['minlen'], opts['maxlen']) unless params.puk.length >= opts['minlen'] and params.puk.length <= opts['maxlen']    
 
 module.exports = Unblock

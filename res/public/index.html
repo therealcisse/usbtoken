@@ -1,13 +1,27 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset=utf-8>
+  <meta charset="utf-8">
   <title>Epsilon Token Manager</title>
   
-  <link rel="stylesheet" href="/bootstrap.min.css" type="text/css" charset="utf-8">
+  <link rel="stylesheet" href="/bootstrap.css" type="text/css" charset="utf-8">
   <link rel="stylesheet" href="/font-awesome.css" type="text/css" charset="utf-8">
   <link rel="stylesheet" href="/application.css" type="text/css" charset="utf-8">
 
+  <script type="text/javascript" charset="utf-8">
+
+    String.prototype.Format = function() {
+      var args = arguments;
+      return this.replace(/{(\d+)}/g, function(match, number) { 
+        return typeof args[number] != 'undefined'
+          ? args[number]
+          : match
+        ;
+      });
+    };
+
+  </script> 
+  
   <script src="/application.js" type="text/javascript" charset="utf-8"></script> 
 
   <script type="text/javascript" charset="utf-8">
@@ -30,6 +44,302 @@
 
   <script type="text/javascript" charset="utf-8">
 
+  var $LANG = {};
+
+  $LANG['names'] = {
+    'en-US' : 'English',
+    'fr-FR' : 'Français'
+  };
+
+  $LANG['from_codes'] = {
+    1033: 'en-US',
+    1036: 'fr-FR' 
+  };
+
+  $LANG['en-US'] = {
+     invalid_x_length   : "{0} must be between {1} and {2} caracters.",
+     invalid_pin_length   : "PIN must be between {0} and {1} caracters.",
+     invalid_puk_length   : "PUK must be between {0} and {1} caracters.",
+     old_invalid_pin_length   : "Old PIN must be between {0} and {1} caracters.",
+     new_invalid_pin_length   : "New PIN must be between {0} and {1} caracters.",
+     confirmation_dont_match : "The PIN confirmation does not match.",
+     x_required : "{0} is required.",
+     ok: 'Ok',
+     enter_pin: "Enter PIN",
+     enter_puk: 'Enter PUK',
+     token_wont_be_initialized: "The Token will not be formatted",
+
+     msg_init: 'Format Token',
+
+     label_token_name: "Token Name",
+     label_file_name: "File Name",
+     label_email_address: "Email Address",
+     label_full_name: "Full name",
+     label_x509_name: "Certificate Name",
+     label_key_name: "Key Name",
+     label_old_x: 'Enter old {0}',
+     label_new_x: 'Enter new {0}',
+     label_confirm_x: 'Confirm {0}',
+     label_pin: 'Enter PIN',
+     label_puk: 'Enter PUK',
+     label_old_pin: 'Enter old PIN',
+     label_new_pin: 'Enter new PIN',
+     label_confirm_pin: 'Confirm PIN',
+     label_export_format: 'Format',
+     label_paraphrase: 'Enter passphrase',
+     label_dept_name: 'Department Name',
+     label_org: 'Organization',
+     label_org_unit: 'Organization Unit',
+     label_country: 'Country',
+     label_city: 'City',
+     label_region: 'Region or Province',
+     label_not_before: 'Not Before',
+     label_not_after: 'Not AFter',
+
+     title_login: 'Login',
+     title_reset_pin: 'Reset your PIN',
+     title_unblock: 'Unblock',
+     title_keys: 'Keys',
+     
+     err_while_x_x: "An error occured while {0} the {1}, please try again",
+     success_while_x_x: "The {0} was successfully {1}",
+
+     msg_gen_prkey: 'Generate Private Key',
+     prkey_gen_success: 'The Private Key was successfully generated.',
+     prkey_gen_success_req: '<p>The Private Key was successfully generated.</p><p>Do you want to generate a <b><i>Certificate Signing Request</i></b>?</p>',
+
+     msg_err: "There was an error, please try again",
+     msg_reset_pin: 'Please reset your PIN',
+
+     msg_import_x: "Import {0}",
+     msg_is_detecting: "Detecting token . . .",
+     msg_puk_blocked: "The PUK is blocked, please re-initialize your token.",
+     msg_init_token: "The token must be initialized.",
+     msg_no_token: "No token is detected, please insert a token.",
+     msg_readonly: "The token is readonly.",
+     msg_in_use: "The token is in use",
+     msg_detecting: 'Detecting . . . please insert your token.',
+     msg_pin_blocked: "PIN blocked, please enter your PUK",
+     msg_are_you_sure: 'Are you sure?',
+     msg_invalid_pin_login: "Invalid PIN, try again",
+     msg_invalid_pin_login_count: 'Invalid PIN, you have only one more try before your PIN is blocked',
+     msg_invalid_pin_login_counts: 'Invalid PIN, you have only {0} more tries before your PIN is blocked', 
+     msg_logged_out: 'You have successfully logged out.',
+     msg_leave_blank: 'Leave blank if no passphrase.',
+     msg_no_keys: 'No keys founds',
+     msg_loading: 'Loading...',
+
+     x_import_success: 'The {0} was successfully imported.',
+
+     prkey: "Private Key",
+     x509: "X.509 Certificate",
+
+     added: 'added',
+     deleted: 'deleted',
+     exported: 'exported',
+     imported: 'imported',
+     changed: 'changed',
+     information: 'information',
+     saved: 'saved',
+     req: 'request',
+     generated: 'generated',
+     selected_keys: 'selected keys',
+
+     deleting: 'deleting',
+     exporting: 'exporting',
+
+     token: 'token',
+     initialized: 'formatted',
+     erased: 'erased',
+     unblocked: 'unblocked',
+     csr: 'Certificate Signing Request',
+     back: 'Back',
+
+     header_change_pin: 'Change your PIN',
+     header_login: 'Login',
+     header_issued_to: 'Issued To',
+     header_validity: 'Validity',
+     header_issued_by: 'Issued By',
+     header_unblock: 'Unblock your PIN',
+     header_export_x: 'Export {0}',
+     header_create_x: 'Create a {0}',
+
+     action_cancel: 'Cancel',
+     action_create_req: 'Create Request',
+     action_export: 'Export',
+     action_import_x: 'Import {0}',
+     action_import_x509: 'Import X. 509 Certificate',
+     action_import_prkey: 'Import Private Key',
+     action_change_pin: 'Change PIN',
+     action_sign_in: 'Sign in',
+     action_add: 'Add',
+     action_gen_key: 'Generate Private Key',
+     action_unblock: 'Unblock',
+     action_configure_firefox: 'Configure Firefox',
+     action_detect_again: "Detect Token",
+     action_format: "Format Token",
+
+     as_admin: 'as Admin',
+
+     tooltip_detect_again: "Detect token presence again",
+     tooltip_format: "Format Token",
+     tooltip_sign_out: 'Sign out',
+     tooltip_options: 'Options',
+     tooltip_download: 'Download',
+     tooltip_reload_keys: 'Reload keys',
+     tooltip_import_x: 'Import {0}',
+     tooltip_onboard_keygen: 'This private key was generated on-board',
+     tooltip_imported: 'This private key was imported',
+     tooltip_del: 'Delete',
+     tooltip_export: 'Export Key',
+     tooltip_gen_csr: "Generate a Certificate Signing Request",
+     tooltip_more_info: "More information . . .",
+     tooltip_change_language: 'Change current language'
+  };
+
+  $LANG['fr-FR'] = {
+     invalid_x_length   : "{0} doit être entre {1} et {2} caractères.",
+     invalid_pin_length   : "Le PIN doit être entre {0} et {1} caractères.",
+     invalid_puk_length   : "Le PUK doit être entre {0} et {1} caractères.",
+     old_invalid_pin_length   : "Le PIN actuel doit être entre {0} et {1} caractères.",
+     new_invalid_pin_length   : "Le nouveau PIN doit être entre {0} et {1} caractères.",
+     confirmation_dont_match : "La confirmation du PIN ne correspond pas.",
+     x_required : "Le {0} est exigé.",
+     ok: 'Valider',
+     enter_pin: "Entrer Le PIN",
+     enter_puk: 'Entrer Le PUK',
+     token_wont_be_initialized: "Le support ne sera pas formaté",
+
+     msg_init: 'Formatter le support',
+
+     label_token_name: "Etiquette du support",
+     label_file_name: "Nom du Fichier",
+     label_email_address: "Adresse E-mail",
+     label_full_name: "Nom et Prénom",
+     label_x509_name: "Label du Certificat",
+     label_key_name: "Label de la Clé",
+     label_old_x: '{0} actuel',
+     label_new_x: 'Nouveau {0}',
+     label_confirm_x: 'Confirmation du {0}',
+     label_pin: 'Entrer le PIN',
+     label_puk: 'Entrer le PUK',
+     label_old_pin: 'Entrer le PIN actuel',
+     label_new_pin: 'Entrer le nouveau PIN',
+     label_confirm_pin: 'Confirmation du PIN',
+     label_export_format: "Format d'export",
+     label_paraphrase: 'Entrer le mot de passe',
+     label_dept_name: 'Nom du Département',
+     label_org: 'Organization',
+     label_org_unit: 'Organisation Unit',
+     label_country: 'Pays',
+     label_city: 'Ville',
+     label_region: 'Région ou Province',
+     label_not_before: 'pas Avant',
+     label_not_after: 'Pas Après',
+
+     title_login: 'Connexion',
+     title_reset_pin: 'Réinitialiser votre PIN',
+     title_unblock: 'Débloquer',
+     title_keys: 'Gestion des clés',
+     
+     err_while_x_x: "Erreur de {0} du {1}, veuillez essayer de nouveau.",
+     success_while_x_x: "L'opération a réussi.",
+
+     msg_gen_prkey: 'Générer une Clé Privée',
+     prkey_gen_success: "L'opération a réussi.",
+     prkey_gen_success_req: "L'opération a réussi.</p><p>Voulez-vous générer une <b><i>Demande de Signature de Certificat</i></b>?</p>",
+
+     msg_err: "Il y a eu une erreur, essayer encore",
+     msg_reset_pin: 'Veuillez réinitialiser votre PIN',
+
+     msg_import_x: "Importer un {0}",
+     msg_is_detecting: 'Detection en cour . . .',
+     msg_puk_blocked: "Le PUK est bloqué, vous devez reformatter votre support.",
+     msg_init_token: 'Le support doit être formaté.',
+     msg_no_token: "Aucun supporte ne detecté, veuillez inserer votre support physique.",
+     msg_readonly: "Le supporte est en mode lecture.",
+     msg_in_use: "Le supporte est en cours d'utilisation par une autre application.",
+     msg_detecting: 'Detection en cour, veuillez inserer votre support physique.',
+     msg_pin_blocked: 'Votre PIN a été bloqué, veuillez entrer votre PUK.',
+     msg_are_you_sure: 'Etes-vous sûr de vouloir continuer?',
+     msg_invalid_pin_login: "PIN invalide, essayer encore.",
+     msg_invalid_pin_login_count: "PIN invalide, il ne vous reste qu'un essai avant le blockage de votre PIN.",
+     msg_invalid_pin_login_counts: "PIN invalide, il ne vous reste que {0} essais avant le blockage de votre PIN.",
+     msg_logged_out: 'Vous êtes déconnecté.',
+     msg_leave_blank: "Laisser ce champs vide pour mot de passe absent.",
+     msg_no_keys: 'Le support est vide',
+     msg_loading: 'Chargement...',
+
+     x_import_success: "L'opération a réussi.",
+
+     prkey: "Clé Privée",
+     x509: "Certificat X.509",
+
+     added: 'ajouté',
+     deleted: 'supprimé',
+     exported: 'exporté',
+     imported: 'importé',
+     changed: 'changé',
+     information: 'information',
+     saved: 'enregistré',
+     req: 'demande',
+     generated: 'généré',
+     selected_keys: 'les objets selectionnés',
+
+     deleting: 'supprimant',
+     exporting: 'exportant',
+
+     token: 'support',
+     initialized: 'formatter',
+     erased: 'efacé',
+     unblocked: 'De-bloqué',
+     csr: 'Demande de Signature de Certificat',
+     back: 'Retour',
+
+     header_change_pin: 'Changer votre PIN',
+     header_login: 'Connexion',
+     header_issued_to: 'Délivré à',
+     header_validity: 'Validité',
+     header_issued_by: 'Délivré par',
+     header_unblock: 'De-bloquer votre PIN',
+     header_export_x: 'Exporter le {0}',
+     header_create_x: 'Créer un {0}',
+
+     action_cancel: 'Annuler',
+     action_create_req: 'Créer la Demande',
+     action_export: 'Exporter',
+     action_import_x: 'Importer un {0}',
+     action_import_x509: 'Importer un Certificat X.509',
+     action_import_prkey: 'Importer une Clé Privée',
+     action_change_pin: 'Changer le PIN',
+     action_sign_in: 'Connectez-vous',
+     action_add: 'Ajouter',
+     action_gen_key: 'Générer une Clé Privée',
+     action_unblock: 'De-bloquer',
+     action_configure_firefox: 'Configurer Firefox',
+     action_detect_again: "Detecter le support",
+     action_format: "Formatter le support",
+
+     as_admin: "en tant qu'Administrateur",
+
+     tooltip_detect_again: "Detecter encore la présence de supporte",
+     tooltip_format: "Formatter le support",
+     tooltip_sign_out: 'Déconnexion',
+     tooltip_options: 'Les paramètres',
+     tooltip_download: 'Télécharger',
+     tooltip_reload_keys: 'Recharger',
+     tooltip_import_x: 'Importer le {0}',
+     tooltip_import_x509: 'Importer un Certificat X.509',
+     tooltip_import_prkey: 'Importer une Clé Privée',     
+     tooltip_onboard_keygen: 'Cette clé privée a été générée à bord le support',
+     tooltip_imported: 'Cette clé privée a été importé',
+     tooltip_del: 'Supprimer',
+     tooltip_export: 'Exporter la clé',
+     tooltip_gen_csr: 'Générer une Demande de Signature de Certificat',
+     tooltip_more_info: "voir plus d'information . . .",
+     tooltip_change_language: 'Changer la langue'
+  };
+
 window.countries=[{name:'Afghanistan',code:'AF'},{name:'Åland Islands',code:'AX'},{name:'Albania',code:'AL'},{name:'Algeria',code:'DZ'},{name:'American Samoa',code:'AS'},{name:'AndorrA',code:'AD'},{name:'Angola',code:'AO'},{name:'Anguilla',code:'AI'},{name:'Antarctica',code:'AQ'},{name:'Antigua and Barbuda',code:'AG'},{name:'Argentina',code:'AR'},{name:'Armenia',code:'AM'},{name:'Aruba',code:'AW'},{name:'Australia',code:'AU'},{name:'Austria',code:'AT'},{name:'Azerbaijan',code:'AZ'},{name:'Bahamas',code:'BS'},{name:'Bahrain',code:'BH'},{name:'Bangladesh',code:'BD'},{name:'Barbados',code:'BB'},{name:'Belarus',code:'BY'},{name:'Belgium',code:'BE'},{name:'Belize',code:'BZ'},{name:'Benin',code:'BJ'},{name:'Bermuda',code:'BM'},{name:'Bhutan',code:'BT'},{name:'Bolivia',code:'BO'},{name:'Bosnia and Herzegovina',code:'BA'},{name:'Botswana',code:'BW'},{name:'Bouvet Island',code:'BV'},{name:'Brazil',code:'BR'},{name:'British Indian Ocean Territory',code:'IO'},{name:'Brunei Darussalam',code:'BN'},{name:'Bulgaria',code:'BG'},{name:'Burkina Faso',code:'BF'},{name:'Burundi',code:'BI'},{name:'Cambodia',code:'KH'},{name:'Cameroon',code:'CM'},{name:'Canada',code:'CA'},{name:'Cape Verde',code:'CV'},{name:'Cayman Islands',code:'KY'},{name:'Central African Republic',code:'CF'},{name:'Chad',code:'TD'},{name:'Chile',code:'CL'},{name:'China',code:'CN'},{name:'Christmas Island',code:'CX'},{name:'Cocos (Keeling) Islands',code:'CC'},{name:'Colombia',code:'CO'},{name:'Comoros',code:'KM'},{name:'Congo',code:'CG'},{name:'Congo, The Democratic Republic of the',code:'CD'},{name:'Cook Islands',code:'CK'},{name:'Costa Rica',code:'CR'},{name:'Cote D\'Ivoire',code:'CI'},{name:'Croatia',code:'HR'},{name:'Cuba',code:'CU'},{name:'Cyprus',code:'CY'},{name:'Czech Republic',code:'CZ'},{name:'Denmark',code:'DK'},{name:'Djibouti',code:'DJ'},{name:'Dominica',code:'DM'},{name:'Dominican Republic',code:'DO'},{name:'Ecuador',code:'EC'},{name:'Egypt',code:'EG'},{name:'El Salvador',code:'SV'},{name:'Equatorial Guinea',code:'GQ'},{name:'Eritrea',code:'ER'},{name:'Estonia',code:'EE'},{name:'Ethiopia',code:'ET'},{name:'Falkland Islands (Malvinas)',code:'FK'},{name:'Faroe Islands',code:'FO'},{name:'Fiji',code:'FJ'},{name:'Finland',code:'FI'},{name:'France',code:'FR'},{name:'French Guiana',code:'GF'},{name:'French Polynesia',code:'PF'},{name:'French Southern Territories',code:'TF'},{name:'Gabon',code:'GA'},{name:'Gambia',code:'GM'},{name:'Georgia',code:'GE'},{name:'Germany',code:'DE'},{name:'Ghana',code:'GH'},{name:'Gibraltar',code:'GI'},{name:'Greece',code:'GR'},{name:'Greenland',code:'GL'},{name:'Grenada',code:'GD'},{name:'Guadeloupe',code:'GP'},{name:'Guam',code:'GU'},{name:'Guatemala',code:'GT'},{name:'Guernsey',code:'GG'},{name:'Guinea',code:'GN'},{name:'Guinea-Bissau',code:'GW'},{name:'Guyana',code:'GY'},{name:'Haiti',code:'HT'},{name:'Heard Island and Mcdonald Islands',code:'HM'},{name:'Holy See (Vatican City State)',code:'VA'},{name:'Honduras',code:'HN'},{name:'Hong Kong',code:'HK'},{name:'Hungary',code:'HU'},{name:'Iceland',code:'IS'},{name:'India',code:'IN'},{name:'Indonesia',code:'ID'},{name:'Iran, Islamic Republic Of',code:'IR'},{name:'Iraq',code:'IQ'},{name:'Ireland',code:'IE'},{name:'Isle of Man',code:'IM'},{name:'Israel',code:'IL'},{name:'Italy',code:'IT'},{name:'Jamaica',code:'JM'},{name:'Japan',code:'JP'},{name:'Jersey',code:'JE'},{name:'Jordan',code:'JO'},{name:'Kazakhstan',code:'KZ'},{name:'Kenya',code:'KE'},{name:'Kiribati',code:'KI'},{name:'Korea, Democratic People\'S Republic of',code:'KP'},{name:'Korea, Republic of',code:'KR'},{name:'Kuwait',code:'KW'},{name:'Kyrgyzstan',code:'KG'},{name:'Lao People\'S Democratic Republic',code:'LA'},{name:'Latvia',code:'LV'},{name:'Lebanon',code:'LB'},{name:'Lesotho',code:'LS'},{name:'Liberia',code:'LR'},{name:'Libyan Arab Jamahiriya',code:'LY'},{name:'Liechtenstein',code:'LI'},{name:'Lithuania',code:'LT'},{name:'Luxembourg',code:'LU'},{name:'Macao',code:'MO'},{name:'Macedonia, The Former Yugoslav Republic of',code:'MK'},{name:'Madagascar',code:'MG'},{name:'Malawi',code:'MW'},{name:'Malaysia',code:'MY'},{name:'Maldives',code:'MV'},{name:'Mali',code:'ML'},{name:'Malta',code:'MT'},{name:'Marshall Islands',code:'MH'},{name:'Martinique',code:'MQ'},{name:'Mauritania',code:'MR'},{name:'Mauritius',code:'MU'},{name:'Mayotte',code:'YT'},{name:'Mexico',code:'MX'},{name:'Micronesia, Federated States of',code:'FM'},{name:'Moldova, Republic of',code:'MD'},{name:'Monaco',code:'MC'},{name:'Mongolia',code:'MN'},{name:'Montserrat',code:'MS'},{name:'Morocco',code:'MA'},{name:'Mozambique',code:'MZ'},{name:'Myanmar',code:'MM'},{name:'Namibia',code:'NA'},{name:'Nauru',code:'NR'},{name:'Nepal',code:'NP'},{name:'Netherlands',code:'NL'},{name:'Netherlands Antilles',code:'AN'},{name:'New Caledonia',code:'NC'},{name:'New Zealand',code:'NZ'},{name:'Nicaragua',code:'NI'},{name:'Niger',code:'NE'},{name:'Nigeria',code:'NG'},{name:'Niue',code:'NU'},{name:'Norfolk Island',code:'NF'},{name:'Northern Mariana Islands',code:'MP'},{name:'Norway',code:'NO'},{name:'Oman',code:'OM'},{name:'Pakistan',code:'PK'},{name:'Palau',code:'PW'},{name:'Palestinian Territory, Occupied',code:'PS'},{name:'Panama',code:'PA'},{name:'Papua New Guinea',code:'PG'},{name:'Paraguay',code:'PY'},{name:'Peru',code:'PE'},{name:'Philippines',code:'PH'},{name:'Pitcairn',code:'PN'},{name:'Poland',code:'PL'},{name:'Portugal',code:'PT'},{name:'Puerto Rico',code:'PR'},{name:'Qatar',code:'QA'},{name:'Reunion',code:'RE'},{name:'Romania',code:'RO'},{name:'Russian Federation',code:'RU'},{name:'RWANDA',code:'RW'},{name:'Saint Helena',code:'SH'},{name:'Saint Kitts and Nevis',code:'KN'},{name:'Saint Lucia',code:'LC'},{name:'Saint Pierre and Miquelon',code:'PM'},{name:'Saint Vincent and the Grenadines',code:'VC'},{name:'Samoa',code:'WS'},{name:'San Marino',code:'SM'},{name:'Sao Tome and Principe',code:'ST'},{name:'Saudi Arabia',code:'SA'},{name:'Senegal',code:'SN'},{name:'Serbia and Montenegro',code:'CS'},{name:'Seychelles',code:'SC'},{name:'Sierra Leone',code:'SL'},{name:'Singapore',code:'SG'},{name:'Slovakia',code:'SK'},{name:'Slovenia',code:'SI'},{name:'Solomon Islands',code:'SB'},{name:'Somalia',code:'SO'},{name:'South Africa',code:'ZA'},{name:'South Georgia and the South Sandwich Islands',code:'GS'},{name:'Spain',code:'ES'},{name:'Sri Lanka',code:'LK'},{name:'Sudan',code:'SD'},{name:'Suriname',code:'SR'},{name:'Svalbard and Jan Mayen',code:'SJ'},{name:'Swaziland',code:'SZ'},{name:'Sweden',code:'SE'},{name:'Switzerland',code:'CH'},{name:'Syrian Arab Republic',code:'SY'},{name:'Taiwan, Province of China',code:'TW'},{name:'Tajikistan',code:'TJ'},{name:'Tanzania, United Republic of',code:'TZ'},{name:'Thailand',code:'TH'},{name:'Timor-Leste',code:'TL'},{name:'Togo',code:'TG'},{name:'Tokelau',code:'TK'},{name:'Tonga',code:'TO'},{name:'Trinidad and Tobago',code:'TT'},{name:'Tunisia',code:'TN'},{name:'Turkey',code:'TR'},{name:'Turkmenistan',code:'TM'},{name:'Turks and Caicos Islands',code:'TC'},{name:'Tuvalu',code:'TV'},{name:'Uganda',code:'UG'},{name:'Ukraine',code:'UA'},{name:'United Arab Emirates',code:'AE'},{name:'United Kingdom',code:'GB'},{name:'United States',code:'US'},{name:'United States Minor Outlying Islands',code:'UM'},{name:'Uruguay',code:'UY'},{name:'Uzbekistan',code:'UZ'},{name:'Vanuatu',code:'VU'},{name:'Venezuela',code:'VE'},{name:'Viet Nam',code:'VN'},{name:'Virgin Islands, British',code:'VG'},{name:'Virgin Islands, U.S.',code:'VI'},{name:'Wallis and Futuna',code:'WF'},{name:'Western Sahara',code:'EH'},{name:'Yemen',code:'YE'},{name:'Zambia',code:'ZM'},{name:'Zimbabwe',code:'ZW'}];  
 
     for(var winPath in require.modules) {
@@ -47,8 +357,8 @@ window.countries=[{name:'Afghanistan',code:'AF'},{name:'Åland Islands',code:'AX
     window.jQuery  = require("jqueryify");
 
   </script>
-  <script src="/jquery-ui-1.8.23.custom.min.js" type="text/javascript" charset="utf-8"></script>
-  <script src="/bootstrap.min.js" type="text/javascript" charset="utf-8"></script>
+  <script src="/jquery-ui-1.8.23.custom.js" type="text/javascript" charset="utf-8"></script>
+  <script src="/bootstrap.js" type="text/javascript" charset="utf-8"></script>
 
   <script type="text/javascript" charset="utf-8">
 
@@ -338,7 +648,17 @@ window.countries=[{name:'Afghanistan',code:'AF'},{name:'Åland Islands',code:'AX
         };
       };
 
+      app.$T = function(key) {
+        return $LANG[app.view.lang][key];
+      };
+
       app.view = new App({el: '#application'});
+
+      var S = require('controllers/statusbar');
+      var L = require('controllers/loading');
+
+      new S({el: $('.statusbar')});
+      new L({el: $('#loading')});
     });
 
   </script>
@@ -356,23 +676,12 @@ window.countries=[{name:'Afghanistan',code:'AF'},{name:'Åland Islands',code:'AX
 
     </div><!-- /content -->
 
-    <div class="statusbar">
-      <!-- <div class="copyright pull-left">©2012 Epsilon</div> -->
-
-      <div class="copyright pull-left"><span> Epsilon © 2012</span> <!-- · <a rel="dialog" href="#/setlang" title="Use Token Manager in another language.">English</a> --></div>      
-      
-      <!-- <select class="locale pull-right">
-        <option value="en_US">English</option>
-        <option value="fr_FR">Français</option>
-      </select> -->
-
-      <div class="options pull-right"><a href="#/options"><i class="icon-cog"></i></a></div>
-
-    </div>
+    <div class="statusbar">      
+    </div> <!-- statusbar -->
 
   </div><!-- /app -->
 
 <img id="blank" src="data:image/gif;base64,R0lGODlhAQABAID/AMDAwAAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw=="/>
-<div id="loading">Chargement...</div>
+<div id="loading"></div>
 </body>
 </html>

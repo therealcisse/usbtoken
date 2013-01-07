@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- heat.exe dir Debug -dr INSTALLDIR -cg EpsilonFiles -gg -g1 -sf -srd -var "var.MySrcDir" -out EpsilonFiles.wxs -->
+<!-- candle.exe -fips -arch x86 -out ".\wixobj\" ".\*.wxs" -ext "C:\Program Files (x86)\WiX Toolset v3.6\bin\WixUtilExtension.dll" -ext "C:\Program Files (x86)\WiX Toolset v3.6\bin\WixUIExtension.dll" -->
+<!-- light.exe -out "epToken-1.0.0.msi" .\wixobj\*.wixobj -ext "C:\Program Files (x86)\WiX Toolset v3.6\bin\WixUtilExtension.dll" -ext "C:\Program Files (x86)\WiX Toolset v3.6\bin\WixUIExtension.dll" -->
+
+  <?define MySrcDir = "C:\epToken" ?>
+  <?define PlatformUpgradeCode = "{4FADD52F-A862-402B-826A-3B0102EAEF3E}" ?>
+  <?define ProductName = "Epsilon Token Manager" ?>
+
+<Wix xmlns='http://schemas.microsoft.com/wix/2006/wi' xmlns:util="http://schemas.microsoft.com/wix/UtilExtension">
+  
+  <Product Name='$(var.ProductName)' 
+           Id='*' 
+           UpgradeCode="$(var.PlatformUpgradeCode)"
+           Language='1033' 
+           Codepage='1252' 
+           Version='1.0.0' 
+           Manufacturer='Epsilon SARL'>
+
+    <Package Id='*' Keywords='Installer'
+             Description="Epsilon Token Manager Installer"
+             Comments='Epsilon Token Manager is a registered trademark of Epsilon SARL.' Manufacturer='Epsilon SARL'
+             InstallerVersion='100' Languages='1033' Compressed='yes' SummaryCodepage='1252' />
+
+    <Icon Id="epToken.ico" SourceFile="$(var.MySrcDir)\epToken.ico" />
+    <Property Id="ARPPRODUCTICON" Value="epToken.ico" />
+
+    <Media Id='1' Cabinet='epUSBToken.cab' EmbedCab='yes' DiskPrompt="CD-ROM #1"  CompressionLevel="high"/>
+    <MajorUpgrade DowngradeErrorMessage="Can't downgrade." AllowSameVersionUpgrades="yes"/>
+    <Property Id='DiskPrompt' Value="Epsilon Token Manager Installation [1]" />
+
+    <Directory Id='TARGETDIR' Name='SourceDir'>
+      <Directory Id='SystemFolder' Name='SysFiles'>
+
+        <Component Id="engine_pkcs11_cmp" Guid="3F2A8020-4EA0-11E2-BCFD-0800200C9A66">
+            <File Id="engine_pkcs11_file" KeyPath="yes" Source="$(var.MySrcDir)\engines\engine_pkcs11.dll" />
+        </Component>
+
+        <Component Id="opensc_pkcs11_cmp" Guid="35C05FF0-4EA0-11E2-BCFD-0800200C9A66">
+            <File Id="opensc_pkcs11_file" KeyPath="yes" Source="$(var.MySrcDir)\opensc-pkcs11.dll" />
+        </Component>
+
+      </Directory>
+      
+
+      <Directory Id='ProgramFilesFolder' Name='PFiles'>
+        <Directory Id='Epsilon' Name='Epsilon'>
+          <Directory Id='INSTALLDIR' Name='Epsilon Token Manager'>
+          
+            <Directory Id='firefox_DIR' Name='firefox'>
+
+              <Component Id="Firefox_Extension_openscpkcs11moduleinstaller_cmp86" Guid="A75384A0-5286-11E2-BCFD-0800200C9A66" KeyPath='yes'>
+                  <Condition>%PROCESSOR_ARCHITECTURE~="x86" AND %PROCESSOR_ARCHITEW6432&lt;&gt;"amd64"</Condition>
+                  <File Id='Firefox_Extension_openscpkcs11moduleinstaller_FILE86' Source="$(var.MySrcDir)\firefox\epTokenPKCS11@epsilon.ma.xpi"/>
+
+                  <RegistryKey Id="FirefoxRegs86" Root="HKLM" Key="SOFTWARE\Mozilla\Firefox\Extensions" ForceCreateOnInstall="yes">                    
+                    <RegistryValue Name="epTokenPKCS11@epsilon.ma" Type='string' Value='[INSTALLDIR]firefox\epTokenPKCS11@epsilon.ma.xpi'/>
+                  </RegistryKey>
+                                  
+              </Component>
+
+              <Component Id="Firefox_Extension_openscpkcs11moduleinstaller_cmp64" Guid="02191B60-5274-11E2-BCFD-0800200C9A66" KeyPath='yes'>
+                  <Condition>%PROCESSOR_ARCHITECTURE~="amd64" OR %PROCESSOR_ARCHITEW6432~="amd64"</Condition>
+                  <File Id='Firefox_Extension_openscpkcs11moduleinstaller_FILE64' Source="$(var.MySrcDir)\firefox\epTokenPKCS11@epsilon.ma.xpi"/>
+                    
+                  <RegistryKey Id="FirefoxRegs64" Root="HKLM" Key="SOFTWARE\Wow6432Node\Mozilla\Firefox\Extensions" ForceCreateOnInstall="yes">                        
+                      <RegistryValue Name="epTokenPKCS11@epsilon.ma" Type='string' Value='[INSTALLDIR]firefox\epTokenPKCS11@epsilon.ma.xpi'/>
+                  </RegistryKey>
+                
+              </Component>        
+
+            </Directory>
+
+            <!-- Main EXE -->
+
+            <Component Id="MainExecutable" Guid="64BF8F38-5102-4B61-BDD9-9BB17420C3C3">
+                <File Id='MainExecutable_FILE' KeyPath="yes" Source="$(var.MySrcDir)\epToken.exe" />
+            </Component>        
+
+            <Component Id="configFile" Guid="54936BEB-E898-4A7C-BD9A-8833B4103951">
+                <File Id="fil207E921A6B48A1627684CC9CFF39EB8F" KeyPath="yes" Source="$(var.MySrcDir)\opensc.conf" />
+                <RegistryKey Id="OpenscRegs" Root="HKLM" Key="Software\OpenSC Project\OpenSC" ForceCreateOnInstall="yes" ForceDeleteOnUninstall="yes">
+                    <RegistryValue Type="string" Name="ConfigFile" Value="[INSTALLDIR]opensc.conf"/>
+                    <RegistryValue Type="string" Name="ProfileDir" Value="[INSTALLDIR]profiles"/>
+                </RegistryKey>                
+            </Component>                
+
+            <!-- Service EXE -->
+
+            <Component Id="epTokend_SERVICE" Guid="2362B1E6-4FA2-4DB2-8F96-4C4BBF6D6673">
+
+              <File Id="epTokend_FILE" KeyPath="yes" Source="$(var.MySrcDir)\epTokend.exe" />
+
+              <Shortcut Id="startmenu_epToken" Directory="ProgramMenuDir" Arguments="start" Name="Epsilon ToKen Manager" WorkingDirectory='INSTALLDIR' Icon="epToken.exe" IconIndex="0" Advertise="yes" />
+              
+              <Shortcut Id="desktop_epToken" Directory="DesktopFolder" Arguments="start" Name="Epsilon ToKen Manager" WorkingDirectory='INSTALLDIR' Icon="epToken.exe" IconIndex="0" Advertise="yes" />              
+              
+              <ServiceInstall
+                Id="Install_epTokend"
+                Vital="yes"
+                Name="epTokend"
+                DisplayName="Epsilon USB Token Manager Service Monitor"
+                Description="Epsilon USB Token Manager Service Monitor"
+                Start="auto"
+                ErrorControl="normal"
+                Type="ownProcess"
+                Account="LocalSystem" />
+
+              <ServiceControl
+                  Id="sc_epTokend"
+                  Name="epTokend"
+                  Start="install"
+                  Stop="both"
+                  Remove="uninstall"
+                  Wait="yes" />
+
+              <util:ServiceConfig
+                  ServiceName="epTokend"
+                  FirstFailureActionType="restart"
+                  SecondFailureActionType="restart"
+                  ThirdFailureActionType="none"
+                  RestartServiceDelayInSeconds="5"
+                  ResetPeriodInDays="1" />  
+
+            </Component>
+
+
+          </Directory> 
+        </Directory>
+      </Directory>
+
+      <Directory Id="ProgramMenuFolder" Name="Programs">
+        <Directory Id="ProgramMenuDir" Name="Epsilon Token Manager">
+          <Component Id="ProgramMenuDir" Guid="F134EF49-DE49-4B55-BE0C-B47BDDD249BB">
+            <RemoveFolder Id='ProgramMenuDir' On='uninstall'/>
+            <RegistryValue Root='HKCU' Key='Software\[Manufacturer]\[ProductName]' Name="installed" Type='integer' Value='1' KeyPath='yes'/>                      
+          </Component>
+        </Directory>
+      </Directory>
+
+      <Directory Id="DesktopFolder" Name="Desktop" />
+    </Directory>
+
+    <Feature Id='Complete' 
+             Display='expand'
+             InstallDefault='local'
+             TypicalDefault='install'
+             Level='1'
+             Absent='disallow'
+             Title="$(var.ProductName)">
+
+      <ComponentRef Id='Firefox_Extension_openscpkcs11moduleinstaller_cmp86' />
+      <ComponentRef Id='Firefox_Extension_openscpkcs11moduleinstaller_cmp64' />
+      <ComponentRef Id='MainExecutable' />
+      <ComponentRef Id='engine_pkcs11_cmp' />
+      <ComponentRef Id='opensc_pkcs11_cmp' />
+      <ComponentRef Id='configFile' />
+      <ComponentRef Id='epTokend_SERVICE' />
+      <ComponentGroupRef Id='EpsilonFiles' />
+      <ComponentRef Id='ProgramMenuDir' />
+
+    </Feature>
+
+    <Icon Id="epToken.exe" SourceFile="$(var.MySrcDir)\epToken.exe" />
+
+    <UIRef Id="WixUI_Mondo"/>
+    <UIRef Id="WixUI_ErrorProgressText"/>
+
+  </Product>
+</Wix>

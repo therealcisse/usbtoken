@@ -1,15 +1,15 @@
 <div class="form-title"><%= @title %></div>
 <form class="getpw form">
 
-  <label>Enter new <%= @label %></label>
+  <label><%= app.$T('label_new_x').Format(@label) %></label>
   <input name="pw" type="password" class="span3" autofocus>
 
-  <label>Confirm <%= @label %></label>
+  <label><%= app.$T('label_confirm_x').Format(@label) %></label>
   <input name="pw_confirm" type="password" class="span3">
 
-  <cite class="help-block"><i class="icon-info-sign"></i> &nbsp;<%= @label %> must be between <%= @minLength %> and <%= @maxLength %> caracters.</cite>
+  <cite class="help-block"><i class="icon-info-sign"></i> &nbsp;<%= app.$T('invalid_x_length').Format(@label, @minLength, @maxLength) %></cite>
   <button type="submit" class="btn default"><i class="icon-ok"></i> &nbsp;<%= @actionLabel %></button>&nbsp;&nbsp;
 
-  <% if @hasCancel : %> <button type="button" class="cancel btn" style="margin-top:5px;">Cancel</button> <% end %>
+  <% if @hasCancel : %> <button type="button" class="cancel btn" style="margin-top:5px;"><%= app.$T('action_cancel') %></button> <% end %>
 
 </form>

@@ -27,6 +27,10 @@
 #include <commctrl.h>
 #include <strsafe.h>
 #include <direct.h>
+#include <shlwapi.h>
+#include <shlobj.h>
+#include <winbase.h>
+#include <windowsx.h>
 #include <sstream>
 #include <string>
 
@@ -45,6 +49,11 @@
 
 #pragma endregion
 
+#define PREF_EPSILON_BASE L"Epsilon SARL"
+#define APP_NAME L"Epsilon Token Manager"
+
+#define PACKVERSION(major, minor) MAKELONG(minor, major)
+
 #define MAX_LOADSTRING 100
 
 // Global Variables
@@ -58,18 +67,15 @@ char szWorkingDir[MAX_PATH];  // The current working directory
 
 SC_HANDLE g_scm;
 SC_HANDLE g_service;
-HANDLE m_SvcWatcherHnd;
 
 #endif
+
+HANDLE m_SvcWatcherHnd;
 
 // The global ClientHandler reference.
 extern CefRefPtr<ClientHandler> g_handler;
 
 //// Registry access functions
-//void EnsureTrailingSeparator(LPWSTR pRet);
-//void GetKey(LPCWSTR pBase, LPCWSTR pGroup, LPCWSTR pApp, LPCWSTR pFolder, LPWSTR pRet);
-//bool GetRegistryInt(LPCWSTR pFolder, LPCWSTR pEntry, int* pDefault, int& ret);
-//bool WriteRegistryInt (LPCWSTR pFolder, LPCWSTR pEntry, int val);
 //
 //// Registry key strings
 //#define PREF_APPSHELL_BASE    L"Software"
@@ -88,10 +94,10 @@ extern CefRefPtr<ClientHandler> g_handler;
 //void SaveWindowRect(HWND hWnd);
 //void RestoreWindowRect(int& left, int& top, int& width, int& height, int& showCmd);
 //void RestoreWindowPlacement(HWND hWnd, int showCmd);// Registry access functions
-//void EnsureTrailingSeparator(LPWSTR pRet);
-//void GetKey(LPCWSTR pBase, LPCWSTR pGroup, LPCWSTR pApp, LPCWSTR pFolder, LPWSTR pRet);
-//bool GetRegistryInt(LPCWSTR pFolder, LPCWSTR pEntry, int* pDefault, int& ret);
-//bool WriteRegistryInt (LPCWSTR pFolder, LPCWSTR pEntry, int val);
+void EnsureTrailingSeparator(LPWSTR pRet);
+void GetKey(LPCWSTR pBase, LPCWSTR pGroup, LPCWSTR pApp, LPCWSTR pFolder, LPWSTR pRet);
+bool GetRegistryInt(LPCWSTR pFolder, LPCWSTR pEntry, int* pDefault, int& ret);
+bool WriteRegistryInt (LPCWSTR pFolder, LPCWSTR pEntry, int val);
 //
 //// Registry key strings
 //#define PREF_APPSHELL_BASE    L"Software"
@@ -113,11 +119,15 @@ extern CefRefPtr<ClientHandler> g_handler;
 
 UINT const WMAPP_NOTIFYCALLBACK = WM_APP + 1;
 UINT const IDM_SERVICE_STOPPED  = WM_APP + 2;
+UINT const NOTIFICATION_ICON_ID = WM_APP + 3;
 
 UINT_PTR const HIDEBROWSER_TIMER_ID = 1;
 
+#if NTDDI_VERSION > NTDDI_VISTA  
 // Use a guid to uniquely identify our icon
-class __declspec(uuid("{6f17b89f-0622-4434-9e85-bb113dd1f814}")) NotificationIcon;
+class __declspec(uuid("{3886E88A-87F9-4623-BCBD-AEB3410F1028}")) NotificationIcon;
+
+#endif
 
 // Forward declarations of functions included in this code module:
 ATOM        MyRegisterClass(HINSTANCE hInstance);
@@ -125,12 +135,13 @@ BOOL        InitInstance(HINSTANCE, int);
 LRESULT CALLBACK  WndProc(HWND, UINT, WPARAM, LPARAM);
 
 void                ShowContextMenu(int, HWND, POINT);
-BOOL                AddNotificationIcon(HWND hwnd);
-BOOL                DeleteNotificationIcon();
-BOOL                ShowTokenRemovedBalloon();
-BOOL                ShowPINBlockedBalloon();
-BOOL                ShowTokenInsertedBalloon();
-BOOL                RestoreTooltip();
+BOOL                AddNotificationIcon(HWND const &);
+// BOOL                ShowStartNotification();
+BOOL                DeleteNotificationIcon(HWND const &);
+// BOOL                ShowTokenRemovedBalloon();
+// BOOL                ShowPINBlockedBalloon();
+// BOOL                ShowTokenInsertedBalloon();
+// BOOL                RestoreTooltip();
 
 BOOL DoStopSvc(SC_HANDLE);
 
@@ -141,9 +152,16 @@ LPWSTR GetLastErrorMessage();
 #if NTDDI_VERSION >= NTDDI_VISTA
 
 void CALLBACK ServiceNotifyCallback(void*);
-unsigned __stdcall WatchSvc(void*);
 
 #endif
+
+#if NTDDI_VERSION < NTDDI_VISTA
+
+HANDLE CreatePipe();
+
+#endif
+
+unsigned __stdcall WatchSvc(void*);
 
 // BOOL MyPostQuitMessage(UINT message = 0x0);
 
@@ -300,6 +318,7 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
   wcex.cbClsExtra   = 0;
   wcex.cbWndExtra   = 0;
   wcex.hInstance    = hInstance;
+  
   wcex.hIcon      = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_USBTOKEN));
   wcex.hCursor    = LoadCursor(NULL, IDC_ARROW);
   wcex.hbrBackground  = (HBRUSH)(COLOR_WINDOW+1);
@@ -310,21 +329,101 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
   return RegisterClassEx(&wcex);
 }
 
-BOOL AddNotificationIcon(HWND hwnd)
+DWORD GetAssemblyVersion(LPCTSTR lpszDllName)
 {
-    NOTIFYICONDATA nid = {sizeof(nid)};
-    nid.hWnd = hwnd;
+    HINSTANCE hinstDll;
+    static DWORD dwVersion = 0;
+
+    if(dwVersion != 0)
+      return dwVersion; //been here
+
+    /* For security purposes, LoadLibrary should be provided with a fully qualified 
+       path to the DLL. The lpszDllName variable should be tested to ensure that it 
+       is a fully qualified path before it is used. */
+    hinstDll = LoadLibrary(lpszDllName);
+	
+    if(hinstDll)
+    {
+        DLLGETVERSIONPROC pDllGetVersion;
+        pDllGetVersion = (DLLGETVERSIONPROC)GetProcAddress(hinstDll, "DllGetVersion");
+
+        /* Because some DLLs might not implement this function, you must test for 
+           it explicitly. Depending on the particular DLL, the lack of a DllGetVersion 
+           function can be a useful indicator of the version. */
+
+        if(pDllGetVersion)
+        {
+            DLLVERSIONINFO2 dvi;
+            HRESULT hr;
+
+            ZeroMemory(&dvi, sizeof(dvi));
+            dvi.info1.cbSize = sizeof(dvi);
+
+			hr = (*pDllGetVersion)(&dvi.info1);
+
+            if(SUCCEEDED(hr))
+               dwVersion = PACKVERSION(dvi.info1.dwMajorVersion, dvi.info1.dwMinorVersion);
+        }
+        FreeLibrary(hinstDll);
+    }
+    return dwVersion;
+}
+
+BOOL AddNotificationIcon(HWND const &hHnd)
+{
+    NOTIFYICONDATA nid = {0};
+	nid.hWnd = hHnd;
+
+	DWORD ullVersion = GetAssemblyVersion(L"shell32.dll");
+
+	if(ullVersion > MAKEDLLVERULL(6, 0, 0, 0))
+        nid.cbSize = sizeof (NOTIFYICONDATA);
+    
+#if NTDDI_VERSION >= NTDDI_VISTA  
+  else if(ullVersion == MAKEDLLVERULL(6, 0, 0, 0))
+        nid.cbSize = sizeof(NOTIFYICONDATA_V3_SIZE);    
+#endif
+    
+	else if (ullVersion >= MAKEDLLVERULL(5, 0, 0, 0))
+        nid.cbSize = NOTIFYICONDATA_V2_SIZE;
+    
+	else 
+        nid.cbSize = NOTIFYICONDATA_V1_SIZE;
+
+#if NTDDI_VERSION > NTDDI_VISTA  
+  nid.guidItem = __uuidof(NotificationIcon);  
+#else
+	nid.uID = NOTIFICATION_ICON_ID;
+#endif
+
     // add the icon, setting the icon, tooltip, and callback message.
     // the icon will be identified with the GUID
-    nid.uFlags = NIF_ICON | NIF_TIP | NIF_MESSAGE | NIF_SHOWTIP | NIF_GUID;
-    nid.guidItem = __uuidof(NotificationIcon);
+#if NTDDI_VERSION >= NTDDI_VISTA  
+    nid.uFlags = NIF_ICON | NIF_MESSAGE | NIF_SHOWTIP | NIF_TIP;
+#else
+    nid.uFlags = NIF_ICON | NIF_MESSAGE | NIF_TIP;
+#endif  
+
     nid.uCallbackMessage = WMAPP_NOTIFYCALLBACK;
-    LoadIconMetric(g_hInst, MAKEINTRESOURCE(IDI_USBTOKEN), LIM_SMALL, &nid.hIcon);
+  	nid.dwState = 0;
+  	nid.dwStateMask = NIS_HIDDEN;
+
+#if NTDDI_VERSION >= NTDDI_VISTA  
+    LoadIconMetric(g_hInst, MAKEINTRESOURCE(IDI_SMALL), LIM_SMALL, &nid.hIcon);
+#else
+    nid.hIcon = (HICON)LoadImage(g_hInst, MAKEINTRESOURCE(IDI_SMALL), IMAGE_ICON, GetSystemMetrics(SM_CXSMICON), GetSystemMetrics(SM_CYSMICON), LR_DEFAULTCOLOR);
+#endif  
+        
     LoadString(g_hInst, IDS_TOOLTIP, nid.szTip, ARRAYSIZE(nid.szTip));
     Shell_NotifyIcon(NIM_ADD, &nid);
 
-    // NOTIFYICON_VERSION_4 is prefered
+    // NOTIFYICON_VERSION_4 is prefered    
+#if NTDDI_VERSION >= NTDDI_VISTA  
     nid.uVersion = NOTIFYICON_VERSION_4;
+#else
+    nid.uVersion = NOTIFYICON_VERSION;
+#endif      
+
     return Shell_NotifyIcon(NIM_SETVERSION, &nid);
 }
 
@@ -376,6 +475,24 @@ void ShowContextMenu(int type, HWND hwnd, POINT pt)
     }
 }
 
+#if NTDDI_VERSION < NTDDI_VISTA
+
+HANDLE CreatePipe()
+{
+	union maxSize
+	  {
+		  UINT _1;
+	  };
+  
+  return ::CreateNamedPipe(L"\\\\.\\pipe\\epTokend",
+                    PIPE_ACCESS_DUPLEX, 
+                    PIPE_TYPE_MESSAGE | PIPE_READMODE_MESSAGE | PIPE_WAIT, 
+                    PIPE_UNLIMITED_INSTANCES, sizeof maxSize, 
+                    sizeof maxSize, NMPWAIT_USE_DEFAULT_WAIT, NULL);
+}
+
+#endif
+
 #if NTDDI_VERSION >= NTDDI_VISTA
 
 void CALLBACK ServiceNotifyCallback(void* param)
@@ -383,76 +500,81 @@ void CALLBACK ServiceNotifyCallback(void* param)
   SERVICE_NOTIFY* sn = static_cast<SERVICE_NOTIFY*>(param);
 
   // Check the notification results
-  if(sn->dwNotificationStatus == ERROR_SUCCESS && ((sn->dwNotificationTriggered & SERVICE_NOTIFY_STOPPED) || (sn->dwNotificationTriggered & SERVICE_NOTIFY_STOP_PENDING)))
+  if(sn->dwNotificationStatus == ERROR_SUCCESS && (sn->dwNotificationTriggered & SERVICE_NOTIFY_STOP_PENDING))
     ::PostMessage(g_handler->GetMainHwnd(), WM_COMMAND, IDM_EXIT, IDM_SERVICE_STOPPED);
 }
 
+#endif
+
 unsigned __stdcall WatchSvc(void *lpParam) {
+
+#if NTDDI_VERSION >= NTDDI_VISTA
 
   g_scm = ::OpenSCManager(
     NULL,                              // local SCM
     SERVICES_ACTIVE_DATABASE,
     SC_MANAGER_ENUMERATE_SERVICE);
 
-  ASSERT(NULL != g_scm); // Call GetLastError for more info.
-
   g_service = ::OpenService(
     g_scm,
-    L"epUSBToken",
+    L"epTokend",
     SERVICE_STOP | SERVICE_QUERY_STATUS);
-
-  ASSERT(NULL != g_service); // Call GetLastError for more info.
 
   SERVICE_NOTIFY serviceNotify = 
     { SERVICE_NOTIFY_STATUS_CHANGE, 
       ServiceNotifyCallback };
 
-  ASSERT(ERROR_SUCCESS == ::NotifyServiceStatusChange(
+  ::NotifyServiceStatusChange(
     g_service,
-    SERVICE_NOTIFY_STOPPED | SERVICE_NOTIFY_STOP_PENDING,
-    &serviceNotify));  
+    SERVICE_NOTIFY_STOP_PENDING,
+    &serviceNotify);
 
   ::SleepEx(INFINITE, TRUE); // Wait for the notification 
 
-  _endthreadex(0);
+#else
 
-  // ASSERT(CloseHandle(m_SvcWatcherHnd));
-  // m_SvcWatcherHnd = NULL;
+  HANDLE hPipe = CreatePipe();
+  if (NULL == hPipe || hPipe == INVALID_HANDLE_VALUE)
+    goto terminated;
 
-  return 0; 
-}
+  if(::ConnectNamedPipe(hPipe, NULL) || ::GetLastError() == ERROR_PIPE_CONNECTED)
+  {
+    BYTE buffer[sizeof UINT] = {0}; 
+    UINT uMessage = 0;   
+    
+    while (true) 
+    {
+		DWORD lpNumberOfBytesRead = 0;
+      if (::ReadFile(hPipe, &buffer, sizeof UINT, &lpNumberOfBytesRead, 0) && sizeof UINT == lpNumberOfBytesRead)
+      {
+        uMessage = *((UINT*)&buffer[0]);
+        
+        // The processing of the received data
+        if(uMessage == 0x0) {
+          ::PostMessage(g_handler->GetMainHwnd(), WM_COMMAND, IDM_EXIT, IDM_SERVICE_STOPPED);
+          break; //Terminated from the service
+        }
+      }
+      else
+      {   
+      }
+
+      ::Sleep(1000);  // Simulate some lengthy operations. 
+    }
+
+    ::DisconnectNamedPipe(hPipe);
+  }
+  else
+  {
+  }
+
+terminated :
 
 #endif
 
-// BOOL MyPostQuitMessage(UINT message)
-// {
-//     HANDLE hPipe = INVALID_HANDLE_VALUE;
-//     while (true) 
-//     { 
-//         hPipe = ::CreateFile(L"\\\\.\\pipes\\epUSBToken.pipe", GENERIC_WRITE, 0, 0, OPEN_EXISTING, 0, 0);
-        
-//         if (hPipe != INVALID_HANDLE_VALUE)
-//             break;
-
-//         // If any error except the ERROR_PIPE_BUSY has occurred,
-//         // we should return FALSE. 
-//         if (::GetLastError() != ERROR_PIPE_BUSY) 
-//             return FALSE;
-
-//         // The named pipe is busy. Let’s wait for 20 seconds. 
-//         if (!WaitNamedPipe(L"\\\\.\\pipes\\epUSBToken.pipe", 20000)) 
-//             return FALSE;
-//     } 
-
-//     if (!WriteFile(hPipe, (LPVOID)&message, sizeof UINT, NULL, 0))
-//     {
-//         CloseHandle(hPipe);
-//         return FALSE;
-//     }
-
-//     CloseHandle(hPipe);
-//     return TRUE;
-// }
+  _endthreadex(0);
+  return 0; 
+}  
 
 //
 //  FUNCTION: WndProc(HWND, UINT, WPARAM, LPARAM)
@@ -479,6 +601,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
       // add the notification icon
       AddNotificationIcon(hWnd);
+      // ShowStartNotification();
 
       // Create the single static handler class instance
       g_handler = new ClientHandler();
@@ -525,11 +648,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
       g_handler->app_running_ = true;
       epsilon::TokenWatcher::Init(g_handler);
 
-#if NTDDI_VERSION >= NTDDI_VISTA       
-
-    m_SvcWatcherHnd = (HANDLE)_beginthreadex(NULL, 0, &WatchSvc, NULL, 0, NULL);
-
-#endif           
+      m_SvcWatcherHnd = (HANDLE)_beginthreadex(NULL, 0, &WatchSvc, NULL, 0, NULL);
 
       return 0;
     }
@@ -589,39 +708,47 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                 //g_handler->QuittingApp(true);
               //g_handler->DispatchCloseToNextBrowser();
             //} else {
-            DeleteNotificationIcon();
-            DestroyWindow(hWnd);
-
-#if NTDDI_VERSION >= NTDDI_VISTA
 
             if(m_SvcWatcherHnd) {
               TerminateThread(m_SvcWatcherHnd, 0);
               CloseHandle(m_SvcWatcherHnd);
               m_SvcWatcherHnd = NULL;
-            }
-              
-
-#endif            
-
+            }              
 
             if(lParam != IDM_SERVICE_STOPPED) {
               
+			try {
+
+              DoStopSvc(
+				  
 #if NTDDI_VERSION >= NTDDI_VISTA
 
-              DoStopSvc(g_service);
+				  g_service
 
-# else
-              // Create hService and call DoStopSvc              
+#else
+				  NULL
+				  
+#endif
 
-#endif                      
+				  );
+
+			} catch(...) {}
+
+                      
             }
             
 #if NTDDI_VERSION >= NTDDI_VISTA
 
-            ::CloseServiceHandle(g_service);
-            ::CloseServiceHandle(g_scm);
+			if(g_service)
+				::CloseServiceHandle(g_service);
+            
+			if(g_scm)
+				::CloseServiceHandle(g_scm);
 
 #endif            
+
+			DestroyWindow(hWnd);
+            DeleteNotificationIcon(hWnd);            
 
             PostQuitMessage(0);                
             //}
@@ -644,10 +771,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     }
     break;
 
-    case WMAPP_NOTIFYCALLBACK:
+    case WMAPP_NOTIFYCALLBACK: {
+		
       switch (LOWORD(lParam))
       {
         case NIN_SELECT:
+		case NIN_KEYSELECT:
+		case WM_LBUTTONUP:
           // for NOTIFYICON_VERSION_4 clients, NIN_SELECT is prerable to listening to mouse clicks and key presses
           // directly.
           if (IsWindowVisible(hWnd))
@@ -662,28 +792,32 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
           break;
 
         case NIN_BALLOONTIMEOUT:
-          RestoreTooltip();
+          // RestoreTooltip();
           break;
 
         case NIN_BALLOONUSERCLICK:
-          RestoreTooltip();
+          // RestoreTooltip();
           // placeholder for the user clicking on the balloon.
-          MessageBox(hWnd, L"The user clicked on the balloon.", L"User click", MB_OK);
+          // MessageBox(hWnd, L"The user clicked on the balloon.", L"User click", MB_OK);
           break;
 
         case WM_CONTEXTMENU:
+		case WM_RBUTTONUP:
           {
-            POINT const pt = { LOWORD(wParam), HIWORD(wParam) };
+			POINT pt;// = { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) };			
+			GetCursorPos(&pt);
 
-            if (IsWindowVisible(hWnd))
-              ShowContextMenu(IDC_CONTEXTMENU_HIDE, hWnd, pt);
+            if (IsWindowVisible(hWnd)) {
+				::SetForegroundWindow(hWnd);
+				ShowContextMenu(IDC_CONTEXTMENU_HIDE, hWnd, pt);
+			}
             else
               ShowContextMenu(IDC_CONTEXTMENU_SHOW, hWnd, pt);
           }
           break;
       }
       break;
-
+    }
     case WM_PAINT:
       hdc = BeginPaint(hWnd, &ps);
       // TODO: Add any drawing code here...
@@ -788,60 +922,213 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
   return 0;
 }
 
-BOOL DeleteNotificationIcon()
+BOOL IsWinVistaOrLater()
 {
-    NOTIFYICONDATA nid = {sizeof(nid)};
+    // Initialize the OSVERSIONINFOEX structure.
+    OSVERSIONINFOEX osvi;
+    ZeroMemory(&osvi, sizeof(OSVERSIONINFOEX));
+    osvi.dwOSVersionInfoSize = sizeof(OSVERSIONINFOEX);
+    osvi.dwMajorVersion = 6;
+    osvi.dwMinorVersion = 0;
+
+    // Initialize the condition mask.
+    DWORDLONG dwlConditionMask = 0;
+    VER_SET_CONDITION(dwlConditionMask, VER_MAJORVERSION, VER_GREATER_EQUAL);
+    VER_SET_CONDITION(dwlConditionMask, VER_MINORVERSION, VER_GREATER_EQUAL);
+
+    // Perform the test.
+    return VerifyVersionInfo(&osvi, 
+                             VER_MAJORVERSION | VER_MINORVERSION,
+                             dwlConditionMask);
+}
+
+BOOL DeleteNotificationIcon(HWND const &hWnd)
+{
+    NOTIFYICONDATA nid = {0};
+	nid.hWnd = hWnd;
+
+	DWORD ullVersion = GetAssemblyVersion(L"shell32.dll");
+
+	if(ullVersion > MAKEDLLVERULL(6, 0, 0, 0))
+        nid.cbSize = sizeof (NOTIFYICONDATA);
+    
+#if NTDDI_VERSION >= NTDDI_VISTA  
+	else if(ullVersion == MAKEDLLVERULL(6, 0, 0, 0))
+        nid.cbSize = sizeof(NOTIFYICONDATA_V3_SIZE);    
+#endif
+
+	else if (ullVersion >= MAKEDLLVERULL(5, 0, 0, 0))
+        nid.cbSize = NOTIFYICONDATA_V2_SIZE;
+    
+	else 
+        nid.cbSize = NOTIFYICONDATA_V1_SIZE;
+
     nid.uFlags = NIF_GUID;
-    nid.guidItem = __uuidof(NotificationIcon);
+
+#if NTDDI_VERSION > NTDDI_VISTA  
+  nid.guidItem = __uuidof(NotificationIcon);
+#else
+	nid.uID = NOTIFICATION_ICON_ID;
+#endif
+
     return Shell_NotifyIcon(NIM_DELETE, &nid);
 }
 
-BOOL ShowTokenRemovedBalloon()
-{
-    // Display a low ink balloon message. This is a warning, so show the appropriate system icon.
-    NOTIFYICONDATA nid = {sizeof(nid)};
-    nid.uFlags = NIF_INFO | NIF_GUID;
-    nid.guidItem = __uuidof(NotificationIcon);
-    // respect quiet time since this balloon did not come from a direct user action.
-    nid.dwInfoFlags = NIIF_WARNING | NIIF_RESPECT_QUIET_TIME;
-    LoadString(g_hInst, IDS_TOKEN_REMOVED_TITLE, nid.szInfoTitle, ARRAYSIZE(nid.szInfoTitle));
-    LoadString(g_hInst, IDS_TOKEN_REMOVED_TEXT, nid.szInfo, ARRAYSIZE(nid.szInfo));
-    return Shell_NotifyIcon(NIM_MODIFY, &nid);
-}
+// BOOL ShowTokenRemovedBalloon()
+// {
+//     // Display a low ink balloon message. This is a warning, so show the appropriate system icon.
+//     NOTIFYICONDATA nid = {0};
 
-BOOL ShowPINBlockedBalloon()
-{
-    // Display an out of ink balloon message. This is a error, so show the appropriate system icon.
-    NOTIFYICONDATA nid = {sizeof(nid)};
-    nid.uFlags = NIF_INFO | NIF_GUID;
-    nid.guidItem = __uuidof(NotificationIcon);
-    nid.dwInfoFlags = NIIF_ERROR;
-    LoadString(g_hInst, IDS_PIN_BLOCKED_TITLE, nid.szInfoTitle, ARRAYSIZE(nid.szInfoTitle));
-    LoadString(g_hInst, IDS_PIN_BLOCKED_TEXT, nid.szInfo, ARRAYSIZE(nid.szInfo));
-    return Shell_NotifyIcon(NIM_MODIFY, &nid);
-}
+//   DWORD ullVersion = GetAssemblyVersion(L"shell32.dll");
 
-BOOL ShowTokenInsertedBalloon()
-{
-    // Display a balloon message for a print job with a custom icon
-    NOTIFYICONDATA nid = {sizeof(nid)};
-    nid.uFlags = NIF_INFO | NIF_GUID;
-    nid.guidItem = __uuidof(NotificationIcon);
-    nid.dwInfoFlags = NIIF_USER | NIIF_LARGE_ICON;
-    LoadString(g_hInst, IDS_TOKEN_INSERTED_TITLE, nid.szInfoTitle, ARRAYSIZE(nid.szInfoTitle));
-    LoadString(g_hInst, IDS_TOKEN_INSERTED_TEXT, nid.szInfo, ARRAYSIZE(nid.szInfo));
-    LoadIconMetric(g_hInst, MAKEINTRESOURCE(IDI_USBTOKEN), LIM_LARGE, &nid.hBalloonIcon);
-    return Shell_NotifyIcon(NIM_MODIFY, &nid);
-}
+//   if(ullVersion > MAKEDLLVERULL(6, 0, 0, 0))
+//         nid.cbSize = sizeof (NOTIFYICONDATA);
+    
+//   else if(ullVersion == MAKEDLLVERULL(6, 0, 0, 0))
+//         nid.cbSize = sizeof(NOTIFYICONDATA_V3_SIZE);
+    
+//   else if (ullVersion >= MAKEDLLVERULL(5, 0, 0, 0))
+//         nid.cbSize = NOTIFYICONDATA_V2_SIZE;
+    
+//   else 
+//         nid.cbSize = NOTIFYICONDATA_V1_SIZE;
 
-BOOL RestoreTooltip()
-{
-    // After the balloon is dismissed, restore the tooltip.
-    NOTIFYICONDATA nid = {sizeof(nid)};
-    nid.uFlags = NIF_SHOWTIP | NIF_GUID;
-    nid.guidItem = __uuidof(NotificationIcon);
-    return Shell_NotifyIcon(NIM_MODIFY, &nid);
-}
+//     nid.uFlags = NIF_INFO | NIF_GUID;
+// #if NTDDI_VERSION > NTDDI_VISTA  
+//   nid.guidItem = __uuidof(NotificationIcon); 
+//#else
+//	nid.uID = NOTIFICATION_ICON_ID;
+// #endif
+//     // respect quiet time since this balloon did not come from a direct user action.
+//     nid.dwInfoFlags = NIIF_WARNING | NIIF_RESPECT_QUIET_TIME;
+//     LoadString(g_hInst, IDS_TOKEN_REMOVED_TITLE, nid.szInfoTitle, ARRAYSIZE(nid.szInfoTitle));
+//     LoadString(g_hInst, IDS_TOKEN_REMOVED_TEXT, nid.szInfo, ARRAYSIZE(nid.szInfo));
+//     return Shell_NotifyIcon(NIM_MODIFY, &nid);
+// }
+
+// BOOL ShowPINBlockedBalloon()
+// {
+//     // Display an out of ink balloon message. This is a error, so show the appropriate system icon.
+//     NOTIFYICONDATA nid = {0};
+
+//   DWORD ullVersion = GetAssemblyVersion(L"shell32.dll");
+
+//   if(ullVersion > MAKEDLLVERULL(6, 0, 0, 0))
+//         nid.cbSize = sizeof (NOTIFYICONDATA);
+    
+//   else if(ullVersion == MAKEDLLVERULL(6, 0, 0, 0))
+//         nid.cbSize = sizeof(NOTIFYICONDATA_V3_SIZE);
+    
+//   else if (ullVersion >= MAKEDLLVERULL(5, 0, 0, 0))
+//         nid.cbSize = NOTIFYICONDATA_V2_SIZE;
+    
+//   else 
+//         nid.cbSize = NOTIFYICONDATA_V1_SIZE;
+
+//     nid.uFlags = NIF_INFO | NIF_GUID;
+// #if NTDDI_VERSION > NTDDI_VISTA  
+//   nid.guidItem = __uuidof(NotificationIcon);
+//#else
+//	nid.uID = NOTIFICATION_ICON_ID;
+// #endif
+//     nid.dwInfoFlags = NIIF_ERROR;
+//     LoadString(g_hInst, IDS_PIN_BLOCKED_TITLE, nid.szInfoTitle, ARRAYSIZE(nid.szInfoTitle));
+//     LoadString(g_hInst, IDS_PIN_BLOCKED_TEXT, nid.szInfo, ARRAYSIZE(nid.szInfo));
+//     return Shell_NotifyIcon(NIM_MODIFY, &nid);
+// }
+
+// BOOL ShowTokenInsertedBalloon()
+// {
+//     // Display a balloon message for a print job with a custom icon
+//     NOTIFYICONDATA nid = {0};
+
+//   DWORD ullVersion = GetAssemblyVersion(L"shell32.dll");
+
+//   if(ullVersion > MAKEDLLVERULL(6, 0, 0, 0))
+//         nid.cbSize = sizeof (NOTIFYICONDATA);
+    
+//   else if(ullVersion == MAKEDLLVERULL(6, 0, 0, 0))
+//         nid.cbSize = sizeof(NOTIFYICONDATA_V3_SIZE);
+    
+//   else if (ullVersion >= MAKEDLLVERULL(5, 0, 0, 0))
+//         nid.cbSize = NOTIFYICONDATA_V2_SIZE;
+    
+//   else 
+//         nid.cbSize = NOTIFYICONDATA_V1_SIZE;
+
+//     nid.uFlags = NIF_INFO | NIF_GUID;
+// #if NTDDI_VERSION > NTDDI_VISTA  
+//   nid.guidItem = __uuidof(NotificationIcon); 
+//#else
+//	nid.uID = NOTIFICATION_ICON_ID;
+// #endif
+//     nid.dwInfoFlags = NIIF_USER | NIIF_LARGE_ICON;
+//     LoadString(g_hInst, IDS_TOKEN_INSERTED_TITLE, nid.szInfoTitle, ARRAYSIZE(nid.szInfoTitle));
+//     LoadString(g_hInst, IDS_TOKEN_INSERTED_TEXT, nid.szInfo, ARRAYSIZE(nid.szInfo));
+//     LoadIconMetric(g_hInst, MAKEINTRESOURCE(IDI_USBTOKEN), LIM_LARGE, &nid.hBalloonIcon);
+//     return Shell_NotifyIcon(NIM_MODIFY, &nid);
+// }
+
+// BOOL ShowStartNotification()
+// {
+//     // Display a balloon message for a print job with a custom icon
+//     NOTIFYICONDATA nid = {0};
+
+//   DWORD ullVersion = GetAssemblyVersion(L"shell32.dll");
+
+//   if(ullVersion > MAKEDLLVERULL(6, 0, 0, 0))
+//         nid.cbSize = sizeof (NOTIFYICONDATA);
+    
+// #if NTDDI_VERSION > NTDDI_VISTA  
+// 	else if(ullVersion == MAKEDLLVERULL(6, 0, 0, 0))
+//         nid.cbSize = sizeof(NOTIFYICONDATA_V3_SIZE);    
+// #endif    
+//   else if (ullVersion >= MAKEDLLVERULL(5, 0, 0, 0))
+//         nid.cbSize = NOTIFYICONDATA_V2_SIZE;
+    
+//   else 
+//         nid.cbSize = NOTIFYICONDATA_V1_SIZE;
+
+//     nid.uFlags = NIF_INFO | NIF_GUID;
+// #if NTDDI_VERSION > NTDDI_VISTA  
+//   nid.guidItem = __uuidof(NotificationIcon);  
+//#else
+//	nid.uID = NOTIFICATION_ICON_ID;
+// #endif
+//     nid.dwInfoFlags = NIIF_USER | NIIF_LARGE_ICON;
+//     LoadString(g_hInst, IDS_EP_TOKEND_START_TITLE, nid.szInfoTitle, ARRAYSIZE(nid.szInfoTitle));
+//     LoadString(g_hInst, IDS_EP_TOKEND_START_TEXT, nid.szInfo, ARRAYSIZE(nid.szInfo));
+//     LoadIconMetric(g_hInst, MAKEINTRESOURCE(IDI_USBTOKEN), LIM_LARGE, &nid.hBalloonIcon);
+//     return Shell_NotifyIcon(NIM_MODIFY, &nid);
+// }
+
+// BOOL RestoreTooltip()
+// {
+//     // After the balloon is dismissed, restore the tooltip.
+//     NOTIFYICONDATA nid = {0};
+
+//   DWORD ullVersion = GetAssemblyVersion(L"shell32.dll");
+
+//   if(ullVersion > MAKEDLLVERULL(6, 0, 0, 0))
+//         nid.cbSize = sizeof (NOTIFYICONDATA);
+    
+//   else if(ullVersion == MAKEDLLVERULL(6, 0, 0, 0))
+//         nid.cbSize = sizeof(NOTIFYICONDATA_V3_SIZE);
+    
+//   else if (ullVersion >= MAKEDLLVERULL(5, 0, 0, 0))
+//         nid.cbSize = NOTIFYICONDATA_V2_SIZE;
+    
+//   else 
+//         nid.cbSize = NOTIFYICONDATA_V1_SIZE;
+
+//     nid.uFlags = NIF_SHOWTIP | NIF_GUID;
+// #if NTDDI_VERSION > NTDDI_VISTA  
+//   nid.guidItem = __uuidof(NotificationIcon);  
+//#else
+//	nid.uID = NOTIFICATION_ICON_ID;
+// #endif
+//     return Shell_NotifyIcon(NIM_MODIFY, &nid);
+// }
 
 // Global functions
 
@@ -852,8 +1139,36 @@ std::string AppGetWorkingDirectory() {
 // Purpose: 
 //   Stops the service.
 //
-BOOL DoStopSvc(SC_HANDLE hService)
+BOOL DoStopSvc(SC_HANDLE mService)
 {
+	BOOL bLocal = TRUE;
+	SC_HANDLE scm;
+	SC_HANDLE hService;
+
+	if(mService == NULL || INVALID_HANDLE_VALUE == mService) {
+
+	  scm = ::OpenSCManager(
+		NULL,                              // local SCM
+		SERVICES_ACTIVE_DATABASE,
+		SC_MANAGER_ENUMERATE_SERVICE);
+
+	if (scm == NULL) 
+		goto cleanup;
+
+	  hService = ::OpenService(
+		scm,
+		L"epTokend",
+		SERVICE_STOP | SERVICE_QUERY_STATUS);
+
+	if (hService == NULL) 
+		goto cleanup;
+		
+	} else {
+
+		hService = mService;
+		bLocal = FALSE;
+	}
+
     SERVICE_STATUS_PROCESS ssp;
     // DWORD dwStartTime = GetTickCount();
     DWORD dwBytesNeeded;
@@ -959,6 +1274,17 @@ BOOL DoStopSvc(SC_HANDLE hService)
     //     }
     // }
 
+cleanup:
+
+	if(bLocal == TRUE) {
+
+		if(hService)
+			::CloseServiceHandle(hService);
+
+		if(scm)
+			::CloseServiceHandle(scm);
+	}
+
     return TRUE;
 }
 
@@ -966,7 +1292,7 @@ BOOL DoStopSvc(SC_HANDLE hService)
 // list of arguments.
 LPWSTR GetLastErrorMessage()
 {
-    LPWSTR pBuffer = NULL;
+    LPWSTR pBuffer = NULL; 
 
     FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER |
                   FORMAT_MESSAGE_FROM_SYSTEM | 
@@ -979,4 +1305,139 @@ LPWSTR GetLastErrorMessage()
                   NULL);
 
     return pBuffer;
+}
+
+/* Registry functions */
+
+// Add trailing separator, if necessary
+void EnsureTrailingSeparator(LPWSTR pRet)
+{
+  if (!pRet)
+    return;
+
+  int len = wcslen(pRet);
+  if (len > 0 && wcscmp(&(pRet[len-1]), L"\\") != 0)
+  {
+    wcscat(pRet, L"\\");
+  }
+}
+
+// Helper method to build Registry Key string
+void GetKey(LPCWSTR pBase, LPCWSTR pGroup, LPCWSTR pApp, LPCWSTR pFolder, LPWSTR pRet)
+{
+  // Check for required params
+  ASSERT(pBase && pApp && pRet);
+  if (!pBase || !pApp || !pRet)
+    return;
+
+  // Base
+  wcscpy(pRet, pBase);
+
+  // Group (optional)
+  if (pGroup && (pGroup[0] != '\0'))
+  {
+    EnsureTrailingSeparator(pRet);
+    wcscat(pRet, pGroup);
+  }
+
+  // App name
+  EnsureTrailingSeparator(pRet);
+  wcscat(pRet, pApp);
+
+  // Folder (optional)
+  if (pFolder && (pFolder[0] != '\0'))
+  {
+    EnsureTrailingSeparator(pRet);
+    wcscat(pRet, pFolder);
+  }  
+}
+
+// get integer value from registry key
+// caller can either use return value to determine success/fail, or pass a default to be used on fail
+bool GetRegistryInt(LPCWSTR pFolder, LPCWSTR pEntry, int* pDefault, int& ret)
+{
+  HKEY hKey;
+  bool result = false;
+
+  wchar_t key[MAX_PATH] = {0};
+  GetKey(L"Software", PREF_EPSILON_BASE, APP_NAME, pFolder, (LPWSTR)&key);
+
+  if (ERROR_SUCCESS == RegOpenKeyEx(HKEY_CURRENT_USER, (LPCWSTR)key, 0, KEY_READ, &hKey))
+  {
+    DWORD dwValue = 0;
+    DWORD dwType = 0;
+    DWORD dwCount = sizeof(DWORD);
+    if (ERROR_SUCCESS == RegQueryValueEx(hKey, pEntry, NULL, &dwType, (LPBYTE)&dwValue, &dwCount))
+    {
+      result = true;
+      ASSERT(dwType == REG_DWORD);
+      ASSERT(dwCount == sizeof(dwValue));
+      ret = (int)dwValue;
+    }
+    RegCloseKey(hKey);
+  }
+
+  if (!result)
+  {
+    // couldn't read value, so use default, if specified
+    if (pDefault)
+      ret = *pDefault;
+  }
+
+  return result;
+}
+
+// write integer value to registry key
+bool WriteRegistryInt(LPCWSTR pFolder, LPCWSTR pEntry, int val)
+{
+  HKEY hKey;
+  bool result = false;
+
+  wchar_t key[MAX_PATH] = {0};
+  GetKey(L"Software", PREF_EPSILON_BASE, APP_NAME, pFolder, (LPWSTR)&key);
+
+  if (ERROR_SUCCESS == RegCreateKeyEx(HKEY_CURRENT_USER, (LPCWSTR)key, 0, NULL, REG_OPTION_NON_VOLATILE, KEY_WRITE, NULL, &hKey, NULL))
+  {
+    DWORD dwCount = sizeof(int);
+    if (ERROR_SUCCESS == RegSetValueEx(hKey, pEntry, 0, REG_DWORD, (LPBYTE)&val, dwCount))
+      result = true;
+    RegCloseKey(hKey);
+  }
+
+  return result;
+}
+
+CefString ClientApp::GetCurrentLanguage() {
+
+  // Read current language from registry in case user has changed his language
+  int langID = 0;
+
+  if(!GetRegistryInt(NULL, L"language", NULL, langID))
+	  langID = GetUserDefaultUILanguage();
+
+  if(langID != 1033 && langID != 1036)
+	  langID = 1033;
+
+  // Convert LANGID to a RFC 4646 language tag (per navigator.language)
+  int langSize = GetLocaleInfo(langID, LOCALE_SISO639LANGNAME, NULL, 0);
+  int countrySize = GetLocaleInfo(langID, LOCALE_SISO3166CTRYNAME, NULL, 0);
+
+  wchar_t *lang = new wchar_t[langSize + countrySize + 1];
+  wchar_t *country = new wchar_t[countrySize];
+
+  GetLocaleInfo(langID, LOCALE_SISO639LANGNAME, lang, langSize);
+  GetLocaleInfo(langID, LOCALE_SISO3166CTRYNAME, country, countrySize);
+
+  // add hyphen
+  wcscat(wcscat(lang, L"-"), country);
+  std::wstring locale(lang);
+
+  delete [] lang;
+  delete [] country;
+
+  return CefString(locale);
+}
+
+bool ClientHandler::SetLang(const int langID) {
+	return bool(WriteRegistryInt(NULL, L"language", langID));
 }

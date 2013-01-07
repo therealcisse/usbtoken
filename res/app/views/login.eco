@@ -1,8 +1,8 @@
 <% Login = require('controllers/login'); %>
-<div class="form-header">Login <%= 'as Admin' if @type is Login.SO_LOGIN %></div>
+<div class="form-header"> <%= app.$T('header_login') %> <%= app.$T('as_admin') if @type is Login.SO_LOGIN %></div>
 <form class="form login" method="post" action="#/login">
-  <label>Enter PIN</label>
+  <label><%= app.$T('label_pin') %></label>
   <input name="pin" type="password" class="span3" autofocus>
-  <cite class="help-block"><i class="icon-info-sign"></i> &nbsp;PIN must be between <%= @minLength %> and <%= @maxLength %> caracters.</cite>
-  <button type="submit" class="btn default"><i class="icon-signin"></i> &nbsp;Sign in</button>
+  <cite class="help-block"><i class="icon-info-sign"></i> &nbsp;<%= app.$T('invalid_pin_length').Format(@minLength, @maxLength) %></cite>
+  <button type="submit" class="btn default"><i class="icon-signin"></i> &nbsp;<%= app.$T('action_sign_in') %></button>
 </form>

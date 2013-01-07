@@ -1,0 +1,108 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<?define MySrcDir = "C:\epToken" ?>
+
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+    
+    <Fragment>
+        <DirectoryRef Id="INSTALLDIR">
+            <Directory Id="dirC2A25BD972A0CE6CA0E5449830E3199D" Name="locales" />
+            <Directory Id="dirE261E339054661BE144912734FDBD413" Name="profiles" />
+        </DirectoryRef>
+    </Fragment>
+    
+    <Fragment>
+        <ComponentGroup Id="EpsilonFiles">
+            <Component Id="cmp33E6BCADE3A4C579E4C14BD4623FC0F0" Directory="INSTALLDIR" Guid="8C8EF9B6-FCA2-4C2D-941E-400C855AD6AB">
+                <File Id="filBCB9D0A15BE3794593DD1CEBC248E83B" KeyPath="yes" Source="$(var.MySrcDir)\avcodec-54.dll" />
+            </Component>
+            <Component Id="cmp6439AAA40F75B244D42FA915F8F0309F" Directory="INSTALLDIR" Guid="1E39586E-BA9C-4B17-937E-7A4AD176A08C">
+                <File Id="filB1B77F01CC7BDB962DAFE5324316EE7A" KeyPath="yes" Source="$(var.MySrcDir)\avformat-54.dll" />
+            </Component>
+            <Component Id="cmpFB5BA2865E692256833E07D0BD860477" Directory="INSTALLDIR" Guid="D3AE212C-BEF4-4807-AB2C-E18BE6FF1840">
+                <File Id="fil4567890C9A1126DA4E9B94910A6E9DBF" KeyPath="yes" Source="$(var.MySrcDir)\avutil-51.dll" />
+            </Component>
+            <Component Id="cmpEB785AFB85843B3AC33B855FE1774C19" Directory="INSTALLDIR" Guid="AE49EF0A-69D1-44B8-863B-FBCFA9A59293">
+                <File Id="filF92153A6A4829217A3090F6432F7F9BF" KeyPath="yes" Source="$(var.MySrcDir)\cef.pak" />
+            </Component>
+            <Component Id="cmp08F25CB34BA21623E7DC8DFA601C252E" Directory="INSTALLDIR" Guid="BF453C71-B401-4AD4-8647-80350FAF2801">
+                <File Id="fil09C8B1A05CFC15015DE27019CBE6D7AE" KeyPath="yes" Source="$(var.MySrcDir)\d3dcompiler_43.dll" />
+            </Component>
+            <Component Id="cmp5097AE274534E2D6E420D4703DD1BB06" Directory="INSTALLDIR" Guid="FF2A0B44-9C22-4C88-99C1-325E1F6339BC">
+                <File Id="fil6992BB8F6874A6628C2458D300B8B9C5" KeyPath="yes" Source="$(var.MySrcDir)\d3dx9_43.dll" />
+            </Component>
+            <Component Id="cmp6F47924FE9934DC7CF5F308C3F3AA4D1" Directory="INSTALLDIR" Guid="D872C0B1-151A-45B3-BAAC-C188C82C4949">
+                <File Id="fil2CAEE03038107D83E7A8B6238C38F08F" KeyPath="yes" Source="$(var.MySrcDir)\epToken.ico" />
+            </Component>
+            <Component Id="cmpB44CC413E7FC0257F410AFA27BF82C43" Directory="INSTALLDIR" Guid="9002C92F-E900-4500-8436-08B45D472115">
+                <File Id="fil29AD2A5C191E0B84599176D98C6083E3" KeyPath="yes" Source="$(var.MySrcDir)\icudt.dll" />
+            </Component>
+            <Component Id="cmpBB0C7B993C9AF0704B701083AB25A9E6" Directory="INSTALLDIR" Guid="16F5BC8D-8D0A-44C3-AE07-1962CBBA873C">
+                <File Id="fil680C3F803F7453BD76FB62858767E327" KeyPath="yes" Source="$(var.MySrcDir)\libcef.dll" />
+            </Component>
+            <Component Id="cmp17131BA271257D72FB32E0B8CD164BCA" Directory="INSTALLDIR" Guid="8A3AE927-6B95-4AEE-A551-13E62D8B2D6D">
+                <File Id="fil0936B3F06B062CC85604526F0DFF963B" KeyPath="yes" Source="$(var.MySrcDir)\libeay32.dll" />
+            </Component>
+            <Component Id="cmp5DDCF0CE56D406D1B8B1F93E988AED6B" Directory="INSTALLDIR" Guid="EAEC08CF-A2F2-441B-B716-1C3977C9544E">
+                <File Id="fil0F4CD3729AF07C1C460E292E0F081D0A" KeyPath="yes" Source="$(var.MySrcDir)\libEGL.dll" />
+            </Component>
+            <Component Id="cmpB0CFEB9FF932521D6A75B6BE6F8D644F" Directory="INSTALLDIR" Guid="34C368B6-7554-4CB2-BA92-BA0B20ACAFCA">
+                <File Id="fil736048FE57EC840EA5DCE88625C38E8D" KeyPath="yes" Source="$(var.MySrcDir)\libGLESv2.dll" />
+            </Component>
+            <Component Id="cmp064BC76407CF113B5024F589B7F1FF42" Directory="INSTALLDIR" Guid="40C17728-5391-42F3-A3CB-A5AF0DFDA1C4">
+                <File Id="filBC79F2537F7E9417D25BA8403CF0EB4A" KeyPath="yes" Source="$(var.MySrcDir)\libp11.dll" />
+            </Component>
+            <Component Id="cmp46FA5AB4BF22933E8BB2EBBC98AA3725" Directory="INSTALLDIR" Guid="2BE27BAB-48C5-40BF-9C1D-211077D80545">
+                <File Id="fil149E81CB4D26A55EC38B528155CE7DC8" KeyPath="yes" Source="$(var.MySrcDir)\opensc.dll" />
+            </Component>
+            <Component Id="cmpAD26CD129A22547CE847B9393B35EB23" Directory="INSTALLDIR" Guid="EAB5F5E1-183C-4B2D-BD65-107A74AD4BC0">
+                <File Id="fil9EEC1809405C3DAFE3D442BC731EE069" KeyPath="yes" Source="$(var.MySrcDir)\ssleay32.dll" />
+            </Component>
+            <Component Id="cmp5C7429CF0CCA0A2F988DC61A5E0A4783" Directory="dirC2A25BD972A0CE6CA0E5449830E3199D" Guid="72B6E84F-D77C-4A9E-907B-B227F902E480">
+                <File Id="fil49A7F348F1C08F04196EBE24B20D9BA1" KeyPath="yes" Source="$(var.MySrcDir)\locales\en-US.pak" />
+            </Component>
+            <Component Id="cmp6A168A6D0BF60F488492D2016FDD3D7D" Directory="dirC2A25BD972A0CE6CA0E5449830E3199D" Guid="2EB2D181-3DBB-4981-9C19-45C81E7DED08">
+                <File Id="fil5BC185ABBC27545F6A24D845293883AF" KeyPath="yes" Source="$(var.MySrcDir)\locales\fr.pak" />
+            </Component>
+            <Component Id="cmpD549378B8F1B17AC76138A07ADE327E4" Directory="dirE261E339054661BE144912734FDBD413" Guid="3C0A77D6-F9DB-4174-AC3E-DD4485CF11E9">
+                <File Id="fil5303D671CDBD369065339530AB2C2A54" KeyPath="yes" Source="$(var.MySrcDir)\profiles\asepcos.profile" />
+            </Component>
+            <Component Id="cmp19FA4529F715E97EABE968A76C70ABD8" Directory="dirE261E339054661BE144912734FDBD413" Guid="6DB007CA-AD2E-414F-9E84-99407B63A6A8">
+                <File Id="fil2C00B757209E0E220461811B0C761C7E" KeyPath="yes" Source="$(var.MySrcDir)\profiles\authentic.profile" />
+            </Component>
+            <Component Id="cmpF22981BEB80AC3162AF73CE524CB928A" Directory="dirE261E339054661BE144912734FDBD413" Guid="B71155D6-AF4B-4F19-ABEE-2D41D78539F6">
+                <File Id="fil743E8D37AD3ECF2FBCE46E6B800A3B92" KeyPath="yes" Source="$(var.MySrcDir)\profiles\cardos.profile" />
+            </Component>
+            <Component Id="cmpCA1F541AD4BCBA33F104F830D878333B" Directory="dirE261E339054661BE144912734FDBD413" Guid="10DB9CBB-C9F5-4C53-B8F0-7D726B54A028">
+                <File Id="fil9DFC4549D213B7D454F39C745756D770" KeyPath="yes" Source="$(var.MySrcDir)\profiles\entersafe.profile" />
+            </Component>
+            <Component Id="cmp26B163A20BB79960C0747FC1D5ABB1D2" Directory="dirE261E339054661BE144912734FDBD413" Guid="214B2C86-1B8E-4D6D-AA2F-06EE7A629E2E">
+                <File Id="fil353F5B49C9E1F7E30827B904ED176BED" KeyPath="yes" Source="$(var.MySrcDir)\profiles\epass2003.profile" />
+            </Component>
+            <Component Id="cmpBAD3D24F87B6D5D392BCD05F26AAC594" Directory="dirE261E339054661BE144912734FDBD413" Guid="182C1B31-9A65-47AF-9363-4E21F50B5A0B">
+                <File Id="filA1824ED3B78168AFA0797392487C4054" KeyPath="yes" Source="$(var.MySrcDir)\profiles\myeid.profile" />
+            </Component>
+            <Component Id="cmp005C06CFE7E3CADBE3121FA575D7B556" Directory="dirE261E339054661BE144912734FDBD413" Guid="3051208C-7741-4F0B-9C84-1A4ECA8C6599">
+                <File Id="fil39C83A0AB7B056DB7535730077EC0A1E" KeyPath="yes" Source="$(var.MySrcDir)\profiles\oberthur.profile" />
+            </Component>
+            <Component Id="cmp27FC0F4D692718F24249DC429EB2121C" Directory="dirE261E339054661BE144912734FDBD413" Guid="9AA2E6B5-1298-4094-816C-5E42905D1283">
+                <File Id="fil4F3042B321133EE1860EEE04F26F8F8B" KeyPath="yes" Source="$(var.MySrcDir)\profiles\pkcs15.profile" />
+            </Component>
+            <Component Id="cmpB030C92CBC355C7FB08E97EC2B226BF9" Directory="dirE261E339054661BE144912734FDBD413" Guid="B0DBD711-A92D-40D7-8664-852CFFD6341B">
+                <File Id="fil9A33C362C2B6CD4824AF69FD0D6E4B8C" KeyPath="yes" Source="$(var.MySrcDir)\profiles\rutoken.profile" />
+            </Component>
+            <Component Id="cmpA7047427B81376464C6F69BAE3F80BF5" Directory="dirE261E339054661BE144912734FDBD413" Guid="6D688A66-3D11-4748-8775-3E9ABCEA827E">
+                <File Id="fil6619D0ED671D2F2D14D558B051C5A4CE" KeyPath="yes" Source="$(var.MySrcDir)\profiles\rutoken_ecp.profile" />
+            </Component>
+            <Component Id="cmp4517D5BFEF8AC8644A62E41DDBA073AF" Directory="dirE261E339054661BE144912734FDBD413" Guid="3AB227FF-E81B-4639-B296-90BAAE8FD615">
+                <File Id="filCE1EA66A7D4B131F579A349D01D818AE" KeyPath="yes" Source="$(var.MySrcDir)\profiles\setcos.profile" />
+            </Component>
+            <Component Id="cmp16C5399DD63AE95BAF73A9B7AA6E4C6C" Directory="dirE261E339054661BE144912734FDBD413" Guid="25894087-A406-40B5-8D80-2C842D13569C">
+                <File Id="fil09D9A58C40497AB5EE0836E3F7CD9F2A" KeyPath="yes" Source="$(var.MySrcDir)\profiles\starcos.profile" />
+            </Component>
+            <Component Id="cmpF55B6C3B5DFEEBD609595BCA8699927B" Directory="dirE261E339054661BE144912734FDBD413" Guid="18DF26A4-A089-485B-BDE7-403F01385696">
+                <File Id="filEE9107C2452AD3441024A415615A5F0D" KeyPath="yes" Source="$(var.MySrcDir)\profiles\westcos.profile" />
+            </Component>
+        </ComponentGroup>
+    </Fragment>
+</Wix>

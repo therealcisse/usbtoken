@@ -1,0 +1,11 @@
+<div class="copyright pull-left"><span> Epsilon © <%= new Date().getFullYear() %></span> </div>      
+
+<div class="options pull-right">
+  <li class="dropdown" id="language">
+      <a title="<%= app.$T('tooltip_change_language') %>" href="#" class="dropdown-toggle options" data-toggle="dropdown"><i class="icon-flag"></i><%= (app.view.lang or 'en-US').split('-')[0].toUpperCase() %></a>
+      <ul class="dropdown-menu dropup">
+        <li><a href="#/SetLang/1033"><%= $LANG['names']['en-US'] %></a></li>
+        <li><a href="#/SetLang/1036"><%= $LANG['names']['fr-FR'] %></a></li>
+      </ul>
+  </li>        
+</div>
