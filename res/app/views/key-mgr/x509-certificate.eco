@@ -54,7 +54,7 @@
 					<div class="x509-entry-value"><%= $.formatDate('dd/ mm/ yy', $.parseDate('ymd', @notBefore.substr(0, 6))) %></div>
 			</div>
 			<div class="x509-entry">
-					<div class="x509-entry-key"><%= app.$T('label_not_before') %></div>
+					<div class="x509-entry-key"><%= app.$T('label_not_after') %></div>
 					<div class="x509-entry-value"><%= $.formatDate('dd/ mm/ yy', $.parseDate('ymd', @notAfter.substr(0, 6))) %></div>
 			</div>
 		</div>

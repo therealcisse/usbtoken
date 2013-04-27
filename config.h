@@ -29,13 +29,13 @@
 // Name of group (if any) that application prefs/settings/etc. are stored under
 // This must be an empty string (for no group), or a string that ends with "\\"
 #define GROUP_NAME L""
-#define APP_NAME L"UsbToken"
+#define APP_NAME L"epToken"
 #endif
 #ifdef OS_MACOSX
 // Name of group (if any) that application prefs/settings/etc. are stored under
 // This must be an empty string (for no group), or a string that ends with "/"
 #define GROUP_NAME @""
-#define APP_NAME @"UsbToken"
+#define APP_NAME @"epToken"
 #endif
 
 

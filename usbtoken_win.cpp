@@ -36,16 +36,16 @@
 
 #include "include/cef_app.h"
 #include "include/cef_browser.h"
-#include "include/cef_frame.h"
-#include "include/cef_runnable.h"
 
+#include "client_switches.h"
+#include "osr_widget_win.h"
 #include "client_app.h"
 #include "client_handler.h"
-#include "string_util.h"
 
 #include "inc/watcher.h"
 
 #include "ep_pkcs11_scheme.h"
+#include "resource.h"
 
 #pragma endregion
 
@@ -61,6 +61,7 @@ DWORD g_appStartupTime;
 HINSTANCE g_hInst;                // current instance
 TCHAR szTitle[MAX_LOADSTRING];          // The title bar text
 TCHAR szWindowClass[MAX_LOADSTRING];      // the main window class name
+TCHAR szOSRWindowClass[MAX_LOADSTRING];  // the OSR window class name
 char szWorkingDir[MAX_PATH];  // The current working directory
 
 #if NTDDI_VERSION >= NTDDI_VISTA
@@ -74,6 +75,15 @@ HANDLE m_SvcWatcherHnd;
 
 // The global ClientHandler reference.
 extern CefRefPtr<ClientHandler> g_handler;
+
+class MainBrowserProvider : public OSRBrowserProvider {
+  virtual CefRefPtr<CefBrowser> GetBrowser() {
+    if (g_handler.get())
+      return g_handler->GetBrowser();
+
+    return NULL;
+  }
+} g_main_browser_provider;
 
 //// Registry access functions
 //
@@ -205,6 +215,7 @@ int APIENTRY wWinMain(HINSTANCE hInstance,
   // Populate the settings based on command line arguments.
   AppGetSettings(settings, app);
 
+  //settings.pack_loading_disabled = true;
   settings.multi_threaded_message_loop = true;
 
   // Initialize CEF.
@@ -218,6 +229,7 @@ int APIENTRY wWinMain(HINSTANCE hInstance,
   // Initialize global strings
   LoadString(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
   LoadString(hInstance, IDC_USBTOKEN, szWindowClass, MAX_LOADSTRING);
+  LoadString(hInstance, IDS_OSR_WIDGET_CLASS, szOSRWindowClass, MAX_LOADSTRING);
   MyRegisterClass(hInstance);
 
   // Perform application initialization
@@ -616,30 +628,45 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
       CefBrowserSettings settings;
 
       // Populate the settings based on command line arguments.
-      AppGetBrowserSettings(settings);
+//       //AppGetBrowserSettings(settings);
 
-      //settings.file_access_from_file_urls_allowed = true;
-        //settings.universal_access_from_file_urls_allowed = true;
+//       //settings.file_access_from_file_urls_allowed = true;
+//         //settings.universal_access_from_file_urls_allowed = true;
 
-      settings.accelerated_2d_canvas_disabled = false;
-      settings.accelerated_compositing_disabled = false;
-      settings.accelerated_filters_enabled = true;
-      settings.accelerated_layers_disabled =  false;
-      settings.accelerated_painting_enabled = true;
-      settings.accelerated_plugins_disabled = true;
-      settings.accelerated_video_disabled = true;
-      settings.application_cache_disabled = false;
-      settings.databases_disabled = true;
-      //settings.developer_tools_disabled = true;
-      settings.plugins_disabled = true;
-      settings.fullscreen_enabled = false;
-      settings.javascript_open_windows_disallowed = true;
-      settings.plugins_disabled = true;
-      settings.webgl_disabled = false;
-      settings.java_disabled = true;
+//      settings.accelerated_2d_canvas = STATE_ENABLED;
+      settings.accelerated_compositing = STATE_ENABLED;
+//      settings.accelerated_filters = STATE_ENABLED;
+//     settings.accelerated_layers =  STATE_ENABLED;
+//      settings.accelerated_painting = STATE_ENABLED;
+//      settings.accelerated_plugins = STATE_DISABLED;
+//      settings.accelerated_video = STATE_DISABLED;
+      settings.application_cache = STATE_ENABLED;
+      settings.databases = STATE_DISABLED;
+      settings.developer_tools = STATE_ENABLED;
+//      settings.fullscreen = STATE_DISABLED;
+      settings.javascript_open_windows = STATE_DISABLED;
+      settings.plugins = STATE_DISABLED;
+      settings.webgl = STATE_ENABLED;
+      settings.java = STATE_DISABLED;
+
+      if (AppIsOffScreenRenderingEnabled()) {
+        CefRefPtr<CefCommandLine> cmd_line = AppGetCommandLine();
+        bool transparent =
+            cmd_line->HasSwitch(usbtoken::kTransparentPaintingEnabled);
+
+        CefRefPtr<OSRWindow> osr_window =
+            OSRWindow::Create(&g_main_browser_provider, transparent);
+        osr_window->CreateWidget(hWnd, rect, g_hInst, szOSRWindowClass);
+        info.SetAsOffScreen(osr_window->hwnd());
+        info.SetTransparentPainting(transparent ? TRUE : FALSE);
+        g_handler->SetOSRHandler(osr_window.get());
+      } else {
+        // Initialize window info to the defaults for a child window.
+        info.SetAsChild(hWnd, rect);
+      }      
 
       // Initialize window info to the defaults for a child window
-      info.SetAsChild(hWnd, rect);
+      // info.SetAsChild(hWnd, rect);
 
       // Creat the new child browser window
       CefBrowserHost::CreateBrowser(info, g_handler.get(),

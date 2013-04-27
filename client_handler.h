@@ -27,6 +27,7 @@ class ClientHandler : public CefClient,
                       public CefKeyboardHandler,
                       public CefLifeSpanHandler,
                       public CefLoadHandler,
+                      public CefRenderHandler,
                       public CefRequestHandler {
  public:
 
@@ -66,6 +67,12 @@ class ClientHandler : public CefClient,
       return NULL;
     }
   };
+
+  // Interface implemented to handle off-screen rendering.
+  class RenderHandler : public CefRenderHandler {
+   public:
+    virtual void OnBeforeClose(CefRefPtr<CefBrowser> browser) =0;
+  };  
 
   typedef std::set<CefRefPtr<RequestDelegate> > RequestDelegateSet;
 
@@ -164,8 +171,32 @@ void ClientHandler::OnDownloadUpdated(
       CefRefPtr<CefFrame> frame,
       CefRefPtr<CefRequest> request) OVERRIDE;
 
+  virtual bool GetRootScreenRect(CefRefPtr<CefBrowser> browser,
+                                 CefRect& rect) OVERRIDE;
+  virtual bool GetViewRect(CefRefPtr<CefBrowser> browser,
+                           CefRect& rect) OVERRIDE;
+  virtual bool GetScreenPoint(CefRefPtr<CefBrowser> browser,
+                              int viewX,
+                              int viewY,
+                              int& screenX,
+                              int& screenY) OVERRIDE;
+  virtual void OnPopupShow(CefRefPtr<CefBrowser> browser, bool show) OVERRIDE;
+  virtual void OnPopupSize(CefRefPtr<CefBrowser> browser,
+                           const CefRect& rect) OVERRIDE;
+  virtual void OnPaint(CefRefPtr<CefBrowser> browser,
+                       PaintElementType type,
+                       const RectList& dirtyRects,
+                       const void* buffer,
+                       int width,
+                       int height) OVERRIDE;  
+
   void SetMainHwnd(CefWindowHandle hwnd);
   CefWindowHandle GetMainHwnd() { return m_MainHwnd; }
+
+  void SetOSRHandler(CefRefPtr<RenderHandler> handler) {
+    m_OSRHandler = handler;
+  }
+  CefRefPtr<RenderHandler> GetOSRHandler() { return m_OSRHandler; }
 
   CefRefPtr<CefBrowser> GetBrowser() { return m_Browser; }
   int GetBrowserId() { return m_BrowserId; }
@@ -216,6 +247,8 @@ void SetLastDownloadFile(const std::string& fileName);
 
   // The main frame window handle
   CefWindowHandle m_MainHwnd;
+
+  CefRefPtr<RenderHandler> m_OSRHandler;
 
   // The child browser id
   int m_BrowserId;

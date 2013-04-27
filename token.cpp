@@ -16,7 +16,7 @@
 namespace epsilon {
 
 bool Token::EraseToken() {
-	CefRefPtr<TokenContext> ctx = TokenContext::GetGlobalContext();
+	TokenContext *ctx = TokenContext::GetGlobalContext();
 	ASSERT(!ctx->InContext());
 
 	if(ctx->Bind()) {
@@ -43,7 +43,7 @@ bool Token::InitToken(const char* sopin, const char* sopuk, const char *label) {
 	if(!EraseToken())
 		return false;
 
-	CefRefPtr<TokenContext> ctx = TokenContext::GetGlobalContext();
+	TokenContext *ctx = TokenContext::GetGlobalContext();
 	ASSERT(!ctx->InContext());
 
 	if(ctx->Bind()) {
@@ -85,7 +85,7 @@ bool Token::InitToken(const char* sopin, const char* sopuk, const char *label) {
 }
 
 //bool Token::InitPIN(const char *pin, const char *puk) {
-//	CefRefPtr<TokenContext> ctx = TokenContext::GetGlobalContext();
+//	TokenContext *ctx = TokenContext::GetGlobalContext();
 //	ASSERT(!ctx->InContext());
 //
 //	if(ctx->Bind()) {
@@ -116,7 +116,7 @@ bool Token::InitToken(const char* sopin, const char* sopuk, const char *label) {
 //}
 
 bool Token::ChangePIN(const char *pincode, const char *newpin) {
-	CefRefPtr<TokenContext> ctx = TokenContext::GetGlobalContext();
+	TokenContext *ctx = TokenContext::GetGlobalContext();
 	ASSERT(!ctx->InContext());
 
 	if(ctx->Bind()) {
@@ -145,7 +145,7 @@ bool Token::ChangePIN(const char *pincode, const char *newpin) {
 }
 
 bool Token::UnblockPIN(const char* puk, const char* pin) {
-	CefRefPtr<TokenContext> ctx = TokenContext::GetGlobalContext();
+	TokenContext *ctx = TokenContext::GetGlobalContext();
 	ASSERT(!ctx->InContext());
 
 	if(ctx->Bind()) {	
@@ -203,7 +203,7 @@ bool Token::UnblockPIN(const char* puk, const char* pin) {
 }
 
 bool Token::VerifyPIN(const char *pin) {
-	CefRefPtr<TokenContext> ctx = TokenContext::GetGlobalContext();
+	TokenContext *ctx = TokenContext::GetGlobalContext();
 	ASSERT(!ctx->InContext());
 
 	if(ctx->Bind()) {	
@@ -294,7 +294,7 @@ bool Token::OnProcessMessageReceived(
 				}
 
 				CefRefPtr<CefProcessMessage> Do() const {
-					CefRefPtr<TokenContext> ctx = TokenContext::GetGlobalContext();
+					TokenContext *ctx = TokenContext::GetGlobalContext();
 					ep_token_info info;
 
 					/* Does this really means that token is blank? */
@@ -383,7 +383,7 @@ bool Token::OnProcessMessageReceived(
 					bool r = VerifyPIN(pin);
 
 					ep_token_info info;
-					CefRefPtr<TokenContext> ctx = TokenContext::GetGlobalContext();
+					TokenContext *ctx = TokenContext::GetGlobalContext();
 			
 					if(ctx->Bind()) {
 				
@@ -621,7 +621,7 @@ bool Token::OnProcessMessageReceived(
 				}
 
 				CefRefPtr<CefProcessMessage> Do() const {
-					CefRefPtr<TokenContext> ctx = TokenContext::GetGlobalContext();
+					TokenContext *ctx = TokenContext::GetGlobalContext();
 			
 					if(ctx->Bind()) {
 						struct ep_key_info *key_info[32];
@@ -656,7 +656,7 @@ bool Token::OnProcessMessageReceived(
 			CefRefPtr<CefDictionaryValue> args = argList->GetDictionary(0);
 			CefString MsgId = args->GetString(CefString("MsgId"));
 
-			CefRefPtr<TokenContext> ctx = TokenContext::GetGlobalContext();
+			TokenContext *ctx = TokenContext::GetGlobalContext();
 			
 			if(ctx->Bind()) {
 				ep_key_info *key_info[32];
@@ -692,7 +692,7 @@ bool Token::OnProcessMessageReceived(
 				}
 
 				CefRefPtr<CefProcessMessage> Do() const {
-					CefRefPtr<TokenContext> ctx = TokenContext::GetGlobalContext();
+					TokenContext *ctx = TokenContext::GetGlobalContext();
 			
 					if(ctx->Bind()) {
 						struct ep_key_info *key_info[32];
@@ -740,7 +740,7 @@ bool Token::OnProcessMessageReceived(
 				}
 
 				CefRefPtr<CefProcessMessage> Do() const {
-					CefRefPtr<TokenContext> ctx = TokenContext::GetGlobalContext();
+					TokenContext *ctx = TokenContext::GetGlobalContext();
 			
 					if(ctx->Bind()) {
 						ep_key_info key_info;
@@ -775,7 +775,7 @@ bool Token::OnProcessMessageReceived(
 			CefString id = args->GetString(CefString("id"));
 			CefString pin = args->GetString(CefString("authData"));
 
-			CefRefPtr<TokenContext> ctx = TokenContext::GetGlobalContext();
+			TokenContext *ctx = TokenContext::GetGlobalContext();
 			
 			if(ctx->Bind()) {
 				ep_key_info key_info;
@@ -800,7 +800,7 @@ bool Token::OnProcessMessageReceived(
 			CefString MsgId = args->GetString(CefString("MsgId"));		
 			CefString id = args->GetString(CefString("id"));
 
-			CefRefPtr<TokenContext> ctx = TokenContext::GetGlobalContext();
+			TokenContext *ctx = TokenContext::GetGlobalContext();
 			
 			if(ctx->Bind()) {
 				ep_key_info key_info;
@@ -854,7 +854,7 @@ bool Token::OnProcessMessageReceived(
 				}
 
 				CefRefPtr<CefProcessMessage> Do() const {
-					CefRefPtr<TokenContext> ctx = TokenContext::GetGlobalContext();
+					TokenContext *ctx = TokenContext::GetGlobalContext();
 			
 					if(ctx->Bind()) {
 						bool r = ImportPrKey(ctx, data, data_len, label, format, passphrase, authData);
@@ -886,7 +886,7 @@ bool Token::OnProcessMessageReceived(
 	//		CefString label = args->GetString(CefString("label"));
 	//		CefString authData = args->GetString(CefString("authData"));
 
-	//		CefRefPtr<TokenContext> ctx = TokenContext::GetGlobalContext();
+	//		TokenContext *ctx = TokenContext::GetGlobalContext();
 	//		
 	//		if(ctx->Bind()) {
 
@@ -936,7 +936,7 @@ bool Token::OnProcessMessageReceived(
 				}
 
 				CefRefPtr<CefProcessMessage> Do() const {
-					CefRefPtr<TokenContext> ctx = TokenContext::GetGlobalContext();
+					TokenContext *ctx = TokenContext::GetGlobalContext();
 			
 					if(ctx->Bind()) {
 						bool r = ImportCert(ctx, data, data_len, label, format, authData);
@@ -980,7 +980,7 @@ bool Token::OnProcessMessageReceived(
 				}
 
 				CefRefPtr<CefProcessMessage> Do() const {
-					CefRefPtr<TokenContext> ctx = TokenContext::GetGlobalContext();
+					TokenContext *ctx = TokenContext::GetGlobalContext();
 			
 					if(ctx->Bind()) {
 
@@ -1026,7 +1026,7 @@ bool Token::OnProcessMessageReceived(
 				}
 
 				CefRefPtr<CefProcessMessage> Do() const {
-					CefRefPtr<TokenContext> ctx = TokenContext::GetGlobalContext();
+					TokenContext *ctx = TokenContext::GetGlobalContext();
 			
 					if(ctx->Bind()) {
 						bool r = DelX509(ctx, id, authData);
@@ -1071,7 +1071,7 @@ bool Token::OnProcessMessageReceived(
 				}
 
 				CefRefPtr<CefProcessMessage> Do() const {
-					CefRefPtr<TokenContext> ctx = TokenContext::GetGlobalContext();
+					TokenContext *ctx = TokenContext::GetGlobalContext();
 			
 					if(ctx->Bind()) {
 						bool r = DelPrKey(ctx, id, authData);
@@ -1109,7 +1109,7 @@ bool Token::OnProcessMessageReceived(
 			CefString emailAddress = args->GetString(CefString("emailAddress"));
 			CefString authData = args->GetString(CefString("authData"));
 
-			CefRefPtr<TokenContext> ctx = TokenContext::GetGlobalContext();
+			TokenContext *ctx = TokenContext::GetGlobalContext();
 			
 			if(ctx->Bind()) {
 
@@ -1136,7 +1136,7 @@ bool Token::OnProcessMessageReceived(
 			CefString path = args->GetString(CefString("fileName"));
 			CefString authData = args->GetString(CefString("authData"));
 
-			CefRefPtr<TokenContext> ctx = TokenContext::GetGlobalContext();
+			TokenContext *ctx = TokenContext::GetGlobalContext();
 			
 			if(ctx->Bind()) {
 
@@ -1165,69 +1165,69 @@ bool Token::OnProcessMessageReceived(
 	return false;
 }
 
-//bool Token::GetPubKeys(CefRefPtr<TokenContext> ctx, ep_key_info **keys, size_t *len) {	
+//bool Token::GetPubKeys(TokenContext *ctx, ep_key_info **keys, size_t *len) {	
 //	if((*len = ::util::ep_token_read_all_pubkeys(ctx, keys, 32)) < 0) 
 //		return false; 
 //	else 
 //		return true;
 //}
 
-bool Token::GetCerts(CefRefPtr<TokenContext> ctx, ep_key_info **keys, size_t *len) {
+bool Token::GetCerts(TokenContext *ctx, ep_key_info **keys, size_t *len) {
 	if((*len = ::util::ep_token_read_all_certs(ctx, keys, 32)) < 0) 
 		return false; 
 	else 
 		return true;
 }
 
-bool Token::GetPrKeys(CefRefPtr<TokenContext> ctx, ep_key_info **keys, size_t *len) {
+bool Token::GetPrKeys(TokenContext *ctx, ep_key_info **keys, size_t *len) {
 	if((*len = ::util::ep_token_read_all_prkeys(ctx, keys, 32)) < 0) 
 		return false; 
 	else 
 		return true;
 }
 
-//bool Token::GetPubKey(CefRefPtr<TokenContext> ctx, const char *id, ep_key_info *key, const char *pin) {
+//bool Token::GetPubKey(TokenContext *ctx, const char *id, ep_key_info *key, const char *pin) {
 //	return ::util::ep_token_read_pubkey(ctx, key, id, (unsigned char *) pin) < 0 ? false : true ;
 //}
 
-//bool Token::GetPrKey(CefRefPtr<TokenContext> ctx, const char *id, ep_key_info *key) {
+//bool Token::GetPrKey(TokenContext *ctx, const char *id, ep_key_info *key) {
 //	return ::util::ep_token_read_prkey(ctx, key, id) < 0 ? false : true ;
 //}
 
-bool Token::GetCert(CefRefPtr<TokenContext> ctx, const char *id, ep_key_info *key) {
+bool Token::GetCert(TokenContext *ctx, const char *id, ep_key_info *key) {
 	return ::util::ep_token_read_certificate(ctx, key, id) < 0 ? false : true ;
 }
 
-bool Token::GenKey(CefRefPtr<TokenContext> ctx, char *label, const char *authData, char **id) {
+bool Token::GenKey(TokenContext *ctx, char *label, const char *authData, char **id) {
 	return ::util::ep_generate_key(ctx, "RSA/2048", label, id, NULL, authData, EP_KEY_USAGE_PRKEY) < 0 ? false : true;
 }
 
-bool Token::ImportPrKey(CefRefPtr<TokenContext> ctx, const char *data, size_t len, const char *label, const char *format, const char *passphrase, const char *authData) {
+bool Token::ImportPrKey(TokenContext *ctx, const char *data, size_t len, const char *label, const char *format, const char *passphrase, const char *authData) {
 	return ::util::ep_store_private_key(ctx, data, len, label, format, (char *)passphrase, authData) < 0 ? false : true;
 }
 
-//bool Token::ImportPubKey(CefRefPtr<TokenContext> ctx, const char *data, size_t len, const char *label, const char *format, const char *authData) {
+//bool Token::ImportPubKey(TokenContext *ctx, const char *data, size_t len, const char *label, const char *format, const char *authData) {
 //	return ::util::ep_store_public_key(ctx, data, len, label, format, authData) < 0 ? false : true;
 //}
 
-bool Token::ImportCert(CefRefPtr<TokenContext> ctx, const char *data, size_t len, const char *label, const char *format, const char *authData) {
+bool Token::ImportCert(TokenContext *ctx, const char *data, size_t len, const char *label, const char *format, const char *authData) {
 	return ::util::ep_store_certificate(ctx, data, len, label, format, authData) < 0 ? false : true;
 }
 
-bool Token::GenX509Req(CefRefPtr<TokenContext> ctx, CefRefPtr<ClientHandler> handler, const char *id, const unsigned char *cn, const unsigned char *o, 
+bool Token::GenX509Req(TokenContext *ctx, CefRefPtr<ClientHandler> handler, const char *id, const unsigned char *cn, const unsigned char *o, 
 	const unsigned char *ou, const unsigned char *city, const unsigned char *region, const unsigned char *country, const unsigned char *emailAddress, const char *authData) {
 	return ::util::ep_gen_x509_req(ctx, handler, id, cn, o, ou, city, region, country, emailAddress, authData) < 0 ? false : true ;
 }
 
-bool Token::ExportX509(CefRefPtr<TokenContext> ctx, CefRefPtr<ClientHandler> handler, const char *path, const char *id, const char *authData, unsigned int format) {
+bool Token::ExportX509(TokenContext *ctx, CefRefPtr<ClientHandler> handler, const char *path, const char *id, const char *authData, unsigned int format) {
 	return ::util::ep_export_x509_certificate(ctx, handler, path, id, authData, format) < 0 ? false : true ;	
 }
 
-bool Token::DelPrKey(CefRefPtr<TokenContext> ctx, const char *id, const char *authData) {
+bool Token::DelPrKey(TokenContext *ctx, const char *id, const char *authData) {
 	return ::util::ep_delete_prkey(ctx, id, authData) < 0 ? false : true ;
 }
 
-bool Token::DelX509(CefRefPtr<TokenContext> ctx, const char *id, const char *authData) {
+bool Token::DelX509(TokenContext *ctx, const char *id, const char *authData) {
 	return ::util::ep_delete_x509_certificate(ctx, id, authData) < 0 ? false : true ;
 }
 

@@ -27,7 +27,7 @@
 
 //#include "inc/token.h"
 
-#include "epUSBToken/client_handler.h"
+#include "epToken/client_handler.h"
 
 #define	MAX_CERTS	4
 
@@ -80,21 +80,21 @@ int ep_verify_pin(struct sc_pkcs15_card *p15card, const char *pin);
 
 /*  Crypto tools */
 
-int ep_delete_prkey(CefRefPtr<epsilon::TokenContext> ctx, const char *id, const char *authData);
+int ep_delete_prkey(epsilon::TokenContext*, const char *id, const char *authData);
 
-int ep_delete_x509_certificate(CefRefPtr<epsilon::TokenContext> ctx, const char *id, const char *authData);
+int ep_delete_x509_certificate(epsilon::TokenContext*, const char *id, const char *authData);
 
 static int 
 pass_cb(char *buf, int len, int flags, void *d);
 
 /* Key generation */
 
-int ep_gen_x509_req(CefRefPtr<epsilon::TokenContext>, CefRefPtr<ClientHandler> handler, const char *, const unsigned char *, 
+int ep_gen_x509_req(epsilon::TokenContext*, CefRefPtr<ClientHandler> handler, const char *, const unsigned char *, 
 	const unsigned char *, const unsigned char *, const unsigned char *, const unsigned char *, const unsigned char *, const unsigned char *, const char *);
 
-int ep_export_x509_certificate(CefRefPtr<epsilon::TokenContext> ctx, CefRefPtr<ClientHandler> handler, const char *path, const char *id, const char *authData, unsigned int format);
+int ep_export_x509_certificate(epsilon::TokenContext*, CefRefPtr<ClientHandler> handler, const char *path, const char *id, const char *authData, unsigned int format);
 
-int ep_generate_key(CefRefPtr<epsilon::TokenContext> ctx, 
+int ep_generate_key(epsilon::TokenContext*, 
   const char *spec, const char *pubkey_label, char **id, char *authid, const char *authData, int x509_usage);
 
 static int 
@@ -136,17 +136,17 @@ int ep_read_certificate(const char *data, size_t len, const char *format, X509 *
 
 /* Token read keys */
 
-int ep_token_read_certificate(CefRefPtr<epsilon::TokenContext> ctx, struct ep_key_info *key, const char *cert_id);
+int ep_token_read_certificate(epsilon::TokenContext*, struct ep_key_info *key, const char *cert_id);
 
-int ep_token_read_pubkey(CefRefPtr<epsilon::TokenContext> ctx, struct ep_key_info *key, const char *key_id, u8 *pin);
+int ep_token_read_pubkey(epsilon::TokenContext*, struct ep_key_info *key, const char *key_id, u8 *pin);
 
-int ep_token_read_prkey(CefRefPtr<epsilon::TokenContext> ctx, struct ep_key_info *key, const char *key_id);
+int ep_token_read_prkey(epsilon::TokenContext*, struct ep_key_info *key, const char *key_id);
 
-int ep_token_read_all_pubkeys(CefRefPtr<epsilon::TokenContext> ctx, struct ::ep_key_info **keys, size_t ret_size);
+int ep_token_read_all_pubkeys(epsilon::TokenContext*, struct ::ep_key_info **keys, size_t ret_size);
 
-int ep_token_read_all_prkeys(CefRefPtr<epsilon::TokenContext> ctx, struct ::ep_key_info **keys, size_t ret_size);
+int ep_token_read_all_prkeys(epsilon::TokenContext*, struct ::ep_key_info **keys, size_t ret_size);
 
-int ep_token_read_all_certs(CefRefPtr<epsilon::TokenContext> ctx, struct ::ep_key_info **keys, size_t ret_size);
+int ep_token_read_all_certs(epsilon::TokenContext*, struct ::ep_key_info **keys, size_t ret_size);
 
 /* FS read keys */
 
@@ -171,7 +171,7 @@ int ep_delete_crypto_objects(sc_pkcs15_card *p15card,
 /*
  * Store a private key
  */
-int ep_store_private_key(CefRefPtr<epsilon::TokenContext> ctx, const char *data, size_t len, 
+int ep_store_private_key(epsilon::TokenContext*, const char *data, size_t len, 
 	const char *label, const char *format, char *passphrase, const char *authData);
 
 static int
@@ -181,13 +181,13 @@ do_store_public_key(struct sc_pkcs15_card *p15card, struct sc_profile *profile,
 /*
  * Store a public key
  */
-int ep_store_public_key(CefRefPtr<epsilon::TokenContext> ctx, 
+int ep_store_public_key(epsilon::TokenContext*, 
 	const char *data, size_t len, const char *format, const char *label, const char *authData);
 
 /*
  * Download certificate to card
  */
-int ep_store_certificate(CefRefPtr<epsilon::TokenContext> ctx,
+int ep_store_certificate(epsilon::TokenContext*,
 	const char *data, size_t len, const char *label, const char *format, const char *authData, unsigned int authority = 0);
 
 static int 

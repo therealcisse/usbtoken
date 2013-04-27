@@ -15,7 +15,7 @@
 
 class ClientApp : public CefApp,
                   public CefBrowserProcessHandler,
-                  public CefProxyHandler,
+//                  public CefProxyHandler,
                   public CefRenderProcessHandler {
  public:
   // Interface for browser delegates. All BrowserDelegates must be returned via
@@ -90,11 +90,11 @@ class ClientApp : public CefApp,
   ClientApp();
 
   // Set the proxy configuration. Should only be called during initialization.
-  void SetProxyConfig(cef_proxy_type_t proxy_type,
-                      const CefString& proxy_config) {
-    proxy_type_ = proxy_type;
-    proxy_config_ = proxy_config;
-  }
+//  void SetProxyConfig(cef_proxy_type_t proxy_type,
+//                      const CefString& proxy_config) {
+//    proxy_type_ = proxy_type;
+//    proxy_config_ = proxy_config;
+//  }
 
   // Platform-specific methods implemented in client_app_mac/client_app_win
   
@@ -144,14 +144,14 @@ class ClientApp : public CefApp,
       OVERRIDE { return this; }
 
   // CefBrowserProcessHandler methods.
-  virtual CefRefPtr<CefProxyHandler> GetProxyHandler() OVERRIDE { return this; }
+ // virtual CefRefPtr<CefProxyHandler> GetProxyHandler() OVERRIDE { return this; }
   virtual void OnContextInitialized() OVERRIDE;
   virtual void OnBeforeChildProcessLaunch(
       CefRefPtr<CefCommandLine> command_line) OVERRIDE;
 
   // CefProxyHandler methods.
-  virtual void GetProxyForUrl(const CefString& url,
-                              CefProxyInfo& proxy_info) OVERRIDE;
+//  virtual void GetProxyForUrl(const CefString& url,
+  //                            CefProxyInfo& proxy_info) OVERRIDE;
 
   // CefRenderProcessHandler methods.
   virtual void OnWebKitInitialized() OVERRIDE;
@@ -170,8 +170,8 @@ class ClientApp : public CefApp,
       CefRefPtr<CefProcessMessage> message) OVERRIDE;
 
   // Proxy configuration.
-  cef_proxy_type_t proxy_type_;
-  CefString proxy_config_;
+//  cef_proxy_type_t proxy_type_;
+//  CefString proxy_config_;
 
   // Map of message callbacks.
   typedef std::map<std::pair<std::string, int>,

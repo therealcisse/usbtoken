@@ -66,7 +66,7 @@ class PKCS11SchemeHandlerFactory : public CefSchemeHandlerFactory {
       return new CefStreamResourceHandler("text/javascript", stream);
     }
 
-    if (strstr(c_str, "jquery-ui-1.8.23.custom.js") != NULL) {
+    if (strstr(c_str, "jquery-ui.custom.js") != NULL) {
       // Show the binding contents
       CefRefPtr<CefStreamReader> stream =
   	  GetBinaryResourceReader(IDS_JQUERY_UI_JS);

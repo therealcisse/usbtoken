@@ -1,0 +1,140 @@
+// Microsoft Visual C++ generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#define APSTUDIO_HIDDEN_SYMBOLS
+#include "windows.h"
+#undef APSTUDIO_HIDDEN_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+IDS_INDEX          BINARY         "epToken\\res\\public\\index.html"
+
+IDS_APPLICATION_JS BINARY         "epToken\\res\\public\\application.js"
+
+IDS_BOOTSTRAP_JS   BINARY         "epToken\\res\\public\\js\\bootstrap.min.js"
+IDS_JQUERY_UI_JS   BINARY         "epToken\\res\\public\\js\\jquery-ui-1.8.23.custom.min.js"
+
+IDS_APPLICATION_CSS BINARY        "epToken\\res\\public\\application.css"
+
+IDS_BOOTSTRAP_CSS  BINARY         "epToken\\res\\public\\css\\bootstrap.min.css"
+IDS_FONTAWESOME_CSS BINARY        "epToken\\res\\public\\css\\font-awesome.min.css"
+
+IDS_LOGO           BINARY         "epToken\\res\\public\\logo.png"
+IDS_LOADER         BINARY         "epToken\\res\\public\\loader.gif"
+IDS_LOADING        BINARY         "epToken\\res\\public\\loading.gif"
+
+IDS_FONTAWESOME_WOFF       BINARY         "epToken\\res\\public\\font\\fontawesome-webfont.woff"
+IDS_FONTAWESOME_TTF        BINARY         "epToken\\res\\public\\font\\fontawesome-webfont.ttf"
+IDS_FONTAWESOME_SVG        BINARY         "epToken\\res\\public\\font\\fontawesome-webfont.svg"
+
+IDS_USBTOKEN_EXTENSIONS        BINARY         "epToken\\usbtoken_extensions.js"
+
+//
+// Menu resources
+//
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE 
+BEGIN
+    "#define APSTUDIO_HIDDEN_SYMBOLS\r\n"
+    "#include ""windows.h""\r\n"
+    "#undef APSTUDIO_HIDDEN_SYMBOLS\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE 
+BEGIN
+    "\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+//
+// String Table resources
+//
+
+IDC_CONTEXTMENU_SHOW MENU
+BEGIN
+    POPUP ""
+    BEGIN
+    MENUITEM "Show Token Manager", IDM_BROWSER_SHOW
+    MENUITEM "E&xit", IDM_EXIT
+    END
+END
+
+IDC_CONTEXTMENU_HIDE MENU
+BEGIN
+    POPUP ""
+    BEGIN
+    MENUITEM "Hide Token Manager", IDM_BROWSER_HIDE
+    MENUITEM "E&xit", IDM_EXIT
+    END
+END
+
+STRINGTABLE
+BEGIN
+    IDC_USBTOKEN                  "epToken"
+    IDS_OSR_WIDGET_CLASS          "epToken"
+    IDS_APP_TITLE                 "Epsilon Token Manager"
+
+   IDS_TOKEN_INSERTED_TITLE    "Token Inserted"
+   IDS_TOKEN_INSERTED_TEXT     "A Token was just inserted."
+
+   IDS_EP_TOKEND_START_TITLE    "Token Service started"
+   IDS_EP_TOKEND_START_TEXT     "The token service started"
+
+   IDS_TOKEN_REMOVED_TITLE     "Token Removed"
+   IDS_TOKEN_REMOVED_TEXT      "The Token was just removed."
+
+   IDS_PIN_BLOCKED_TITLE  "PIN Blocked"
+   IDS_PIN_BLOCKED_TEXT   "Your has been blocked."    
+   
+   IDS_TOOLTIP   "Epsilon Token Manager 1.0"    
+END
+
+//
+// Icon resources
+//
+
+IDI_SMALL          ICON           "epToken\\res\\small.ico"
+IDI_USBTOKEN       ICON           "epToken\\res\\epToken.ico"
+
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED

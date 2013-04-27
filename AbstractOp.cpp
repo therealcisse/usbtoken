@@ -6,6 +6,7 @@
 #endif	
 
 #include "inc\op.h"
+#include "include\cef_runnable.h"
 
 void TOnEnd(Op *op, CefRefPtr<CefProcessMessage> response) {
 	op->OnEnd(response);

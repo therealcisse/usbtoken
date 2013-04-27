@@ -29,7 +29,7 @@
 #include <openssl/engine.h>
 #endif
 
-#include "epUSBToken/usbtoken.h"
+#include "epToken/usbtoken.h"
 
 #include "inc/token.h"
 #include "inc/ep_pkcs15.h"
@@ -609,7 +609,7 @@ std::string Format(char *fmt, ...) {
     }
 }
 
-int ep_gen_x509_req(CefRefPtr<epsilon::TokenContext> ctx, CefRefPtr<ClientHandler> handler, const char *id, const unsigned char *cn, const unsigned char *o, 
+int ep_gen_x509_req(epsilon::TokenContext *ctx, CefRefPtr<ClientHandler> handler, const char *id, const unsigned char *cn, const unsigned char *o, 
 	const unsigned char *ou, const unsigned char *city, const unsigned char *region, const unsigned char *country, const unsigned char *emailAddress, const char *authData) {
 	
 	struct sc_pkcs15_card *p15card;
@@ -794,7 +794,7 @@ out :
 	return e == NULL && r;
 }
 
-int ep_export_x509_certificate(CefRefPtr<epsilon::TokenContext> ctx, CefRefPtr<ClientHandler> handler, const char *path, const char *id, const char *authData, unsigned int format) {
+int ep_export_x509_certificate(epsilon::TokenContext *ctx, CefRefPtr<ClientHandler> handler, const char *path, const char *id, const char *authData, unsigned int format) {
 	struct sc_pkcs15_card *p15card;
 	struct sc_pkcs15_object *obj;
 	struct sc_pkcs15_cert *cert = NULL;
@@ -921,7 +921,7 @@ print_pem_object(unsigned char **buf, const u8 *data, size_t data_len) {
 	return buf_len;
 }
 
-int ep_delete_prkey(CefRefPtr<epsilon::TokenContext> ctx, const char *id, const char *authData) {
+int ep_delete_prkey(epsilon::TokenContext *ctx, const char *id, const char *authData) {
 	struct sc_pkcs15_card *p15card;
 	struct sc_pkcs15_object *obj;
 	struct sc_pkcs15_id kid;
@@ -950,7 +950,7 @@ int ep_delete_prkey(CefRefPtr<epsilon::TokenContext> ctx, const char *id, const 
 	return r;
 }
 
-int ep_delete_x509_certificate(CefRefPtr<epsilon::TokenContext> ctx, const char *id, const char *authData) {
+int ep_delete_x509_certificate(epsilon::TokenContext *ctx, const char *id, const char *authData) {
 	struct sc_pkcs15_card *p15card;
 	struct sc_pkcs15_object *obj;
 	struct sc_pkcs15_id kid;
@@ -979,7 +979,7 @@ int ep_delete_x509_certificate(CefRefPtr<epsilon::TokenContext> ctx, const char 
 /*
  * Generate a new private key
  */
-int ep_generate_key(CefRefPtr<epsilon::TokenContext> ctx, 
+int ep_generate_key(epsilon::TokenContext *ctx, 
   const char *spec, const char *pubkey_label, char **id, char *authid, const char *authData, int x509_usage) {
 	struct sc_pkcs15init_keygen_args keygen_args;
 	struct sc_pkcs15_card *p15card;
@@ -1369,7 +1369,7 @@ int ep_read_certificate(const char *data, size_t len, const char *format, X509 *
 }
 
 /* success if r >= 0 */
-int ep_token_read_certificate(CefRefPtr<epsilon::TokenContext> ctx, struct ep_key_info *key, const char *cert_id) {
+int ep_token_read_certificate(epsilon::TokenContext *ctx, struct ep_key_info *key, const char *cert_id) {
   int r = -1, i, count;
   struct sc_pkcs15_id id;
   struct sc_pkcs15_object *objs[32];
@@ -1588,7 +1588,7 @@ int ep_token_read_certificate(CefRefPtr<epsilon::TokenContext> ctx, struct ep_ke
 }
 
 /* success if r >= 0 */
-int ep_token_read_pubkey(CefRefPtr<epsilon::TokenContext> ctx, struct ep_key_info *key, const char *key_id, u8 *pin) {
+int ep_token_read_pubkey(epsilon::TokenContext *ctx, struct ep_key_info *key, const char *key_id, u8 *pin) {
   int r = -1;
   struct sc_pkcs15_id id;
   struct sc_pkcs15_object *obj;
@@ -1690,7 +1690,7 @@ int ep_token_read_pubkey(CefRefPtr<epsilon::TokenContext> ctx, struct ep_key_inf
 }
 
 /* success if r >= 0 */
-int ep_token_read_prkey(CefRefPtr<epsilon::TokenContext> ctx, struct ep_key_info *key, const char *key_id) {
+int ep_token_read_prkey(epsilon::TokenContext *ctx, struct ep_key_info *key, const char *key_id) {
   int r = -1;
   struct sc_pkcs15_id id;
   struct sc_pkcs15_object *obj;
@@ -1732,7 +1732,7 @@ int ep_token_read_prkey(CefRefPtr<epsilon::TokenContext> ctx, struct ep_key_info
   return r;
 }
 
-int ep_token_read_all_prkeys(CefRefPtr<epsilon::TokenContext> ctx, struct ::ep_key_info **keys, size_t ret_size) {
+int ep_token_read_all_prkeys(epsilon::TokenContext *ctx, struct ::ep_key_info **keys, size_t ret_size) {
 	int r = -1;
 	struct sc_pkcs15_object *objs[32];
 	struct sc_pkcs15_card *p15card;
@@ -1774,7 +1774,7 @@ int ep_token_read_all_prkeys(CefRefPtr<epsilon::TokenContext> ctx, struct ::ep_k
 	return r;
 }
 
-int ep_token_read_all_pubkeys(CefRefPtr<epsilon::TokenContext> ctx, struct ::ep_key_info **keys, size_t ret_size) {
+int ep_token_read_all_pubkeys(epsilon::TokenContext *ctx, struct ::ep_key_info **keys, size_t ret_size) {
 	int r = -1;
 	struct sc_pkcs15_object *objs[32];
 	struct sc_pkcs15_card *p15card;
@@ -1816,7 +1816,7 @@ int ep_token_read_all_pubkeys(CefRefPtr<epsilon::TokenContext> ctx, struct ::ep_
 	return r;
 }
 
-int ep_token_read_all_certs(CefRefPtr<epsilon::TokenContext> ctx, struct ::ep_key_info **keys, size_t ret_size) {
+int ep_token_read_all_certs(epsilon::TokenContext *ctx, struct ::ep_key_info **keys, size_t ret_size) {
 	int r = -1;
 	struct sc_pkcs15_object *objs[32];
 	struct sc_pkcs15_card *p15card;
@@ -1824,7 +1824,7 @@ int ep_token_read_all_certs(CefRefPtr<epsilon::TokenContext> ctx, struct ::ep_ke
 	if ((p15card = epsilon::BindP15Card(ctx)) != NULL) {
 	
 		r = sc_pkcs15_get_objects(p15card, SC_PKCS15_TYPE_CERT_X509, objs, 32);
-		if (r <= 0) {
+		if (r < 0) {
 			fprintf(stderr, "X509 Certificates enumeration failed: %s\n", sc_strerror(r));
 			goto out;
 		}
@@ -1863,7 +1863,7 @@ int ep_token_read_all_certs(CefRefPtr<epsilon::TokenContext> ctx, struct ::ep_ke
 /*
  * Store a private key
  */
-int ep_store_private_key(CefRefPtr<epsilon::TokenContext> ctx, const char *data, size_t len, 
+int ep_store_private_key(epsilon::TokenContext *ctx, const char *data, size_t len, 
 	const char *label, const char *format, char *passphrase, const char *authData) {
 	
 	struct sc_pkcs15init_prkeyargs args;
@@ -2018,7 +2018,7 @@ do_store_public_key(struct sc_pkcs15_card *p15card, struct sc_profile *profile,
 /*
  * Store a public key
  */
-int ep_store_public_key(CefRefPtr<epsilon::TokenContext> ctx, 
+int ep_store_public_key(epsilon::TokenContext *ctx, 
 	const char *data, size_t len, const char *format, const char *label, const char *authData) {
 	
 	struct sc_pkcs15_card *p15card;
@@ -2044,7 +2044,7 @@ int ep_store_public_key(CefRefPtr<epsilon::TokenContext> ctx,
 /*
  * Download certificate to card
  */
-int ep_store_certificate(CefRefPtr<epsilon::TokenContext> ctx,
+int ep_store_certificate(epsilon::TokenContext *ctx,
 	const char *data, size_t len, const char *label, const char *format, const char *authData, unsigned int authority) {
 	
 	struct sc_pkcs15_card *p15card;
@@ -2145,7 +2145,7 @@ is_cacert_already_present(struct sc_pkcs15_card *p15card, struct sc_pkcs15init_c
 			continue;
 
 		if (cert->data_len == args->der_encoded.len
-		     && !memcmp(cert->data, args->der_encoded.value,
+			&& !memcmp(cert->data, args->der_encoded.value,
 				     cert->data_len)) {
 			sc_pkcs15_free_certificate(cert);
 			return 1;
