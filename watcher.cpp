@@ -5,7 +5,7 @@
 #include "inc/ep_pkcs15.h"
 
 #include "inc/watcher.h"
-#include "epUSBToken/client_handler.h"
+#include "client_handler.h"
 
 #include "include/cef_v8.h"
 

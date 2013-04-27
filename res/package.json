@@ -1,12 +1,12 @@
 {
   "name": "app",
-  "version": "0.9.1",
+  "version": "0.9.5",
   "dependencies": {
     "serveup": "~0.0.5",
-    "hem": "~0.1.9",
-    "es5-shimify": "~0.0.1",
-    "json2ify": "~0.0.1",
-    "jqueryify": "~0.0.1",
-    "spine": "~1.0.8"
+    "hem": "~0.2.9",
+    "es5-shimify": "~2.0.5",
+    "json2ify": "~0.0.3",
+    "jqueryify": "~1.9.1",
+    "spine": "~1.0.9"
   }
 }

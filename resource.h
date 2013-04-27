@@ -19,6 +19,7 @@
 #define IDS_JQUERY_UI_JS                        1010
 #define IDC_USBTOKEN                            40000
 #define IDS_APP_TITLE                           40001
+#define IDS_OSR_WIDGET_CLASS                    40002
 
 #define IDS_TOOLTIP             304
 

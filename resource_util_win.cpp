@@ -72,7 +72,7 @@ CefRefPtr<CefStreamReader> GetBinaryResourceReader(const char* resource_name) {
     char* name;
     int id;
   } resource_map[] = {
-    {"index.html", IDS_INDEX},
+    {"index.min.html", IDS_INDEX},
     
 	{"application.js", IDS_APPLICATION_JS},
 	{"bootstrap.min.js", IDS_BOOTSTRAP_JS},

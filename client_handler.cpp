@@ -3,23 +3,27 @@
 // can be found in the LICENSE file.
 
 #include "client_handler.h"
+
 #include <algorithm>
 #include <stdio.h>
 #include <sstream>
 #include <string>
+#include "time.h"
+
 #include "include/cef_browser.h"
 #include "include/cef_frame.h"
 #include "include/cef_path_util.h"
 #include "include/cef_process_util.h"
 #include "include/cef_runnable.h"
 #include "include/wrapper/cef_stream_resource_handler.h"
+
 #include "usbtoken.h"
-#include "client_renderer.h"
 #include "client_switches.h"
 #include "resource_util.h"
 #include "string_util.h"
 
 #include "inc/token.h"
+#include "inc/ep_thread_ctx.h"
 
 #include "ep_pkcs11_scheme.h"
 
@@ -29,10 +33,13 @@ ClientHandler::ClientHandler()
   : m_MainHwnd(NULL),
     app_running_(false),
     m_BrowserId(0),
-    m_StartupURL("pkcs11://epsilon.ma"),
+	m_StartupURL("pkcs11://epsilon.ma"),
     m_bFocusOnEditableField(false), m_bExternalDevTools(false) {
   CreateProcessMessageDelegates(process_message_delegates_);
-  CreateRequestDelegates(request_delegates_);  
+  CreateRequestDelegates(request_delegates_);
+
+  srand(time(NULL)); 
+  ep_init_lock(); 
 }
 
 ClientHandler::~ClientHandler() {
@@ -47,6 +54,7 @@ ClientHandler::~ClientHandler() {
 
 #endif
 
+	ep_free_lock(); 
 }
 
 bool ClientHandler::OnProcessMessageReceived(
@@ -381,6 +389,54 @@ CefRefPtr<CefResourceHandler> ClientHandler::GetResourceHandler(
     handler = (*it)->GetResourceHandler(this, browser, frame, request);
 
   return handler;
+}
+
+bool ClientHandler::GetRootScreenRect(CefRefPtr<CefBrowser> browser,
+    CefRect& rect) {
+  if (!m_OSRHandler.get())
+    return false;
+  return m_OSRHandler->GetRootScreenRect(browser, rect);
+}
+
+bool ClientHandler::GetViewRect(CefRefPtr<CefBrowser> browser, CefRect& rect) {
+  if (!m_OSRHandler.get())
+    return false;
+  return m_OSRHandler->GetViewRect(browser, rect);
+}
+
+bool ClientHandler::GetScreenPoint(CefRefPtr<CefBrowser> browser,
+                                   int viewX,
+                                   int viewY,
+                                   int& screenX,
+                                   int& screenY) {
+  if (!m_OSRHandler.get())
+    return false;
+  return m_OSRHandler->GetScreenPoint(browser, viewX, viewY, screenX, screenY);
+}
+
+void ClientHandler::OnPopupShow(CefRefPtr<CefBrowser> browser,
+                                bool show) {
+  if (!m_OSRHandler.get())
+    return;
+  return m_OSRHandler->OnPopupShow(browser, show);
+}
+
+void ClientHandler::OnPopupSize(CefRefPtr<CefBrowser> browser,
+                                const CefRect& rect) {
+  if (!m_OSRHandler.get())
+    return;
+  return m_OSRHandler->OnPopupSize(browser, rect);
+}
+
+void ClientHandler::OnPaint(CefRefPtr<CefBrowser> browser,
+                            PaintElementType type,
+                            const RectList& dirtyRects,
+                            const void* buffer,
+                            int width,
+                            int height) {
+  if (!m_OSRHandler.get())
+    return;
+  m_OSRHandler->OnPaint(browser, type, dirtyRects, buffer, width, height);
 }
 
 void ClientHandler::SetMainHwnd(CefWindowHandle hwnd) {

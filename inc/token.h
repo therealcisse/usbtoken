@@ -9,7 +9,7 @@
 #include "include/internal/cef_ptr.h"
 #include "include/cef_values.h"
 
-#include "epUSBToken/client_handler.h"
+#include "epToken/client_handler.h"
 
 #include "inc/ep_pkcs15.h"
 #include "inc/watcher.h"
@@ -71,28 +71,28 @@ namespace epsilon {
 		static bool UnblockPIN(const char *, const char *);
 		static bool VerifyPIN(const char *);
 
-		//bool GetPubKeys(CefRefPtr<TokenContext>, ep_key_info **, size_t *);
-		static bool GetCerts(CefRefPtr<TokenContext>, ep_key_info **, size_t *);
-		static bool GetPrKeys(CefRefPtr<TokenContext>, ep_key_info **, size_t *);
+		//bool GetPubKeys(TokenContext*, ep_key_info **, size_t *);
+		static bool GetCerts(TokenContext*, ep_key_info **, size_t *);
+		static bool GetPrKeys(TokenContext*, ep_key_info **, size_t *);
 	
-		//bool GetPubKey(CefRefPtr<TokenContext>, const char *, ep_key_info *, const char *);
-		//bool GetPrKey(CefRefPtr<TokenContext>, const char *, ep_key_info *);
-		static bool GetCert(CefRefPtr<TokenContext>, const char *, ep_key_info *);
+		//bool GetPubKey(TokenContext*, const char *, ep_key_info *, const char *);
+		//bool GetPrKey(TokenContext*, const char *, ep_key_info *);
+		static bool GetCert(TokenContext*, const char *, ep_key_info *);
 	
-		static bool GenKey(CefRefPtr<TokenContext>, char *, const char *, char **);
+		static bool GenKey(TokenContext*, char *, const char *, char **);
 		
-		static bool ImportPrKey(CefRefPtr<TokenContext>, const char *, size_t, const char *, const char *, const char *, const char *);
-		//bool ImportPubKey(CefRefPtr<TokenContext>, const char *, size_t, const char *, const char *, const char *);
-		static bool ImportCert(CefRefPtr<TokenContext>, const char *, size_t, const char *, const char *, const char *);
+		static bool ImportPrKey(TokenContext*, const char *, size_t, const char *, const char *, const char *, const char *);
+		//bool ImportPubKey(TokenContext*, const char *, size_t, const char *, const char *, const char *);
+		static bool ImportCert(TokenContext*, const char *, size_t, const char *, const char *, const char *);
 		
-		static bool DelPrKey(CefRefPtr<TokenContext>, const char *, const char *);
-		static bool DelX509(CefRefPtr<TokenContext>, const char *, const char *);
+		static bool DelPrKey(TokenContext*, const char *, const char *);
+		static bool DelX509(TokenContext*, const char *, const char *);
 
-		bool GenX509Req(CefRefPtr<TokenContext>, CefRefPtr<ClientHandler> handler, const char *, const unsigned char *, 
+		bool GenX509Req(TokenContext*, CefRefPtr<ClientHandler> handler, const char *, const unsigned char *, 
 			const unsigned char *, const unsigned char *, const unsigned char *, const unsigned char *, 
 			const unsigned char *, const unsigned char *, const char *);
 
-		bool ExportX509(CefRefPtr<TokenContext>, CefRefPtr<ClientHandler> handler, const char *, const char *, const char *, unsigned int);
+		bool ExportX509(TokenContext*, CefRefPtr<ClientHandler> handler, const char *, const char *, const char *, unsigned int);
 
 	  virtual bool OnProcessMessageReceived(
 	    CefRefPtr<ClientHandler> handler,

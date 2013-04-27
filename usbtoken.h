@@ -2,14 +2,13 @@
 // reserved. Use of this source code is governed by a BSD-style license that
 // can be found in the LICENSE file.
 
-#ifndef CEF_USBTOKEN_H___
-#define CEF_USBTOKEN_H___
+#ifndef CEF_USBTOKEN_H___X
+#define CEF_USBTOKEN_H___X
 #pragma once
 
 #include <string>
 #include "include/cef_base.h"
 #include "client_app.h"
-#include "resource.h"
 
 
 class CefApp;
@@ -34,7 +33,8 @@ CefRefPtr<CefCommandLine> AppGetCommandLine();
 // Returns the application settings based on command line arguments.
 void AppGetSettings(CefSettings& settings, CefRefPtr<ClientApp> app);
 
-// Returns the application browser settings based on command line arguments.
-void AppGetBrowserSettings(CefBrowserSettings& settings);
+// Returns true if off-screen rendering is enabled via the command line
+// argument.
+bool AppIsOffScreenRenderingEnabled();
 
 #endif  // CEF_USBTOKEN_H___

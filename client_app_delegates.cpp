@@ -3,7 +3,6 @@
 // can be found in the LICENSE file.
 
 #include "client_app.h"
-#include "client_renderer.h"
 #include "ep_pkcs11_scheme.h"
 
 // static

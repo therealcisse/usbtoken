@@ -9,14 +9,15 @@
 #include "pkcs15init/profile.h"
 
 #include "inc/util_pkcs15.h"
+#include "inc/ep_thread_ctx.h"
 
 #include <windows.h>
 
 namespace epsilon {
 
-	CefRefPtr<TokenContext> TokenContext::instance_ = NULL;
+	TokenContext *TokenContext::instance_ = NULL;
 
-	sc_pkcs15_card *CreateP15Card(CefRefPtr<TokenContext> ctx) {
+	sc_pkcs15_card *CreateP15Card(TokenContext* ctx) {
 	  sc_pkcs15_card *p15card = sc_pkcs15_card_new();
 	  p15card->card = ctx->GetCard(); 
 	  return p15card;
@@ -26,7 +27,7 @@ namespace epsilon {
 		sc_pkcs15_card_free(p15card);
 	}
 
-	sc_pkcs15_card *BindP15Card(CefRefPtr<TokenContext> ctx) {
+	sc_pkcs15_card *BindP15Card(TokenContext* ctx) {
 		sc_pkcs15_card *p15card;
 		
 		if(::util::ep_pkcs15_bind_card(ctx->GetCard(), &p15card, ctx->GetProfile()) == SC_SUCCESS) {
@@ -41,7 +42,7 @@ namespace epsilon {
 		sc_pkcs15_unbind(p15card);
 	}	
 
-	void GetTokenInfo(CefRefPtr<TokenContext> ctx, ep_token_info *info) {
+	void GetTokenInfo(TokenContext* ctx, ep_token_info *info) {
 	  sc_pkcs15_card *p15card;
 	  sc_pkcs15_object *pin_obj;
 	  sc_pkcs15_auth_info *pinfo = NULL;

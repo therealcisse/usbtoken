@@ -126,6 +126,8 @@ class App extends Spine.Controller
 
       '/'                   :   @routeDetectOne
 
+      ''                    :   @routeDetectOne
+
     @bind 'statusChanged', @statusChanged
     
     @body   = new Spine.Controller(el: '.body')
@@ -362,11 +364,11 @@ class App extends Spine.Controller
 
   # Routes
 
-  routeSetLang: ({langId: $langId}) =>
+  routeSetLang: (opts) =>
 
-    unless @lang is $LANG['from_codes'][$langId]
+    unless @lang is $LANG['from_codes'][opts.langId]
       
-      Façade.SetLang $langId, (ok) =>
+      Façade.SetLang opts.langId, (ok) =>
 
         if ok
           

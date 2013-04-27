@@ -6,7 +6,6 @@
 #include <string>
 
 #include "stdlib.h"
-#include "time.h"
 
 #include "libopensc/pkcs15.h"
 #include "pkcs15init/profile.h"
@@ -15,8 +14,6 @@
 
 #include "inc/pkcs15.h"
 
-#include "inc/ep_thread_ctx.h"
-
 #define DEFAULT_PROFILE_NAME "pkcs15+onepin"
 
 namespace epsilon {
@@ -24,9 +21,9 @@ namespace epsilon {
 class TokenContext: public CefBase {
 public:
 
-  ~TokenContext() { ep_free_lock(); Destroy(); }
+  ~TokenContext() { Destroy(); }
   
-  static CefRefPtr<TokenContext> 
+  static TokenContext*
   GetGlobalContext (void) {
     static CefCriticalSection cs;
 
@@ -64,12 +61,17 @@ public:
   static bool isTokenPresent(sc_context **);
 
 private:
-  static CefRefPtr<TokenContext> instance_;
+  static TokenContext *instance_;
 
   TokenContext(const TokenContext&);
   void operator=(const TokenContext&);
 
-  explicit TokenContext() : kProfileName(DEFAULT_PROFILE_NAME), in_context(false) { srand(time(NULL)); ep_init_lock(); }
+  explicit TokenContext() 
+	  : 
+	kProfileName(DEFAULT_PROFILE_NAME), 
+	in_context(false) 
+  { 
+  }
   
   const std::string kProfileName;
 
@@ -85,13 +87,13 @@ private:
   //IMPLEMENT_LOCKING(TokenContext); 
 };
 
-sc_pkcs15_card *CreateP15Card(CefRefPtr<TokenContext>);
+sc_pkcs15_card *CreateP15Card(TokenContext*);
 void DestroyP15Card(sc_pkcs15_card*);
 
-sc_pkcs15_card *BindP15Card(CefRefPtr<TokenContext>);
+sc_pkcs15_card *BindP15Card(TokenContext*);
 void ReleaseP15Card(sc_pkcs15_card*); 
 
-void GetTokenInfo(CefRefPtr<TokenContext>, ep_token_info*);
+void GetTokenInfo(TokenContext*, ep_token_info*);
 
 }
 

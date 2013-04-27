@@ -6,7 +6,7 @@
 	#include <windows.h>
 #endif
 
-#include "epUSBToken/client_handler.h"
+#include "epToken/client_handler.h"
 
 namespace epsilon {	
 
