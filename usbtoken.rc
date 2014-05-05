@@ -23,24 +23,24 @@ LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 #pragma code_page(1252)
 #endif //_WIN32
 
-IDS_INDEX          BINARY         "epUSBToken\\res\\public\\index.min.html"
-IDS_APPLICATION_JS BINARY         "epUSBToken\\res\\public\\application.js"
-IDS_BOOTSTRAP_JS   BINARY         "epUSBToken\\res\\public\\bootstrap.min.js"
-IDS_JQUERY_UI_JS   BINARY         "epUSBToken\\res\\public\\jquery-ui-1.8.23.custom.min.js"
+IDS_INDEX          BINARY         "epToken\\res\\public\\index.min.html"
+IDS_APPLICATION_JS BINARY         "epToken\\res\\public\\application.js"
+IDS_BOOTSTRAP_JS   BINARY         "epToken\\res\\public\\js\\bootstrap.min.js"
+IDS_JQUERY_UI_JS   BINARY         "epToken\\res\\public\\js\\jquery-ui-1.8.23.custom.min.js"
 
-IDS_APPLICATION_CSS BINARY        "epUSBToken\\res\\public\\application.css"
-IDS_BOOTSTRAP_CSS  BINARY         "epUSBToken\\res\\public\\bootstrap.min.css"
-IDS_FONTAWESOME_CSS BINARY        "epUSBToken\\res\\public\\font-awesome.min.css"
+IDS_APPLICATION_CSS BINARY        "epToken\\res\\public\\application.css"
+IDS_BOOTSTRAP_CSS  BINARY         "epToken\\res\\public\\css\\bootstrap.min.css"
+IDS_FONTAWESOME_CSS BINARY        "epToken\\res\\public\\css\\font-awesome.min.css"
 
-IDS_LOGO           BINARY         "epUSBToken\\res\\public\\logo.png"
-IDS_LOADER         BINARY         "epUSBToken\\res\\public\\loader.gif"
-IDS_LOADING        BINARY         "epUSBToken\\res\\public\\loading.gif"
+IDS_LOGO           BINARY         "epToken\\res\\public\\logo.png"
+IDS_LOADER         BINARY         "epToken\\res\\public\\loader.gif"
+IDS_LOADING        BINARY         "epToken\\res\\public\\loading.gif"
 
-IDS_FONTAWESOME_WOFF       BINARY         "epUSBToken\\res\\public\\fonts\\fontawesome-webfont.woff"
-IDS_FONTAWESOME_TTF        BINARY         "epUSBToken\\res\\public\\fonts\\fontawesome-webfont.ttf"
-IDS_FONTAWESOME_SVG        BINARY         "epUSBToken\\res\\public\\fonts\\fontawesome-webfont.svg"
+IDS_FONTAWESOME_WOFF       BINARY         "epToken\\res\\public\\fonts\\fontawesome-webfont.woff"
+IDS_FONTAWESOME_TTF        BINARY         "epToken\\res\\public\\fonts\\fontawesome-webfont.ttf"
+IDS_FONTAWESOME_SVG        BINARY         "epToken\\res\\public\\fonts\\fontawesome-webfont.svg"
 
-IDS_USBTOKEN_EXTENSIONS        BINARY         "epUSBToken\\usbtoken_extensions.js"
+IDS_USBTOKEN_EXTENSIONS        BINARY         "epToken\\usbtoken_extensions.js"
 
 //
 // Menu resources
@@ -119,8 +119,8 @@ END
 // Icon resources
 //
 
-IDI_SMALL          ICON           "epUSBToken\\res\\small.ico"
-IDI_USBTOKEN       ICON           "epUSBToken\\res\\epUSBToken.ico"
+IDI_SMALL          ICON           "epToken\\res\\small.ico"
+IDI_USBTOKEN       ICON           "epToken\\res\\epToken.ico"
 
 #endif    // English (U.S.) resources
 /////////////////////////////////////////////////////////////////////////////

@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <!-- heat.exe dir Debug -dr INSTALLDIR -cg EpsilonFiles -gg -g1 -sf -srd -var "var.MySrcDir" -out EpsilonFiles.wxs -->
-<!-- candle.exe -fips -arch x86 -out ".\wixobj\" ".\*.wxs" -ext "C:\Program Files (x86)\WiX Toolset v3.6\bin\WixUtilExtension.dll" -ext "C:\Program Files (x86)\WiX Toolset v3.6\bin\WixUIExtension.dll" -->
-<!-- light.exe -out "epToken-1.0.0.msi" .\wixobj\*.wixobj -ext "C:\Program Files (x86)\WiX Toolset v3.6\bin\WixUtilExtension.dll" -ext "C:\Program Files (x86)\WiX Toolset v3.6\bin\WixUIExtension.dll" -->
+<!-- candle.exe -fips -arch x86 -out .\\wixobj\\ .\\*.wxs -ext "C:\Program Files\WiX Toolset v3.7\bin\WixUtilExtension.dll" -ext "C:\Program Files\WiX Toolset v3.7\bin\WixUIExtension.dll" -->
+<!-- light.exe -out "epToken-1.0.0.msi" .\\wixobj\\*.wixobj -ext "C:\Program Files\WiX Toolset v3.7\bin\WixUtilExtension.dll" -ext "C:\Program Files\WiX Toolset v3.7\bin\WixUIExtension.dll" -->
 
-  <?define MySrcDir = "C:\epToken" ?>
+  <?define MySrcDir = "C:\epToken.X" ?>
   <?define PlatformUpgradeCode = "{4FADD52F-A862-402B-826A-3B0102EAEF3E}" ?>
   <?define ProductName = "Epsilon Token Manager" ?>
 
@@ -98,7 +98,7 @@
               
               <ServiceInstall
                 Id="Install_epTokend"
-                Vital="yes"
+                Vital="no"
                 Name="epTokend"
                 DisplayName="Epsilon USB Token Manager Service Monitor"
                 Description="Epsilon USB Token Manager Service Monitor"

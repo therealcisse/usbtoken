@@ -621,22 +621,22 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
       //settings.file_access_from_file_urls_allowed = true;
         //settings.universal_access_from_file_urls_allowed = true;
 
-      settings.accelerated_2d_canvas_disabled = false;
-      settings.accelerated_compositing_disabled = false;
-      settings.accelerated_filters_enabled = true;
-      settings.accelerated_layers_disabled =  false;
-      settings.accelerated_painting_enabled = true;
-      settings.accelerated_plugins_disabled = true;
-      settings.accelerated_video_disabled = true;
-      settings.application_cache_disabled = false;
-      settings.databases_disabled = true;
+//      settings.accelerated_2d_canvas_disabled = false;
+//      settings.accelerated_compositing_disabled = false;
+     // settings.accelerated_filters_enabled = true;
+      //settings.accelerated_layers_disabled =  false;
+     // settings.accelerated_painting_enabled = true;
+      //settings.accelerated_plugins_disabled = true;
+      //settings.accelerated_video_disabled = true;
+      //settings.application_cache_disabled = false;
+   //   settings.databases_disabled = true;
       //settings.developer_tools_disabled = true;
-      settings.plugins_disabled = true;
-      settings.fullscreen_enabled = false;
-      settings.javascript_open_windows_disallowed = true;
-      settings.plugins_disabled = true;
-      settings.webgl_disabled = false;
-      settings.java_disabled = true;
+ //     settings.plugins_disabled = true;
+   //   settings.fullscreen_enabled = false;
+    //  settings.javascript_open_windows_disallowed = true;
+     // settings.plugins_disabled = true;
+  //    settings.webgl_disabled = false;
+//      settings.java_disabled = true;
 
       // Initialize window info to the defaults for a child window
       info.SetAsChild(hWnd, rect);

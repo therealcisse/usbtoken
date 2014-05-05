@@ -9,7 +9,7 @@
 #include "include/internal/cef_ptr.h"
 #include "include/cef_values.h"
 
-#include "epUSBToken/client_handler.h"
+#include "epToken/client_handler.h"
 
 #include "inc/ep_pkcs15.h"
 #include "inc/watcher.h"

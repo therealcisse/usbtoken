@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 
-<?define MySrcDir = "C:\epToken" ?>
+<?define MySrcDir = "C:\epToken.X" ?>
 
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
     

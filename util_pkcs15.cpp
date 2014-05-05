@@ -29,7 +29,7 @@
 #include <openssl/engine.h>
 #endif
 
-#include "epUSBToken/usbtoken.h"
+#include "epToken/usbtoken.h"
 
 #include "inc/token.h"
 #include "inc/ep_pkcs15.h"

@@ -1,0 +1,1254 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"marg",
+				"margin-bottom"
+			],
+			[
+				"mar",
+				"margin-bottom"
+			],
+			[
+				"l",
+				"loading"
+			],
+			[
+				"toke",
+				"token_removed"
+			],
+			[
+				"ins",
+				"instanceof"
+			],
+			[
+				"a",
+				"always"
+			],
+			[
+				"pr",
+				"promise"
+			],
+			[
+				"res",
+				"resolve"
+			],
+			[
+				"De",
+				"Deferred"
+			],
+			[
+				"re",
+				"require"
+			],
+			[
+				"un",
+				"unRendered"
+			],
+			[
+				"load",
+				"loading"
+			],
+			[
+				"sta",
+				"status"
+			],
+			[
+				"st",
+				"status"
+			],
+			[
+				"del",
+				"delay"
+			],
+			[
+				"se",
+				"setMessageCallback"
+			],
+			[
+				"con",
+				"controller"
+			],
+			[
+				"clo",
+				"close"
+			],
+			[
+				"cl",
+				"close"
+			],
+			[
+				"moda",
+				"modal-header"
+			],
+			[
+				"text",
+				"text-align"
+			],
+			[
+				"mod",
+				"modal-footer"
+			],
+			[
+				"can",
+				"cancelled"
+			],
+			[
+				"Expo",
+				"ExportForm"
+			],
+			[
+				"fi",
+				"fileName"
+			],
+			[
+				"form",
+				"format"
+			],
+			[
+				"relo",
+				"reloadKeys"
+			],
+			[
+				"sele",
+				"selectionChanged"
+			],
+			[
+				"sel",
+				"selectedKeys"
+			],
+			[
+				"key",
+				"keyList"
+			],
+			[
+				"ke",
+				"keyid"
+			],
+			[
+				"2",
+				"287px"
+			],
+			[
+				"get",
+				"get-x509-req-info"
+			],
+			[
+				"ren",
+				"rendered"
+			],
+			[
+				"remo",
+				"removeKeys"
+			],
+			[
+				"h",
+				"hideDlg"
+			],
+			[
+				"hide",
+				"hideDlg"
+			],
+			[
+				"r",
+				"region"
+			],
+			[
+				"c",
+				"cancelled"
+			],
+			[
+				"co",
+				"controller"
+			],
+			[
+				"pa",
+				"parseDate"
+			],
+			[
+				"T",
+				"Toolsbar"
+			],
+			[
+				"X",
+				"X509Certificate"
+			],
+			[
+				"rel",
+				"reload"
+			],
+			[
+				"cer",
+				"certificat"
+			],
+			[
+				"x509",
+				"x509-certificate"
+			],
+			[
+				"la",
+				"label"
+			],
+			[
+				"Key",
+				"KeyList"
+			],
+			[
+				"add",
+				"addPrKeys"
+			],
+			[
+				"gen",
+				"genCSR"
+			],
+			[
+				"da",
+				"data_len"
+			],
+			[
+				"data",
+				"data_len"
+			],
+			[
+				"for",
+				"format"
+			],
+			[
+				"GetKey",
+				"GetKeyInfo"
+			],
+			[
+				"ha",
+				"hasPassphrase"
+			],
+			[
+				"has",
+				"hasPassphrase"
+			],
+			[
+				"do",
+				"doImportPrKey"
+			],
+			[
+				"get-",
+				"get-key-info"
+			],
+			[
+				"sub",
+				"submitBtn"
+			],
+			[
+				"Ge",
+				"GetLabel"
+			],
+			[
+				"L",
+				"LABEL"
+			],
+			[
+				"le",
+				"length"
+			],
+			[
+				"na",
+				"navigate"
+			],
+			[
+				"reader",
+				"reader_id"
+			],
+			[
+				"s",
+				"submitBtn"
+			],
+			[
+				"su",
+				"submitBtn"
+			],
+			[
+				"bord",
+				"border-bottom"
+			],
+			[
+				"rou",
+				"routeUnblock"
+			],
+			[
+				"G",
+				"GetPINOpts"
+			],
+			[
+				"Lo",
+				"LoggedIn"
+			],
+			[
+				"tr",
+				"tries_left"
+			],
+			[
+				"max",
+				"max_tries"
+			],
+			[
+				"log",
+				"logged-in"
+			],
+			[
+				"A",
+				"Absent"
+			],
+			[
+				"dte",
+				"detectToken"
+			],
+			[
+				"det",
+				"detectToken"
+			],
+			[
+				"de",
+				"detectToken"
+			],
+			[
+				"lo",
+				"locked"
+			],
+			[
+				"d",
+				"detecting"
+			],
+			[
+				"readonl",
+				"readonly"
+			],
+			[
+				"getst",
+				"getstatus"
+			],
+			[
+				"BUILD",
+				"BUILD_ON"
+			],
+			[
+				"U",
+				"UUID"
+			],
+			[
+				"set",
+				"setMessageCallback"
+			],
+			[
+				"o",
+				"onhide"
+			],
+			[
+				"fon",
+				"font-weight"
+			],
+			[
+				"bor",
+				"border"
+			],
+			[
+				"m",
+				"modal"
+			],
+			[
+				"b",
+				"btn"
+			],
+			[
+				"w",
+				"wordLength"
+			],
+			[
+				"bo",
+				"border-radius"
+			],
+			[
+				"setp",
+				"setpw"
+			],
+			[
+				"per",
+				"personal-info"
+			],
+			[
+				"Per",
+				"personal-info"
+			],
+			[
+				"te",
+				"textarea"
+			],
+			[
+				"e",
+				"email"
+			],
+			[
+				"fu",
+				"fullName"
+			],
+			[
+				"ty",
+				"type"
+			],
+			[
+				"fa",
+				"Façade"
+			],
+			[
+				"S",
+				"SO_LOGIN"
+			],
+			[
+				"doS",
+				"doSetPersonalInfo"
+			],
+			[
+				"v",
+				"vars"
+			],
+			[
+				"in",
+				"include"
+			],
+			[
+				"ino",
+				"info"
+			],
+			[
+				"typ",
+				"typeof"
+			],
+			[
+				"view",
+				"viewopts"
+			],
+			[
+				"t",
+				"templ"
+			],
+			[
+				"p",
+				"params"
+			],
+			[
+				"pw",
+				"pw_confirm"
+			],
+			[
+				"P",
+				"PersonalInfo"
+			],
+			[
+				"Un",
+				"Unblock"
+			],
+			[
+				"fin",
+				"finalText"
+			],
+			[
+				"render",
+				"rendered"
+			],
+			[
+				"Bo",
+				"Bottom"
+			],
+			[
+				"wiza",
+				"wizard"
+			],
+			[
+				"wiz",
+				"Wizard"
+			],
+			[
+				"wi",
+				"wizard-bottom"
+			],
+			[
+				"rese",
+				"resetPIN"
+			],
+			[
+				"cla",
+				"class"
+			],
+			[
+				"Co",
+				"Controller"
+			],
+			[
+				"B",
+				"Bottom"
+			],
+			[
+				"ta",
+				"toggleClass"
+			],
+			[
+				"ex",
+				"expectedStatus"
+			],
+			[
+				"tog",
+				"toggleClass"
+			],
+			[
+				"op",
+				"options"
+			],
+			[
+				"ma",
+				"margin"
+			],
+			[
+				"ba",
+				"background-color"
+			],
+			[
+				"bao",
+				"background-color"
+			]
+		]
+	},
+	"buffers":
+	[
+		{
+			"file": "res/app/views/changepin.eco",
+			"settings":
+			{
+				"buffer_size": 733,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "res/app/views/unblock.eco",
+			"settings":
+			{
+				"buffer_size": 493,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "usbtoken.cpp",
+			"settings":
+			{
+				"buffer_size": 7977,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "res/css/index.styl",
+			"settings":
+			{
+				"buffer_size": 17485,
+				"line_ending": "Windows"
+			}
+		}
+	],
+	"build_system": "",
+	"command_palette":
+	{
+		"height": 392.0,
+		"selected_items":
+		[
+			[
+				"ins",
+				"Package Control: Install Package"
+			],
+			[
+				"in",
+				"Package Control: Install Package"
+			],
+			[
+				"remo",
+				"Package Control: Remove Package"
+			],
+			[
+				"insta",
+				"Package Control: Install Package"
+			],
+			[
+				"install Pa",
+				"Package Control: Install Package"
+			],
+			[
+				"Package Control: ",
+				"Package Control: Install Package"
+			],
+			[
+				"install",
+				"Package Control: Install Package"
+			]
+		],
+		"width": 528.0
+	},
+	"console":
+	{
+		"height": 125.0
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"file_history":
+	[
+		"/C/Documents and Settings/amadou/My Documents/Visual Studio 2010/Projects/cef3/epToken/res/node_modules/hem/package.json",
+		"/C/Documents and Settings/amadou/My Documents/Visual Studio 2010/Projects/cef3/epToken/res/app/index.coffee",
+		"/C/Documents and Settings/amadou/My Documents/Visual Studio 2010/Projects/cef3/epToken/usbtoken_win.cpp",
+		"/C/Documents and Settings/amadou/My Documents/Visual Studio 2010/Projects/cef3/epToken/res/public/application.css",
+		"/C/Documents and Settings/amadou/My Documents/Visual Studio 2010/Projects/cef3/epToken/res/css/index.styl",
+		"/C/Documents and Settings/amadou/My Documents/Visual Studio 2010/Projects/cef3/epToken/res/package.json",
+		"/C/Documents and Settings/amadou/My Documents/Visual Studio 2010/Projects/cef3/epToken/res/hello/lib/runtime.js",
+		"/C/Documents and Settings/amadou/My Documents/Visual Studio 2010/Projects/cef3/epToken/res/slug.json",
+		"/C/Documents and Settings/amadou/My Documents/Visual Studio 2010/Projects/cef3/epToken/res/hello/package.json",
+		"/C/Documents and Settings/amadou/My Documents/Visual Studio 2010/Projects/cef3/epToken/res/hello/Procfile",
+		"/C/Documents and Settings/amadou/My Documents/Visual Studio 2010/Projects/cef3/epToken/res/Procfile",
+		"/C/Documents and Settings/amadou/My Documents/Visual Studio 2010/Projects/cef3/epToken/res/hello/slug.json",
+		"/C/Documents and Settings/amadou/My Documents/Visual Studio 2010/Projects/cef3/epToken/res/node_modules/spine/src/spine.coffee",
+		"/C/Documents and Settings/amadou/My Documents/Visual Studio 2010/Projects/cef3/epToken/res/node_modules/jqueryify/index.js",
+		"/C/Documents and Settings/amadou/My Documents/Visual Studio 2010/Projects/cef3/epToken/res/app/views/key-mgr/toolsbar.keys.eco",
+		"/C/Documents and Settings/amadou/My Documents/Visual Studio 2010/Projects/cef3/epToken/res/public/index.html",
+		"/C/Documents and Settings/amadou/My Documents/Visual Studio 2010/Projects/cef3/epToken/res/app/lib/async.js",
+		"/C/Documents and Settings/amadou/My Documents/Visual Studio 2010/Projects/cef3/epToken/res/app/controllers/start.coffee",
+		"/C/Documents and Settings/amadou/My Documents/Visual Studio 2010/Projects/cef3/epToken/res/app/lib/façade.coffee",
+		"/C/Documents and Settings/amadou/My Documents/Visual Studio 2010/Projects/cef3/epToken/res/app/controllers/keyMgr.coffee",
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken.vcxproj",
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/winSVC.vcxproj",
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken.vcxproj.filters",
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/winSVC.vcxproj.filters",
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/winSVC.filters",
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken.vcxproj.user",
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/app/views/key-mgr/export_x509.eco",
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/node_modules/jqueryify/index.js",
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/css/index.styl",
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/public/index.html",
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/app/controllers/init.coffee",
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/app/lib/wizard.coffee",
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/app/views/start.eco",
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/app/controllers/login.coffee",
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/app/views/key-mgr/_prkey.eco",
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/app/views/key-mgr/toolsbar.X509.eco",
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/public/async.js",
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/node_modules/hem/lib/compilers.js",
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/package.json",
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/node_modules/hem/package.json",
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/node_modules/spine/package.json",
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/slug.json",
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/Procfile",
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/app/views/sysmenu.eco",
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/usbtoken.rc",
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/NotificationIcon/NotificationIcon.cpp",
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/app/views/key-mgr/get-x509-req-info.eco",
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/app/views/login.eco",
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/app/views/dlg.eco",
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/app/controllers/dlg.coffee",
+		"/C/Users/amadou/Desktop/cef3/cef3/tests/cefclient/resource.h",
+		"/C/Users/amadou/Desktop/cef3/cef3/tests/cefclient/cefclient.rc",
+		"/C/Build-OpenSSL/openssl-1.0.1c-dev/apps/apps.c",
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/app/views/key-mgr/x509-certificate.eco",
+		"/C/Build-OpenSSL/openssl-1.0.1c-dev/apps/req.c",
+		"/C/winSvc/winSvc/C++/CppWindowsService/ThreadPool.h",
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/winSvc.vcxproj",
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/winSvc.vcxproj.user",
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/winSvc.vcxproj.filters",
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/Libp11/include/libp11.h",
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/inc/ep_thread_ctx.h",
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/ep_thread_ctx.c",
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/app/controllers/get_pass.coffee",
+		"/C/Build-OpenSSL/openssl-1.0.1c-dev/apps/apps.h",
+		"/C/Build-OpenSSL/openssl-1.0.1c-dev/apps/x509.c",
+		"/C/Build-OpenSSL/openssl-1.0.1c-dev/apps/openssl.c",
+		"/C/Build-OpenSSL/openssl-1.0.1c-dev/apps/progs.h",
+		"/C/Build-engine-pkcs11/engine_pkcs11-0.1.8-dev/configure",
+		"/C/Build-engine-pkcs11/engine_pkcs11-0.1.8/src/Makefile.mak",
+		"/C/Build-engine-pkcs11/engine_pkcs11-0.1.8/configure",
+		"/C/Build-OpenSSL/libp11-0.2.8-dev/src/Makefile.mak",
+		"/C/OpenSC-building/OpenSC/win32/Make.rules.mak",
+		"/C/Build-OpenSSL/engine_pkcs11-0.1.8-dev/src/Makefile.mak",
+		"/C/Build-OpenSSL/engine_pkcs11-0.1.8-dev/configure",
+		"/C/Build-OpenSSL/libp11-0.2.8/src/Makefile.mak",
+		"/C/Build-OpenSSL/libp11-0.2.8/Makefile.mak",
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/log.txt",
+		"/C/Build-OpenSSL/openssl-1.0.1c-dev/apps/genrsa.c",
+		"/C/Build-OpenSSL/openssl-1.0.1c-dev/apps/genpkey.c",
+		"/C/Build-OpenSSL/openssl-1.0.1c-dev/apps/ocsp.c",
+		"/C/Build-OpenSSL/openssl-1.0.1c-dev/apps/rsa.c",
+		"/C/Build-OpenSSL/openssl-1.0.1c-dev/apps/pkeyutl.c",
+		"/C/Build-OpenSSL/openssl-1.0.1c-dev/apps/pkey.c",
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/app/views/key-mgr/prkey.eco",
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/app/views/getpass.eco",
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/app/views/key-mgr/_x509-certificate.eco",
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/app/views/key-mgr/toolsbar.keys.eco",
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/public/bootstrap.js",
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/app/views/msg.eco",
+		"/C/Users/amadou/AppData/Local/Temp/Rar$DIa0.639/jquery.ui.datepicker.js",
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/app/controllers/get-label.coffee",
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/app/views/key-mgr/get-key-info.eco",
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/app/controllers/keyMgr.coffee",
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/app/index.coffee",
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/app/lib/façade.coffee",
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/app/views/get-label.eco",
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/app/views/changepin.eco",
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/app/controllers/changePIN.coffee",
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/app/views/key-mgr/toolsbar.key.eco",
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/app/views/key-mgr/_key.eco",
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/app/views/key-mgr/pubkey.eco",
+		"/D/Users/amadou/Downloads/openssl-1.0.1c/openssl-1.0.1c/apps/openssl.c",
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/public/base64.js",
+		"/D/Users/amadou/Documents/ECC/Ecc/main.cpp",
+		"/D/Users/amadou/Documents/ECC/Ecc/FiniteFieldElement.h",
+		"/D/Users/amadou/Documents/ECC/Ecc/EllipticCurve.h",
+		"/D/Users/amadou/Downloads/openssl-1.0.1c/openssl-1.0.1c/apps/pkcs12.c",
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/app/controllers/personalinfo.coffee",
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/app/controllers/start.coffee",
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/app/controllers/unblock.coffee",
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/app/controllers/resetPIN.coffee",
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/app/controllers/listTokens.coffee",
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/.npmignore",
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/app/controllers/topbar.coffee",
+		"/C/Users/amadou/Desktop/Todo.Token.txt",
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/public/bootstrap.min.css",
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/topbar.keep",
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/app/lib/sysmenu.coffee",
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/public/bootstrap.css",
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/app/views/personal-info.eco",
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/app/views/unblock.eco",
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/app/controllers/sysmenu.coffee",
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/node_modules/spine/src/spine.coffee",
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/app/models/token.coffee",
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/usbtoken/res/public/application.js",
+		"/D/Users/amadou/Documents/Visual Studio 2010/Projects/cef3/console.log",
+		"/D/Users/amadou/Documents/About it/Be A Bad Boy Without Being Bad.txt",
+		"/C/Program Files (x86)/OpenSC Project/OpenSC/opensc.conf"
+	],
+	"find":
+	{
+		"height": 34.0
+	},
+	"find_in_files":
+	{
+		"height": 0.0,
+		"where_history":
+		[
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+			"too",
+			".keys",
+			"for-keys",
+			"tools",
+			"toolsbar",
+			".keys",
+			".keys, .key-view .key",
+			"toolsbar",
+			"ImportX509Certificate",
+			"Deferred",
+			"App",
+			"IDS_APP_TITLE",
+			"unRendered",
+			"> li",
+			"cnt",
+			" if not alert",
+			"detectToken",
+			"GenX",
+			":368",
+			"replyto: replyto, ",
+			", replyto: replyto",
+			"callback = (kMessageName, [response]) =>",
+			" from #{kMessageName}",
+			"notAfter",
+			"ENIGINE",
+			"time",
+			"gmt",
+			"notAfter",
+			"notBefore",
+			"reader",
+			"base64",
+			"BASE64",
+			" && defined(PKCS11_THREAD_LOCKING)",
+			"@keys.html ",
+			"rendered",
+			"KeyView",
+			"modal-footer",
+			"modal",
+			"RSA_version",
+			"dlg",
+			"selectionChanged",
+			"selectChanged",
+			"sigopts",
+			"digest",
+			"sigopts",
+			"pkey_ctrl_string",
+			"do_sign_init",
+			"do_X509_REQ_sign",
+			"make_REQ",
+			"], ",
+			"pkey",
+			"load_pkey",
+			"load_pubkey",
+			"MBSTRING_ASC",
+			"MBSTRING_ASC ",
+			"parse_name",
+			"make_REQ",
+			"load_pubkey",
+			"load_key",
+			"prog_init",
+			"req",
+			"emailRegex",
+			"get-key-info",
+			"modal",
+			"get-label",
+			"reload",
+			"header",
+			".key",
+			"_ticks",
+			"_daylightSavingAdjust",
+			"_getDaysInMonth",
+			"monthNamesShort",
+			"monthNames",
+			"_defa",
+			"parseDate",
+			"(=> @app.reload)",
+			"@delay (=> @app.reload)",
+			"purge",
+			"selectionChanged",
+			"DER",
+			"CER",
+			"Order",
+			"getSt",
+			"v-sc",
+			"get-ke",
+			"max",
+			"get-labe",
+			"Loa",
+			"personal",
+			"person",
+			"('')",
+			"uuid.v1()",
+			"loadin",
+			"end",
+			"msg",
+			"replyto",
+			"readers",
+			"<?",
+			"Win64YesNo",
+			"mini",
+			"MINI",
+			"ZLIB",
+			"ZLIB_LIBS",
+			"ac_cv_header_zlib_h",
+			"zlib",
+			"OpenSS",
+			"LIBLTDL_INCL",
+			"#",
+			"app",
+			"events",
+			" \n",
+			"createW",
+			"{\n",
+			"duration = ",
+			"reps = ",
+			"name = ",
+			"val ",
+			"partagé avec le système",
+			"partage",
+			"raid",
+			"setpin",
+			"SetPin",
+			".keys, .key-view",
+			" autofocus",
+			"setpin",
+			" 	''",
+			"''",
+			"window.setTimeout"
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+			"ImportX509",
+			"",
+			"callback = (response) =>",
+			"",
+			"X509View",
+			"++Façade.cnt",
+			"++cnt",
+			"",
+			"application",
+			"",
+			"partagé avec les autres vms",
+			"partagé",
+			"RAID",
+			"",
+			"@app.delay",
+			"puk-length",
+			"pin-length",
+			"stepChanged",
+			"step",
+			"setStep",
+			"steps",
+			"title",
+			"",
+			"XXXX",
+			"",
+			"'",
+			"",
+			"'",
+			""
+		],
+		"reverse": true,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"selected": 3,
+			"sheets":
+			[
+				{
+					"buffer": 0,
+					"file": "res/app/views/changepin.eco",
+					"settings":
+					{
+						"buffer_size": 733,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								733,
+								733
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/eco/Syntaxes/HTML (ECO).tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "res/app/views/unblock.eco",
+					"settings":
+					{
+						"buffer_size": 493,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								11,
+								11
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/eco/Syntaxes/HTML (ECO).tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "usbtoken.cpp",
+					"settings":
+					{
+						"buffer_size": 7977,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1240,
+								1240
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C++.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 1335.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "res/css/index.styl",
+					"settings":
+					{
+						"buffer_size": 17485,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								8998,
+								8998
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Stylus/Stylus.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 8015.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				}
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 34.0
+	},
+	"input":
+	{
+		"height": 31.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": false,
+	"output.coffeecompile_output":
+	{
+		"height": 351.0
+	},
+	"output.exec":
+	{
+		"height": 100.0
+	},
+	"replace":
+	{
+		"height": 62.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"selected_items":
+		[
+			[
+				"inde",
+				"res/css/index.styl"
+			],
+			[
+				"index",
+				"res/css/index.styl"
+			],
+			[
+				"too",
+				"app/views/key-mgr/toolsbar.keys.eco"
+			],
+			[
+				"log",
+				"app/controllers/login.coffee"
+			],
+			[
+				"sys",
+				"app/views/sysmenu.eco"
+			],
+			[
+				"_pr",
+				"app/views/key-mgr/_prkey.eco"
+			],
+			[
+				"start",
+				"app/views/start.eco"
+			],
+			[
+				"wi",
+				"app/lib/wizard.coffee"
+			],
+			[
+				"ini",
+				"app/controllers/init.coffee"
+			],
+			[
+				"in",
+				"public/index.html"
+			],
+			[
+				"wiz",
+				"app/lib/wizard.coffee"
+			],
+			[
+				"x5",
+				"app/views/key-mgr/x509-certificate.eco"
+			],
+			[
+				"ind",
+				"public/index.html"
+			],
+			[
+				"dlg",
+				"app/controllers/dlg.coffee"
+			],
+			[
+				"get",
+				"app/views/key-mgr/get-x509-req-info.eco"
+			],
+			[
+				"prk",
+				"app/views/key-mgr/prkey.eco"
+			],
+			[
+				"getp",
+				"app/views/getpass.eco"
+			],
+			[
+				"ms",
+				"app/views/msg.eco"
+			],
+			[
+				"msg",
+				"app/views/msg.eco"
+			],
+			[
+				"fa",
+				"app/lib/façade.coffee"
+			],
+			[
+				"keym",
+				"app/controllers/keyMgr.coffee"
+			],
+			[
+				"cha",
+				"app/controllers/changePIN.coffee"
+			],
+			[
+				"login",
+				"app/views/login.eco"
+			],
+			[
+				"get-l",
+				"app/controllers/get-label.coffee"
+			],
+			[
+				"key",
+				"app/controllers/keyMgr.coffee"
+			],
+			[
+				"pers",
+				"app/controllers/personalinfo.coffee"
+			],
+			[
+				"façade",
+				"app/lib/façade.coffee"
+			],
+			[
+				"l",
+				"app/controllers/login.coffee"
+			],
+			[
+				"sta",
+				"app/controllers/start.coffee"
+			],
+			[
+				"st",
+				"app/controllers/start.coffee"
+			],
+			[
+				"boo",
+				"public/bootstrap.css"
+			],
+			[
+				"top",
+				"app/controllers/topbar.coffee"
+			],
+			[
+				"route",
+				"node_modules/spine/src/route.coffee"
+			],
+			[
+				"lo",
+				"app/views/login.eco"
+			],
+			[
+				"f",
+				"app/lib/façade.coffee"
+			],
+			[
+				"tok",
+				"app/models/token.coffee"
+			],
+			[
+				"bott",
+				"app/views/wizard/bottom.eco"
+			]
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 0.0,
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"show_minimap": false,
+	"show_open_files": false,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 278.0,
+	"status_bar_visible": true
+}

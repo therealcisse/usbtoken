@@ -274,7 +274,7 @@ class ClientAppExtensionHandler : public CefV8Handler {
 
 
 ClientApp::ClientApp()
-    : proxy_type_(CEF_PROXY_TYPE_DIRECT) {
+    /*: proxy_type_(CEF_PROXY_TYPE_DIRECT)*/ {
   CreateBrowserDelegates(browser_delegates_);
   CreateRenderDelegates(render_delegates_);
 
@@ -329,12 +329,12 @@ void ClientApp::OnBeforeChildProcessLaunch(
     (*it)->OnBeforeChildProcessLaunch(this, command_line);
 }
 
-void ClientApp::GetProxyForUrl(const CefString& url,
-                               CefProxyInfo& proxy_info) {
-  proxy_info.proxyType = proxy_type_;
-  if (!proxy_config_.empty())
-    CefString(&proxy_info.proxyList) = proxy_config_;
-}
+///void ClientApp::GetProxyForUrl(const CefString& url,
+    //                           CefProxyInfo& proxy_info) {
+  //proxy_info.proxyType = proxy_type_;
+  //if (!proxy_config_.empty())
+    //CefString(&proxy_info.proxyList) = proxy_config_;
+//}
 
 void ClientApp::OnWebKitInitialized() {
   // Register the client_app extension.

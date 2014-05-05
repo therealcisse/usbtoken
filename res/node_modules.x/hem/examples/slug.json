@@ -1,0 +1,10 @@
+{
+  "libs": [
+   "./lib/custom.js"
+  ],
+  "dependencies": ["gfx"],
+  "useProxy": true,
+  "apiHost": "localhost",
+  "apiPort": 8080,
+  "proxyPort": 8001
+}
